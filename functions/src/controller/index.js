@@ -3,7 +3,7 @@
         router = express.Router();
 
     // Define the home page route
-    router.get('/', function (req, res) {
+    router.get('/', (req, res) => {
         res.send(req.user);
     });
 

@@ -10,7 +10,7 @@
     //********************USER*********************** */
 
     /** Update profile of a user */
-    router.put('/svc/users/:_id', middleware.isValidUser, function (req, res) {
+    router.put('/svc/users/:_id', middleware.isValidUser, (req, res) => {
         var id = req.params._id,
             conditions = {
                 _id: id
@@ -37,13 +37,13 @@
     });
 
     /** Logout user */
-    router.get('/svc/user/logout', middleware.isValidUser, function (req, res, next) {
+    router.get('/svc/user/logout', middleware.isValidUser, (req, res, next) => {
         req.logout();
         return res.status(status.OK).json({ status: "LOGOUT_DONE" })
     })
 
     /* Reguster user*/
-    router.post('/svc/user/register', function (req, res) {
+    router.post('/svc/user/register', (req, res) => {
         if (req.body.passwords.password !== req.body.passwords.confirmPassword) {
             return res.status(status.NOT_IMPLEMENTED).json("Passwords are not matched");
         }
@@ -54,7 +54,7 @@
             avatar: '../../assets/image/default-avatar.png',
             joinedDate: moment().format("YYYY-MM-DD")
         }
-        userSvc.registerUser(user).then(newUser => {
+        return userSvc.registerUser(user).then(newUser => {
             return res.status(status.OK).json(newUser);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -62,14 +62,14 @@
     });
 
     /** Login user with local auth */
-    router.post('/svc/user/auth/local', function (req, res, next) {
-        passport.authenticate('local', function (err, user, info) {
+    router.post('/svc/user/auth/local', (req, res, next) => {
+        passport.authenticate('local', (err, user, info) => {
             if (err) {
                 return res.status(status.NOT_IMPLEMENTED).json(err);
             } else if (!user) {
                 return res.status(status.UNAUTHORIZED).json(info);
             }
-            req.logIn(user, function (err) {
+            return req.logIn(user, (err) => {
                 if (err) {
                     return res.status(status.NOT_IMPLEMENTED).json(err);
                 }
@@ -98,12 +98,12 @@
     router.get('/svc/user/auth/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 
     //Google login. This route navigate user to back to application after google authenticated successfully
-    router.get('/svc/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function (req, res) {
+    router.get('/svc/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
         res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
     });
 
     //Google login. This route navigate user to back to application after google authenticated successfully
-    router.get('/svc/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function (req, res) {
+    router.get('/svc/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
         res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
     });
 

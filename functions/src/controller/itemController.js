@@ -8,53 +8,57 @@
         ActionType = require('../shared/actionType');
 
     //********************ITEM*********************** */
-    router.get('/svc/items', function (req, res) {
+    router.get('/svc/items', (req, res, next) => {
         var options = getOptions(req);
-        itemSvc.getItems(options).then(function (items) {
+        itemSvc.getItems(options).then((items) => {
             if (req.user) {
                 if (options.temp) {
                     items = items.filter(item => {
-                        if (options.temp == "cold") {
+                        if (options.temp === "cold") {
                             return item.noOfPoints < 1000;
-                        } else if (options.temp == "warm") {
+                        } else if (options.temp === "warm") {
                             return item.noOfPoints >= 1000 && item.noOfPoints < 2000
-                        } else if (options.temp == "hot") {
-                            return item.noOfPoints >= 2000;
                         }
+                        return item.noOfPoints >= 2000;
                     });
                 }
-                var newItems = items.map(async function (item) {
-                    var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
-                    if (modelUserLog) {
-                        if (modelUserLog.hasVoted == ActionType.DOWNVOTED) {
-                            item.hasDownvoted = true;
-                        }
-                        else if (modelUserLog.hasVoted == ActionType.UPVOTED) {
-                            item.hasUpvoted = true;
-                        }
-                        if (modelUserLog.itemId == item._id && modelUserLog.commentId == null && modelUserLog.reported == ActionType.REPORTED) {
-                            item.hasReported = true;
-                        }
-                    }
-                    return item;
-                });
-                Promise.all(newItems).then(function (result) {
-                    return res.status(status.OK).json(result);
-                })
-            } else {
-                return res.status(status.OK).json(items);
+                return process(req, res, next, items);
             }
+            return res.status(status.OK).json(items);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            next(err);
         })
     });
 
+    function process(req, res, next, items) {
+        var newItems = items.map(async (item) => {
+            var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
+            if (modelUserLog) {
+                if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
+                    item.hasDownvoted = true;
+                }
+                else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+                    item.hasUpvoted = true;
+                }
+                if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {
+                    item.hasReported = true;
+                }
+            }
+            return item;
+        });
+        Promise.all(newItems).then((result) => {
+            return res.status(status.OK).json(result);
+        }).catch(err => {
+            next(err);
+        })
+    }
+
     /** Get item */
-    router.get('/svc/items/:id', function (req, res) {
+    router.get('/svc/items/:id', (req, res) => {
         var item = {
             _id: req.params["id"]
         };
-        itemSvc.getItemById(item).then(function (result) {
+        itemSvc.getItemById(item).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -63,12 +67,12 @@
 
 
     /** Delete item */
-    router.delete('/svc/items/:id', middleware.isValidUser, function (req, res) {
+    router.delete('/svc/items/:id', middleware.isValidUser, (req, res) => {
         var item = {
             _id: req.params["id"],
             "createdBy.userId": req.user.id
         };
-        itemSvc.deleteItem(item).then(function (result) {
+        itemSvc.deleteItem(item).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -107,14 +111,14 @@
 
     function getPageNo(page) {
         if (page && !isNaN(page)) {
-            return +page;
+            return Number(page);
         }
         return 0;
     }
 
     function getPerPageNo(perPage) {
         if (perPage && !isNaN(perPage)) {
-            return +perPage;
+            return Number(perPage);
         }
         return 4;
     }
@@ -122,25 +126,25 @@
     /*
     Service to update an item
     */
-    router.put('/svc/items/:id', function (req, res) {
+    router.put('/svc/items/:id', (req, res) => {
         var newItemInfo = req.body;
         itemSvc.updateItem({ _id: req.params["id"] }, newItemInfo, {}).then(result => {
             return res.status(status.OK).json(result);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            res.status(status.NOT_IMPLEMENTED).json(err);
         });
     });
 
     /*
     Service to create new item
     */
-    router.post('/svc/current-user/items', middleware.isValidUser, function (req, res) {
+    router.post('/svc/current-user/items', middleware.isValidUser, (req, res) => {
         var item = req.body;
         var isValid = validate(req.user, item);
         if (!isValid) {
             return res.status(status.NOT_IMPLEMENTED).json("Invalid form");
         }
-        itemSvc.addItem(item).then(newItem => {
+        return itemSvc.addItem(item).then(newItem => {
             return res.status(status.OK).json(newItem);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);

@@ -2,22 +2,20 @@
     var router = require('express').Router(),
         notificationSvc = require('../services/notificationSvc'),
         middleware = require('../../util/middleware'),
-        status = require('http-status'),
-        moment = require('moment'),
-        ActionType = require('../shared/actionType');
+        status = require('http-status');
 
     //** NOTIFICATION **/
-    router.get('/svc/notifications', middleware.isValidUser, function (req, res) {
+    router.get('/svc/notifications', middleware.isValidUser, (req, res) => {
         var options = getOptions(req)
-        notificationSvc.getNotifications(options).then(function (notifications) {
+        notificationSvc.getNotifications(options).then((notifications) => {
             return res.status(status.OK).json(notifications);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });
     });
 
-    router.get('/svc/notifications/hasnew', middleware.isValidUser, function (req, res) {
-        notificationSvc.checkIfThereIsUnreadNotifications(req.user.id).then(function (yesno) {
+    router.get('/svc/notifications/hasnew', middleware.isValidUser, (req, res) => {
+        notificationSvc.checkIfThereIsUnreadNotifications(req.user.id).then((yesno) => {
             return res.status(status.OK).json(yesno);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -43,14 +41,14 @@
 
     function getPageNo(page) {
         if (page && !isNaN(page)) {
-            return +page;
+            return Number(page);
         }
         return 0;
     }
 
     function getPerPageNo(perPage) {
         if (perPage && !isNaN(perPage)) {
-            return +perPage;
+            return Number(perPage);
         }
         return 5;
     }

@@ -7,12 +7,12 @@
         User = require('../model/user');
 
     var passportConfig = function (passport) {
-        passport.serializeUser(function (user, done) {
+        passport.serializeUser((user, done) => {
             done(null, user._id);
         });
 
-        passport.deserializeUser(function (id, done) {
-            User.findById(id, function (err, user) {
+        passport.deserializeUser((id, done) => {
+            User.findById(id, (err, user) => {
                 done(err, user);
             });
         });
@@ -23,11 +23,11 @@
                 passwordField: "password",
                 passReqToCallback: true
             },
-            function (req, email, password, done) {
+            (req, email, password, done) => {
                 User.findOne(
                     { $or: [{ email: email }, { username: email }] },
                     { email: 1, password: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
-                    function (err, user) {
+                    (err, user) => {
                         if (err) { return done(err); }
                         else if (!user || !user.isValid(password)) {
                             return done(null, false, 'Incorrect username or password!');
@@ -44,7 +44,7 @@
                 clientSecret: 'aYKgRzQOrplV5VQ4oy2ROuma',
                 callbackURL: "http://localhost:4200/svc/auth/google/callback"
             },
-            function (accessToken, refreshToken, profile, done) {
+            (accessToken, refreshToken, profile, done) => {
                 saveGoogleUser(accessToken, refreshToken, profile, done);
             }
         ));
@@ -56,7 +56,7 @@
             profileFields: ["email", "name", "displayName", "photos"]
 
         },
-            function (accessToken, refreshToken, profile, done) {
+            (accessToken, refreshToken, profile, done) => {
                 saveFacebookUser(accessToken, refreshToken, profile, done);
             }
         ));
@@ -69,7 +69,7 @@
             { email: profile.emails[0].value },
             { email: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, googleId: 1, joinedDate: 1, accessToken: 1 },
             {},
-            async function (err, user) {
+            async (err, user) => {
                 if (err) {
                     return done(err);
                 } else if (user) {
@@ -95,9 +95,9 @@
     function saveFacebookUser(accessToken, refreshToken, profile, done) {
         User.findOne(
             { email: profile._json.email },
-            { email: 1, avatar: 1, username: 1, avatar: 1, first_name: 1, last_name: 1, joinedDate: 1 },
+            { email: 1, avatar: 1, username: 1, first_name: 1, last_name: 1, joinedDate: 1 },
             {},
-            async function (err, user) {
+            async (err, user) => {
                 if (err) {
                     return done(err);
                 } else if (user) {

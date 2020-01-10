@@ -97,7 +97,7 @@
 
     function _addComment(comment) {
         return new Promise((resolve, reject) => {
-            Comment.create(comment, function (err, newComment) {
+            Comment.create(comment, (err, newComment) => {
                 if (err) {
                     reject(err);
                 }
@@ -120,31 +120,31 @@
                         },
                         new: true
                     });
-            } else {
-                return itemSvc.updateItem(
-                    { _id: itemId },
-                    { $inc: { noOfPoints: adjustPoint } },
-                    {
-                        projection: {
-                            "noOfPoints": true,
-                            "createdBy": true
-                        },
-                        new: true
-                    });
             }
+            return itemSvc.updateItem(
+                { _id: itemId },
+                { $inc: { noOfPoints: adjustPoint } },
+                {
+                    projection: {
+                        "noOfPoints": true,
+                        "createdBy": true
+                    },
+                    new: true
+                });
         }
+        return null;
     }
 
     // Get replies of a comment
     function getComments(options, user) {
         return new Promise((resolve, reject) => {
-            Comment.find(options.conditions, function (err, comments) {
+            Comment.find(options.conditions, (err, comments) => {
                 if (err) {
                     reject(err);
                 }
                 if (user) {
                     getWhatUserDidToTheseComment(comments, user.id).then(mappedComments => {
-                        resolve(mappedComments);
+                        return resolve(mappedComments);
                     }).catch(errr => {
                         reject(errr);
                     });
@@ -157,7 +157,7 @@
 
     function getCommentById(commentId) {
         return new Promise((resolve, reject) => {
-            Comment.findById(commentId, function (err, comment) {
+            Comment.findById(commentId, (err, comment) => {
                 if (err) {
                     reject(err)
                 }
@@ -167,16 +167,16 @@
     }
 
     function getWhatUserDidToTheseComment(comments, userId) {
-        var newComments = comments.map(async function (comment) {
+        var newComments = comments.map(async (comment) => {
             var modelUserLog = await modelUserLogSvc.getModelUserLog(comment.itemId, comment._id, userId);
             if (modelUserLog) {
-                if (modelUserLog.hasVoted == ActionType.DOWNVOTED) {
+                if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
                     comment.hasDownvoted = true;
                 }
-                else if (modelUserLog.hasVoted == ActionType.UPVOTED) {
+                else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                     comment.hasUpvoted = true;
                 }
-                if (modelUserLog.itemId == comment.itemId && modelUserLog.commentId == comment._id && modelUserLog.reported == ActionType.REPORTED) {
+                if (modelUserLog.itemId === comment.itemId && modelUserLog.commentId === comment._id && modelUserLog.reported === ActionType.REPORTED) {
                     comment.hasReported = true;
                 }
             }
@@ -187,7 +187,7 @@
 
     function updateComment(conditions, updates, options) {
         return new Promise((resolve, reject) => {
-            Comment.findOneAndUpdate(conditions, updates, options, function (err, newComment) {
+            Comment.findOneAndUpdate(conditions, updates, options, (err, newComment) => {
                 if (err) {
                     reject(err);
                 }
@@ -199,7 +199,7 @@
     /** Delete one comment */
     function deleteComment(comment) {
         return new Promise((resolve, reject) => {
-            Comment.findOneAndDelete(comment, function (err, deletedComment) {
+            Comment.findOneAndDelete(comment, (err, deletedComment) => {
                 if (err) {
                     reject(err);
                 }
@@ -209,7 +209,7 @@
                         itemSvc.adjustNoOfCommentsOfItem(deletedComment.itemId, -1);
                         adjustNoOfRepliesOfComment(deletedComment.parentCommentId, -1)
                             .then(updatedParentCom => {
-                                resolve(updatedParentCom);
+                                return resolve(updatedParentCom);
                             }).catch(err => {
                                 reject(err);
                             });
@@ -235,7 +235,7 @@
                 {
                     "writtenBy.username": newUserInfo.username,
                     "writtenBy.avatar": newUserInfo.avatar
-                }, function (err, updatedComments) {
+                }, (err, updatedComments) => {
                     if (err) {
                         reject(err);
                     }

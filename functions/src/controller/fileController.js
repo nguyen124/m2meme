@@ -3,7 +3,7 @@
         request = require('request'),
         middleware = require('../../util/middleware');
 
-    router.post('/svc/uploadFile', middleware.isValidUser, function (req, res) {
+    router.post('/svc/uploadFile', middleware.isValidUser, (req, res) => {
         var newUrl = 'https://us-central1-architect-c592d.cloudfunctions.net/uploadFile';
         req.pipe(request(newUrl)).pipe(res);
     });

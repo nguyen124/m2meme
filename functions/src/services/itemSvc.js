@@ -18,7 +18,7 @@
     /* Get items */
     function getItems(options) {
         return new Promise((resolve, reject) => {
-            Item.find(options.conditions, {}, function (err, items) {
+            Item.find(options.conditions, {}, (err, items) => {
                 if (err) {
                     reject(err);
                 }
@@ -30,7 +30,7 @@
     /** Add item */
     function addItem(item) {
         return new Promise((resolve, reject) => {
-            Item.create(item, function (err, item) {
+            Item.create(item, (err, item) => {
                 if (err) {
                     reject(err);
                 }
@@ -42,7 +42,7 @@
     /** Update item */
     function updateItem(conditions, newInfo, options) {
         return new Promise((resolve, reject) => {
-            Item.findOneAndUpdate(conditions, newInfo, options, function (err, newItem) {
+            Item.findOneAndUpdate(conditions, newInfo, options, (err, newItem) => {
                 if (err) {
                     reject(err);
                 }
@@ -53,7 +53,7 @@
 
     function getItemById(item) {
         return new Promise((resolve, reject) => {
-            Item.findById(item, function (err, foundItem) {
+            Item.findById(item, (err, foundItem) => {
                 if (err) {
                     reject(err);
                 }
@@ -65,7 +65,7 @@
     /** Delete item */
     function deleteItem(item) {
         return new Promise((resolve, reject) => {
-            Item.findOneAndDelete(item, function (err, deletedItem) {
+            Item.findOneAndDelete(item, (err, deletedItem) => {
                 if (err || !deletedItem) {
                     reject(err);
                 } else {
@@ -86,7 +86,7 @@
 
     function deleteAllCommentsOfItem(itemId) {
         return new Promise((resolve, reject) => {
-            Comment.deleteMany({ itemId: itemId }, function (err, deletedComments) {
+            Comment.deleteMany({ itemId: itemId }, (err, deletedComments) => {
                 if (err) {
                     reject(err);
                 }
@@ -102,7 +102,7 @@
                 {
                     "createdBy.username": newUserInfo.username,
                     "createdBy.avatar": newUserInfo.avatar
-                }, function (err, updatedItems) {
+                }, (err, updatedItems) => {
                     if (err) {
                         reject(err);
                     }

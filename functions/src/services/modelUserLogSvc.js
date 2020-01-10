@@ -18,7 +18,7 @@
                 conditions,
                 updates,
                 options,
-                function (err, newModelUserLog) {
+                (err, newModelUserLog) => {
                     if (err) { reject(err); }
                     resolve(newModelUserLog);
                 }
@@ -34,7 +34,7 @@
             ModelUserLog.findOne(
                 conditions,
                 projections,
-                function (err, modelUserLog) {
+                (err, modelUserLog) => {
                     if (err) { reject(err); }
                     resolve(modelUserLog);
                 }
@@ -45,7 +45,7 @@
     function deleteModelUserLog(itemId, commentId, userId) {
         var conditions = getCondition(itemId, commentId, userId);
         return new Promise((resolve, reject) => {
-            ModelUserLog.deleteOne(conditions, function (err, record) {
+            ModelUserLog.deleteOne(conditions, (err, record) => {
                 if (err) {
                     reject(err);
                 }
@@ -57,7 +57,7 @@
     function deleteManyModelUserLogs(itemId, commentId, userId) {
         var conditions = getCondition(itemId, commentId, userId);
         return new Promise((resolve, reject) => {
-            ModelUserLog.deleteMany(conditions, function (err, logs) {
+            ModelUserLog.deleteMany(conditions, (err, logs) => {
                 if (err) {
                     reject(err);
                 }

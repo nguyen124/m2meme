@@ -10,7 +10,7 @@
 
     function getNotifications(options) {
         return new Promise((resolve, reject) => {
-            Notification.find(options.conditions, {}, function (err, notifications) {
+            Notification.find(options.conditions, {}, (err, notifications) => {
                 if (err) {
                     reject(err);
                 }
@@ -26,7 +26,7 @@
 
     function updateNotification(conditions, newInfo, options) {
         return new Promise((resolve, reject) => {
-            Notification.updateOne(conditions, newInfo, options, function (err, updatedInfo) {
+            Notification.updateOne(conditions, newInfo, options, (err, updatedInfo) => {
                 if (err) {
                     reject(err);
                 }
@@ -37,7 +37,7 @@
 
     function createNotification(notification) {
         return new Promise((resolve, reject) => {
-            Notification.create(notification, function (err, notification) {
+            Notification.create(notification, (err, notification) => {
                 if (err) {
                     reject(err);
                 }
@@ -48,7 +48,7 @@
 
     function checkIfThereIsUnreadNotifications(userId) {
         return new Promise((resolve, reject) => {
-            Notification.findOne({ hasRead: false, userId: userId }, function (err, res) {
+            Notification.findOne({ hasRead: false, userId: userId }, (err, res) => {
                 if (err) {
                     reject(err)
                 }

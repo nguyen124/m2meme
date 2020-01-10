@@ -25,7 +25,7 @@
     /** Add report */
     function addReport(report) {
         return new Promise((resolve, reject) => {
-            Report.create(report, function (err, report) {
+            Report.create(report, (err, report) => {
                 if (err) {
                     reject(err);
                 }
@@ -38,7 +38,7 @@
     /** Delete report */
     function deleteReport(conditions) {
         return new Promise((resolve, reject) => {
-            Report.deleteOne(conditions, function (err, report) {
+            Report.deleteOne(conditions, (err, report) => {
                 if (err) {
                     reject(err);
                 }
@@ -50,7 +50,7 @@
 
     function deleteAllReportsInsideAnItem(itemId) {
         return new Promise((resolve, reject) => {
-            Report.deleteMany({ reportedItemId: itemId }, function (err, reports) {
+            Report.deleteMany({ reportedItemId: itemId }, (err, reports) => {
                 if (err) {
                     reject(err);
                 }

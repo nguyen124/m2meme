@@ -11,7 +11,7 @@
 
     function updateUser(conditions, newUserInfo, options) {
         return new Promise((resolve, reject) => {
-            User.findOneAndUpdate(conditions, newUserInfo, options, function (err, updatedUser) {
+            User.findOneAndUpdate(conditions, newUserInfo, options, (err, updatedUser) => {
                 if (err) {
                     reject(err);
                 }
@@ -37,18 +37,21 @@
             };
             return createNewUser(user);
         }
+        return null;
     }
 
     function hasExisted(info) {
         return new Promise((resolve, reject) => {
-            User.findOne({ $or: [{ email: info.email }, { username: info.username }] }, function (err, user) {
+            User.findOne({ $or: [{ email: info.email }, { username: info.username }] }, (err, user) => {
                 if (err) {
                     reject(err);
                 }
                 if (user) {
                     if (user.email === info.email) {
+                        // eslint-disable-next-line prefer-promise-reject-errors
                         reject('Email has been used!');
-                    } else if (user.username == info.username) {
+                    } else if (user.username === info.username) {
+                        // eslint-disable-next-line prefer-promise-reject-errors
                         reject('Username has been used!');
                     }
                 }
@@ -59,7 +62,7 @@
 
     function createNewUser(user) {
         return new Promise((resolve, reject) => {
-            User.create(user, function (err, newUser) {
+            User.create(user, (err, newUser) => {
                 if (err) {
                     reject(err);
                 } else {

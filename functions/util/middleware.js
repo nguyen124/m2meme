@@ -3,7 +3,7 @@
 
     function isValidUser(req, res, next) {
         if (req.isAuthenticated()) {
-            next();
+            return next();
         } else {
             return res.status(status.UNAUTHORIZED).json("Unauthorized request");
         }

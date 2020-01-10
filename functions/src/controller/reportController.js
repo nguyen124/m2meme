@@ -8,7 +8,7 @@
     /*
     Service to create new report
     */
-    router.post('/svc/reports', middleware.isValidUser, function (req, res) {
+    router.post('/svc/reports', middleware.isValidUser, (req, res) => {
         var report = req.body;
         report.reportedDate = moment().format("YYYY-MM-DD");
         report.status = "NEW"
@@ -26,13 +26,8 @@
         });
     });
 
-    /** Update report */
-    router.put('/svc/reports/:id', middleware.isValidUser, function (req, res) {
-
-    });
-
     /** Delete report */
-    router.delete('/svc/reports', middleware.isValidUser, function (req, res) {
+    router.delete('/svc/reports', middleware.isValidUser, (req, res) => {
         var conditions = {
             reportedItemId: req.query["reportedItemId"],
             "reportedByUser._id": req.user.id
@@ -41,7 +36,7 @@
         if (reportedCommentId) {
             conditions = Object.assign(conditions, { reportedCommentId: reportedCommentId })
         }
-        reportSvc.deleteReport(conditions).then(function (result) {
+        reportSvc.deleteReport(conditions).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
