@@ -1,0 +1,120 @@
+(function () {
+
+    var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+        FacebookStrategy = require('passport-facebook').Strategy,
+        LocalStrategy = require('passport-local').Strategy,
+        moment = require('moment'),
+        User = require('../model/user');
+
+    var passportConfig = function (passport) {
+        passport.serializeUser(function (user, done) {
+            done(null, user._id);
+        });
+
+        passport.deserializeUser(function (id, done) {
+            User.findById(id, function (err, user) {
+                done(err, user);
+            });
+        });
+
+        passport.use('local', new LocalStrategy(
+            {
+                usernameField: "email",
+                passwordField: "password",
+                passReqToCallback: true
+            },
+            function (req, email, password, done) {
+                User.findOne(
+                    { $or: [{ email: email }, { username: email }] },
+                    { email: 1, password: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
+                    function (err, user) {
+                        if (err) { return done(err); }
+                        else if (!user || !user.isValid(password)) {
+                            return done(null, false, 'Incorrect username or password!');
+                        }
+                        return done(null, user);
+                    }
+                );
+            }
+        ));
+
+        passport.use(new GoogleStrategy(
+            {
+                clientID: '255336538802-2o65hm0fv0ag6ds098lpa8118s9kdo43.apps.googleusercontent.com',
+                clientSecret: 'aYKgRzQOrplV5VQ4oy2ROuma',
+                callbackURL: "http://localhost:4200/svc/auth/google/callback"
+            },
+            function (accessToken, refreshToken, profile, done) {
+                saveGoogleUser(accessToken, refreshToken, profile, done);
+            }
+        ));
+
+        passport.use(new FacebookStrategy({
+            clientID: '2341935745914929',
+            clientSecret: 'f9b60ab65360841ab7377664348eba75',
+            callbackURL: "http://localhost:4200/svc/auth/facebook/callback",
+            profileFields: ["email", "name", "displayName", "photos"]
+
+        },
+            function (accessToken, refreshToken, profile, done) {
+                saveFacebookUser(accessToken, refreshToken, profile, done);
+            }
+        ));
+
+
+    };
+
+    function saveGoogleUser(accessToken, refreshToken, profile, done) {
+        User.findOne(
+            { email: profile.emails[0].value },
+            { email: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, googleId: 1, joinedDate: 1, accessToken: 1 },
+            {},
+            async function (err, user) {
+                if (err) {
+                    return done(err);
+                } else if (user) {
+                    return done(null, user);
+                } else {
+                    var newUser = new User({
+                        email: profile.emails[0].value,
+                        avatar: profile.photos[0].value,
+                        username: profile.displayName,
+                        familyName: profile.name.familyName,
+                        givenName: profile.name.givenName,
+                        joinedDate: moment().format("YYYY-MM-DD"),
+                        modifiedDate: moment().format("YYYY-MM-DD")
+                        //googleId: profile.id,
+                        //accessToken: accessToken
+                    });
+                    var newCreatedUser = await User.create(newUser);
+                    return done(null, newCreatedUser);
+                }
+            });
+    }
+
+    function saveFacebookUser(accessToken, refreshToken, profile, done) {
+        User.findOne(
+            { email: profile._json.email },
+            { email: 1, avatar: 1, username: 1, avatar: 1, first_name: 1, last_name: 1, joinedDate: 1 },
+            {},
+            async function (err, user) {
+                if (err) {
+                    return done(err);
+                } else if (user) {
+                    return done(null, user);
+                } else {
+                    var newUser = new User({
+                        email: profile._json.email,
+                        username: profile._json.name,
+                        avatar: profile._json.picture.data.url,
+                        givenName: profile._json.first_name,
+                        familyName: profile._json.last_name,
+                        joinedDate: moment().format("YYYY-MM-DD")
+                    });
+                    var newCreatedUser = await User.create(newUser);
+                    return done(null, newCreatedUser);
+                }
+            });
+    }
+    module.exports = passportConfig;
+}());

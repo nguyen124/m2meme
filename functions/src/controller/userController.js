@@ -1,0 +1,111 @@
+(function () {
+    var router = require('express').Router(),
+        userSvc = require('../services/userSvc'),
+        middleware = require('../../util/middleware'),
+        passport = require('passport'),
+        status = require('http-status'),
+        moment = require('moment');
+
+
+    //********************USER*********************** */
+
+    /** Update profile of a user */
+    router.put('/svc/users/:_id', middleware.isValidUser, function (req, res) {
+        var id = req.params._id,
+            conditions = {
+                _id: id
+            },
+            newUserInfo = req.body,
+            options = {
+                projection:
+                {
+                    _id: true,
+                    username: true,
+                    gender: true,
+                    dob: true,
+                    nationality: true,
+                    avatar: true
+                },
+                new: true
+            };
+
+        userSvc.updateUser(conditions, newUserInfo, options).then(newUser => {
+            return res.status(status.OK).json(newUser);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    /** Logout user */
+    router.get('/svc/user/logout', middleware.isValidUser, function (req, res, next) {
+        req.logout();
+        return res.status(status.OK).json({ status: "LOGOUT_DONE" })
+    })
+
+    /* Reguster user*/
+    router.post('/svc/user/register', function (req, res) {
+        if (req.body.passwords.password !== req.body.passwords.confirmPassword) {
+            return res.status(status.NOT_IMPLEMENTED).json("Passwords are not matched");
+        }
+        var user = {
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.passwords.password,
+            avatar: '../../assets/image/default-avatar.png',
+            joinedDate: moment().format("YYYY-MM-DD")
+        }
+        userSvc.registerUser(user).then(newUser => {
+            return res.status(status.OK).json(newUser);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    /** Login user with local auth */
+    router.post('/svc/user/auth/local', function (req, res, next) {
+        passport.authenticate('local', function (err, user, info) {
+            if (err) {
+                return res.status(status.NOT_IMPLEMENTED).json(err);
+            } else if (!user) {
+                return res.status(status.UNAUTHORIZED).json(info);
+            }
+            req.logIn(user, function (err) {
+                if (err) {
+                    return res.status(status.NOT_IMPLEMENTED).json(err);
+                }
+                return res.status(status.OK).json({
+                    user: {
+                        _id: user._id,
+                        username: user.username,
+                        email: user.email,
+                        joinedDate: user.joinedDate,
+                        avatar: user.avatar,
+                        familyName: user.familyName,
+                        givenName: user.givenName,
+                        gender: user.gender,
+                        nationality: user.nationality,
+                        dob: user.dob
+                    }
+                });
+            });
+        })(req, res, next);
+    });
+
+    /* Google login. This route navigate user to google authentication page */
+    router.get('/svc/user/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+    /* Google login. This route navigate user to google authentication page */
+    router.get('/svc/user/auth/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+
+    //Google login. This route navigate user to back to application after google authenticated successfully
+    router.get('/svc/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function (req, res) {
+        res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
+    });
+
+    //Google login. This route navigate user to back to application after google authenticated successfully
+    router.get('/svc/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function (req, res) {
+        res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
+    });
+
+    module.exports = router;
+}());
