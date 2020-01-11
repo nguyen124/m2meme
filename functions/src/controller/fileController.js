@@ -9,8 +9,8 @@
 
     const functions = require('firebase-functions');
     const gcconfig = {
-        projectId: 'architect-c592d',
-        keyFilename: 'architect-c592d-firebase-adminsdk-wocm3-b6d41a751d.json'
+        projectId: 'm2meme',
+        keyFilename: 'm2meme-firebase-adminsdk-rvmhz-dff76c1bfa.json'
     }
     const { Storage } = require('@google-cloud/storage');
     const gcs = new Storage(gcconfig);
@@ -31,7 +31,7 @@
         });
 
         busboy.on('finish', () => {
-            const bucket = gcs.bucket('architect-c592d.appspot.com');
+            const bucket = gcs.bucket('m2meme.appspot.com');
             bucket.upload(uploadData.file, {
                 uploadType: 'media',
                 metadata: {
