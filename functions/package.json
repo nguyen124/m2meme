@@ -10,7 +10,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "10"
+    "node": "8"
   },
   "dependencies": {
     "firebase-admin": "^8.6.0",
@@ -30,7 +30,13 @@
     "passport-google-oauth": "^2.0.0",
     "passport-local": "^1.0.0",
     "request": "^2.88.0",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "@google-cloud/storage": "^2.4.2",
+    "busboy": "^0.3.0",
+    "child-process-promise": "^2.2.1",
+    "os": "^0.1.1",
+    "path": "^0.12.7",
+    "uuid-v4": "^0.1.0"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
