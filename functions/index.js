@@ -16,6 +16,7 @@
     passportCfg(passport);
     // connect to mongoose
     mongoose.connect('mongodb+srv://admin:Nguy3nH0H@1@cluster0-wq5um.gcp.mongodb.net/architect?retryWrites=true&w=majority', { useNewUrlParser: true });
+    //mongoose.connect('mongodb://localhost/architect', { useNewUrlParser: true });
     mongoose.set('useNewUrlParser', true);
     mongoose.set('useFindAndModify', false);
     mongoose.set('useCreateIndex', true);
@@ -41,6 +42,7 @@
     }));
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use('/uploads', express.static('uploads'));
     app.use(flash());
     app.use(require('./src/controller/index'));
     app.use(require('./src/controller/itemController'));
