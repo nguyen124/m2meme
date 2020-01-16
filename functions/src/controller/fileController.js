@@ -23,7 +23,6 @@
             req.method === 'POST' &&
             req.headers['content-type'].startsWith('multipart/form-data')
         ) {
-            console.log("middleF1");
             getRawBody(
                 req,
                 {
@@ -39,7 +38,6 @@
             )
         }
         return next();
-
     }
 
     function middleF2(req, res, next) {
@@ -47,7 +45,6 @@
             req.method === 'POST' &&
             req.headers['content-type'].startsWith('multipart/form-data')
         ) {
-            console.log("middleF2");
             const gcconfig = {
                 projectId: 'm2meme',
                 keyFilename: 'm2meme-firebase-adminsdk-rvmhz-dff76c1bfa.json'
@@ -77,12 +74,10 @@
                 const filepath = path.join(os.tmpdir(), uuid + filename);
                 req.data['file'] = filepath;
                 file.pipe(fs.createWriteStream(filepath));
-                console.log("On end: " + req.file);
             })
 
             busboy.on('field', (fieldname, val) => {
                 req.data[fieldname] = val;
-                console.log("On field: " + req.data[fieldname]);
             })
 
             busboy.on('finish', () => {
@@ -97,7 +92,6 @@
                 }).then((data) => {
                     let file = data[0];
                     fs.unlinkSync(req.data['file']);
-                    console.log("On finish: " + file.name);
                     return res.status(200).json({ fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid });
                 }).catch((err) => {
                     console.log(err);

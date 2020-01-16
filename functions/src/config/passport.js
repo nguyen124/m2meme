@@ -42,7 +42,7 @@
             {
                 clientID: '255336538802-2o65hm0fv0ag6ds098lpa8118s9kdo43.apps.googleusercontent.com',
                 clientSecret: 'aYKgRzQOrplV5VQ4oy2ROuma',
-                callbackURL: "http://localhost:4200/svc/auth/google/callback"
+                callbackURL: "https://m2meme.firebaseapp.com/svc/auth/google/callback"
             },
             (accessToken, refreshToken, profile, done) => {
                 saveGoogleUser(accessToken, refreshToken, profile, done);
@@ -52,7 +52,7 @@
         passport.use(new FacebookStrategy({
             clientID: '2341935745914929',
             clientSecret: 'f9b60ab65360841ab7377664348eba75',
-            callbackURL: "http://localhost:4200/svc/auth/facebook/callback",
+            callbackURL: "https://m2meme.firebaseapp.com/svc/auth/facebook/callback",
             profileFields: ["email", "name", "displayName", "photos"]
 
         },
