@@ -40,8 +40,8 @@
 
         passport.use(new GoogleStrategy(
             {
-                clientID: '255336538802-2o65hm0fv0ag6ds098lpa8118s9kdo43.apps.googleusercontent.com',
-                clientSecret: 'aYKgRzQOrplV5VQ4oy2ROuma',
+                clientID: '325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com',
+                clientSecret: 'GKfVQghfAYBmXhvGbb0oLftZ',
                 callbackURL: "https://m2meme.firebaseapp.com/svc/auth/google/callback"
             },
             (accessToken, refreshToken, profile, done) => {

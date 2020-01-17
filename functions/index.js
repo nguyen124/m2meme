@@ -50,7 +50,6 @@
     app.use(require('./src/controller/userController'));
     app.use(require('./src/controller/reportController'));
     app.use(require('./src/controller/notificationController'));
-
     app.listen(port);
     console.log('Running on port:' + port);
     exports.app = functions.https.onRequest(app);
