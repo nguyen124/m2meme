@@ -55,7 +55,7 @@
                     reject(err);
                 }
                 resolve(reports);
-            })
+            });
         });
     }
 }());

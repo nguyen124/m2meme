@@ -8,6 +8,6 @@
             reportedDate: Date,
             status: String
         });
-    reportSchema.index({ reportedDate: -1 })
+    reportSchema.index({ reportedDate: -1 });
     module.exports = mongoose.model('report', reportSchema);
-}())
+}());

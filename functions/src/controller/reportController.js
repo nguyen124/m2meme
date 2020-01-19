@@ -11,7 +11,7 @@
     router.post('/svc/reports', middleware.isValidUser, (req, res) => {
         var report = req.body;
         report.reportedDate = moment().format("YYYY-MM-DD");
-        report.status = "NEW"
+        report.status = "NEW";
         report.reportedByUser = {
             _id: req.user.id,
             username: req.user.username,
@@ -29,10 +29,10 @@
     /** Delete report */
     router.delete('/svc/reports', middleware.isValidUser, (req, res) => {
         var conditions = {
-            reportedItemId: req.query["reportedItemId"],
+            reportedItemId: req.query.reportedItemId,
             "reportedByUser._id": req.user.id
         };
-        var reportedCommentId = req.query["reportedCommentId"];
+        var reportedCommentId = req.query.reportedCommentId;
         if (reportedCommentId) {
             conditions = Object.assign(conditions, { reportedCommentId: reportedCommentId })
         }

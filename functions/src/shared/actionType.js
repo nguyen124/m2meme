@@ -15,5 +15,5 @@
         COMMENTED: COMMENTED,
         REPORTED: REPORTED,
         UNREPORTED: UNREPORTED
-    }
+    };
 }());

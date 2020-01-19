@@ -19,6 +19,6 @@
             hasDownvoted: Boolean,
             hasReported: Boolean
         });
-    itemSchema.index({ modifiedDate: -1 })
+    itemSchema.index({ modifiedDate: -1 });
     module.exports = mongoose.model('item', itemSchema);
 }());

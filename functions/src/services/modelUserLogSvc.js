@@ -67,15 +67,15 @@
     }
 
     function getCondition(itemId, commentId, userId) {
-        var conditions = {}
+        var conditions = {};
         if (itemId) {
-            conditions = { itemId: itemId }
+            conditions = { itemId: itemId };
         }
         if (commentId) {
-            conditions["commentId"] = commentId;
+            conditions.commentId = commentId;
         }
         if (userId) {
-            conditions["userId"] = userId;
+            conditions.userId = userId;
         }
         return conditions;
     }
@@ -102,4 +102,4 @@
         }
         return updates;
     }
-}())
+}());

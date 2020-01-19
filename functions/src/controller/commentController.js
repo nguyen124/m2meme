@@ -71,8 +71,8 @@
         var comment = req.body;
         var info = {
             comment: {
-                _id: req.params["commentId"],
-                itemId: req.params["itemId"]
+                _id: req.params.commentId,
+                itemId: req.params.itemId
             },
             updates: comment,
             options: { new: true }
@@ -87,10 +87,10 @@
     /*Delete comment*/
     router.delete('/svc/items/:itemId/comments/:commentId', middleware.isValidUser, (req, res) => {
         var comment = {
-            _id: req.params["commentId"],
-            itemId: req.params["itemId"],
+            _id: req.params.commentId,
+            itemId: req.params.itemId,
             "writtenBy.userId": req.user.id
-        }
+        };
         commentSvc.deleteComment(comment).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
@@ -121,17 +121,17 @@
 
     /** Get comment by id */
     router.get('/svc/comments/:id', (req, res) => {
-        commentSvc.getCommentById(req.params["id"]).then((comment) => {
+        commentSvc.getCommentById(req.params.id).then((comment) => {
             return res.status(status.OK).json(comment);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
-        })
-    })
+        });
+    });
 
     function getOptions(req, conditions) {
         var options = {
-            page: getPageNo(req.query["page"]),
-            perPage: getPerPageNo(req.query["perPage"]),
+            page: getPageNo(req.query.page),
+            perPage: getPerPageNo(req.query.perPage),
             order: { noOfPoints: -1 },
             conditions: conditions
         };

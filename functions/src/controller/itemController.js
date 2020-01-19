@@ -17,7 +17,7 @@
                         if (options.temp === "cold") {
                             return item.noOfPoints < 1000;
                         } else if (options.temp === "warm") {
-                            return item.noOfPoints >= 1000 && item.noOfPoints < 2000
+                            return item.noOfPoints >= 1000 && item.noOfPoints < 2000;
                         }
                         return item.noOfPoints >= 2000;
                     });
@@ -27,7 +27,7 @@
             return res.status(status.OK).json(items);
         }).catch(err => {
             next(err);
-        })
+        });
     });
 
     function process(req, res, next, items) {
@@ -50,13 +50,13 @@
             return res.status(status.OK).json(result);
         }).catch(err => {
             next(err);
-        })
+        });
     }
 
     /** Get item */
     router.get('/svc/items/:id', (req, res) => {
         var item = {
-            _id: req.params["id"]
+            _id: req.params.id
         };
         itemSvc.getItemById(item).then((result) => {
             return res.status(status.OK).json(result);
@@ -69,7 +69,7 @@
     /** Delete item */
     router.delete('/svc/items/:id', middleware.isValidUser, (req, res) => {
         var item = {
-            _id: req.params["id"],
+            _id: req.params.id,
             "createdBy.userId": req.user.id
         };
         itemSvc.deleteItem(item).then((result) => {
@@ -81,17 +81,17 @@
 
     function getOptions(req) {
         var options = {
-            page: getPageNo(req.query["page"]),
-            perPage: getPerPageNo(req.query["perPage"]),
-            temp: req.query["temp"] || "",
+            page: getPageNo(req.query.page),
+            perPage: getPerPageNo(req.query.perPage),
+            temp: req.query.temp || "",
             order: { modifiedDate: -1 },
             conditions: {}
         };
 
-        var tag = req.query["tag"],
-            date = req.query["date"],
-            createdBy = req.query["createdBy"],
-            id = req.query["id"];
+        var tag = req.query.tag,
+            date = req.query.date,
+            createdBy = req.query.createdBy,
+            id = req.query.id;
 
         // query conditions
         if (tag) {
@@ -128,7 +128,7 @@
     */
     router.put('/svc/items/:id', (req, res) => {
         var newItemInfo = req.body;
-        itemSvc.updateItem({ _id: req.params["id"] }, newItemInfo, {}).then(result => {
+        itemSvc.updateItem({ _id: req.params.id }, newItemInfo, {}).then(result => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             res.status(status.NOT_IMPLEMENTED).json(err);

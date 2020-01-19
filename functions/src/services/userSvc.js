@@ -17,7 +17,7 @@
                 }
                 if (newUserInfo.hasAvatarChanged || newUserInfo.hasUsernameChanged) {
                     commentSvc.updateCommentsOfAnUser(updatedUser);
-                    itemSvc.updateItemsOfAnUser(updatedUser)
+                    itemSvc.updateItemsOfAnUser(updatedUser);
                 }
                 resolve(updatedUser);
             });

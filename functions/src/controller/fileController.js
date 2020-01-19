@@ -35,7 +35,7 @@
                     req.rawBody = string;
                     return next();
                 }
-            )
+            );
         }
         return next();
     }
@@ -59,7 +59,7 @@
             busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
                 file.on('data', data => {
                     fileBuffer = Buffer.concat([fileBuffer, data])
-                })
+                });
 
                 file.on('end', () => {
                     const file_object = {
@@ -68,21 +68,21 @@
                         encoding,
                         mimetype,
                         buffer: fileBuffer,
-                    }
-                    req.file = file_object
-                })
+                    };
+                    req.file = file_object;
+                });
                 const filepath = path.join(os.tmpdir(), uuid + filename);
                 req.data['file'] = filepath;
                 file.pipe(fs.createWriteStream(filepath));
-            })
+            });
 
             busboy.on('field', (fieldname, val) => {
                 req.data[fieldname] = val;
-            })
+            });
 
             busboy.on('finish', () => {
                 const bucket = gcs.bucket('m2meme.appspot.com');
-                bucket.upload(req.data['file'], {
+                bucket.upload(req.data.file, {
                     uploadType: 'media',
                     metadata: {
                         metadata: {
@@ -91,13 +91,13 @@
                     }
                 }).then((data) => {
                     let file = data[0];
-                    fs.unlinkSync(req.data['file']);
+                    fs.unlinkSync(req.data.file);
                     return res.status(200).json({ fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid });
                 }).catch((err) => {
                     console.log(err);
                     return res.status(500).json(err);
                 });
-            })
+            });
             busboy.end(req.rawBody);
             req.pipe(busboy);
         }

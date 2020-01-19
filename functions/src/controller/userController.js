@@ -39,8 +39,8 @@
     /** Logout user */
     router.get('/svc/user/logout', middleware.isValidUser, (req, res, next) => {
         req.logout();
-        return res.status(status.OK).json({ status: "LOGOUT_DONE" })
-    })
+        return res.status(status.OK).json({ status: "LOGOUT_DONE" });
+    });
 
     /* Reguster user*/
     router.post('/svc/user/register', (req, res) => {

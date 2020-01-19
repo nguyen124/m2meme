@@ -6,7 +6,7 @@
 
     //** NOTIFICATION **/
     router.get('/svc/notifications', middleware.isValidUser, (req, res) => {
-        var options = getOptions(req)
+        var options = getOptions(req);
         notificationSvc.getNotifications(options).then((notifications) => {
             return res.status(status.OK).json(notifications);
         }).catch(err => {
@@ -24,15 +24,15 @@
 
     function getOptions(req) {
         var options = {
-            page: getPageNo(req.query["page"]),
-            perPage: getPerPageNo(req.query["perPage"]),
+            page: getPageNo(req.query.page),
+            perPage: getPerPageNo(req.query.perPage),
             order: { notifiedDate: -1 },
             conditions: {
                 userId: req.user.id
             }
         };
 
-        var page = req.query["page"];
+        var page = req.query.page;
         if (page && !isNaN(page)) {
             options.page = page;
         }

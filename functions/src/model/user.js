@@ -51,10 +51,10 @@
 
     userSchema.statics.hashPassword = function hashPassword(password) {
         return bcrypt.hashSync(password, 10);
-    }
+    };
     userSchema.methods.isValid = function (hashPassword) {
         return bcrypt.compareSync(hashPassword, this.password);
-    }
+    };
 
     module.exports = mongoose.model('user', userSchema);
 }());

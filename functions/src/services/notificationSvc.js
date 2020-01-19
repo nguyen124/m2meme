@@ -6,7 +6,7 @@
         updateNotification: updateNotification,
         createNotification: createNotification,
         checkIfThereIsUnreadNotifications: checkIfThereIsUnreadNotifications
-    }
+    };
 
     function getNotifications(options) {
         return new Promise((resolve, reject) => {
@@ -50,14 +50,14 @@
         return new Promise((resolve, reject) => {
             Notification.findOne({ hasRead: false, userId: userId }, (err, res) => {
                 if (err) {
-                    reject(err)
+                    reject(err);
                 }
                 if (res) {
                     resolve(true);
                 } else {
                     resolve(false);
                 }
-            })
+            });
         });
     }
 }());

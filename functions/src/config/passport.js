@@ -54,14 +54,11 @@
             clientSecret: 'f9b60ab65360841ab7377664348eba75',
             callbackURL: "https://m2meme.firebaseapp.com/svc/auth/facebook/callback",
             profileFields: ["email", "name", "displayName", "photos"]
-
         },
             (accessToken, refreshToken, profile, done) => {
                 saveFacebookUser(accessToken, refreshToken, profile, done);
             }
         ));
-
-
     };
 
     function saveGoogleUser(accessToken, refreshToken, profile, done) {
