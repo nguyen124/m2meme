@@ -90,7 +90,7 @@
                 if (err) {
                     reject(err);
                 }
-                resolve(deletedComments)
+                resolve(deletedComments);
             });
         });
     }

@@ -64,7 +64,7 @@
     function saveGoogleUser(accessToken, refreshToken, profile, done) {
         User.findOne(
             { email: profile.emails[0].value },
-            { email: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, googleId: 1, joinedDate: 1, accessToken: 1 },
+            { email: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
             {},
             async (err, user) => {
                 if (err) {
@@ -80,8 +80,6 @@
                         givenName: profile.name.givenName,
                         joinedDate: moment().format("YYYY-MM-DD"),
                         modifiedDate: moment().format("YYYY-MM-DD")
-                        //googleId: profile.id,
-                        //accessToken: accessToken
                     });
                     var newCreatedUser = await User.create(newUser);
                     return done(null, newCreatedUser);
@@ -92,7 +90,7 @@
     function saveFacebookUser(accessToken, refreshToken, profile, done) {
         User.findOne(
             { email: profile._json.email },
-            { email: 1, avatar: 1, username: 1, first_name: 1, last_name: 1, joinedDate: 1 },
+            { email: 1, avatar: 1, username: 1, givenName: 1, familyName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
             {},
             async (err, user) => {
                 if (err) {
@@ -102,8 +100,8 @@
                 } else {
                     var newUser = new User({
                         email: profile._json.email,
-                        username: profile._json.name,
                         avatar: profile._json.picture.data.url,
+                        username: profile._json.name,
                         givenName: profile._json.first_name,
                         familyName: profile._json.last_name,
                         joinedDate: moment().format("YYYY-MM-DD")

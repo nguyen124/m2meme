@@ -5,7 +5,7 @@
         getNotifications: getNotifications,
         updateNotification: updateNotification,
         createNotification: createNotification,
-        checkIfThereIsUnreadNotifications: checkIfThereIsUnreadNotifications
+        checkNotifications: checkNotifications
     };
 
     function getNotifications(options) {
@@ -46,7 +46,7 @@
         });
     }
 
-    function checkIfThereIsUnreadNotifications(userId) {
+    function checkNotifications(userId) {
         return new Promise((resolve, reject) => {
             Notification.findOne({ hasRead: false, userId: userId }, (err, res) => {
                 if (err) {

@@ -4,7 +4,8 @@
         middleware = require('../../util/middleware'),
         passport = require('passport'),
         status = require('http-status'),
-        moment = require('moment');
+        moment = require('moment'),
+        functions = require('firebase-functions');
 
 
     //********************USER*********************** */
@@ -37,7 +38,7 @@
     });
 
     /** Logout user */
-    router.get('/svc/user/logout', middleware.isValidUser, (req, res, next) => {
+    router.post('/svc/user/logout', middleware.isValidUser, (req, res) => {
         req.logout();
         return res.status(status.OK).json({ status: "LOGOUT_DONE" });
     });
@@ -62,7 +63,7 @@
     });
 
     /** Login user with local auth */
-    router.post('/svc/user/auth/local', (req, res, next) => {
+    router.post('/svc/user/auth/local', functions.https.onRequest((req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) {
                 return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -89,7 +90,7 @@
                 });
             });
         })(req, res, next);
-    });
+    }));
 
     /* Google login. This route navigate user to google authentication page */
     router.get('/svc/user/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

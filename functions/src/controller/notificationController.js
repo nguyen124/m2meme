@@ -15,7 +15,7 @@
     });
 
     router.get('/svc/notifications/hasnew', middleware.isValidUser, (req, res) => {
-        notificationSvc.checkIfThereIsUnreadNotifications(req.user.id).then((yesno) => {
+        notificationSvc.checkNotifications(req.user.id).then((yesno) => {
             return res.status(status.OK).json(yesno);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
