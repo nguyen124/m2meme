@@ -6,11 +6,17 @@
         UUID = require("uuid-v4"),
         getRawBody = require('raw-body'),
         contentType = require('content-type'),
-        { Storage } = require('@google-cloud/storage');
+        { Storage } = require('@google-cloud/storage'),
+        gcconfig = {
+            projectId: 'm2meme',
+            keyFilename: 'm2meme-firebase-adminsdk-rvmhz-dff76c1bfa.json'
+        },
+        gcs = new Storage(gcconfig);
 
     module.exports = {
         middleF1: middleF1,
-        middleF2: middleF2
+        middleF2: middleF2,
+        deleteFile: deleteFile
     };
 
     function middleF1(req, res, next) {
@@ -40,14 +46,9 @@
         if (req.method === 'POST' &&
             req.headers['content-type'].startsWith('multipart/form-data')) {
             let uuid = UUID();
-            const gcconfig = {
-                projectId: 'm2meme',
-                keyFilename: 'm2meme-firebase-adminsdk-rvmhz-dff76c1bfa.json'
-            },
-                gcs = new Storage(gcconfig),
-                busboy = new Busboy({
-                    headers: req.headers,
-                });
+            const busboy = new Busboy({
+                headers: req.headers,
+            });
 
             var fileBuffer = new Buffer('');
             req.data = {};
@@ -87,7 +88,10 @@
                 }).then((data) => {
                     let file = data[0];
                     fs.unlinkSync(req.data.file);
-                    return res.status(200).json({ fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid });
+                    return res.status(200).json({
+                        fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid,
+                        filename: file.name
+                    });
                 }).catch((err) => {
                     console.log(err);
                     return res.status(500).json(err);
@@ -97,5 +101,10 @@
             req.pipe(busboy);
         }
         return next();
+    }
+
+    function deleteFile(filename) {
+        // Create a reference to the file to delete
+        return gcs.bucket('m2meme.appspot.com').file(filename).delete();
     }
 }());

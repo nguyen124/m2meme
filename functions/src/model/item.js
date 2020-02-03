@@ -9,6 +9,10 @@
                 type: String,
                 maxlength: 1024
             },
+            filename: {
+                type: String,
+                maxlength: 256
+            },
             modifiedDate: Date,
             createdBy: Object,
             tags: [String],

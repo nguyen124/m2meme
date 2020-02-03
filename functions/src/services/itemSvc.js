@@ -2,7 +2,8 @@
     var Item = require('../model/item'),
         Comment = require('../model/comment'),
         modelUserLogSvc = require('./modelUserLogSvc'),
-        reportSvc = require('./reportSvc');
+        reportSvc = require('./reportSvc'),
+        fileSvc = require('./fileSvc');
 
     module.exports = {
         getItems: getItems,
@@ -70,6 +71,7 @@
                     reject(err);
                 } else {
                     deleteAllCommentsOfItem(deletedItem._id);
+                    fileSvc.deleteFile(deletedItem.filename);
                     modelUserLogSvc.deleteManyModelUserLogs(deletedItem._id, null, null);
                     reportSvc.deleteAllReportsInsideAnItem(deletedItem._id);
                     resolve(deletedItem);
