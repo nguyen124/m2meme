@@ -4,10 +4,7 @@
             parentCommentId: {
                 type: String
             },
-            content: {
-                type: String,
-                maxlength: 2500
-            },
+            content: [Object],
             modifiedDate: {
                 type: Date
             },

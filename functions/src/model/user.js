@@ -11,6 +11,10 @@
                 type: String,
                 maxlength: 1024
             },
+            filename: {
+                type: String,
+                maxlength: 256
+            },
             username: {
                 type: String,
                 minlength: 1,
