@@ -191,6 +191,17 @@
                 if (err) {
                     reject(err);
                 }
+                if (updates.content) {
+                    Comment.updateMany({
+                        "replyTo._id": conditions._id
+                    }, {
+                        "replyTo.content": updates.content
+                    }, options, (err, updates) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                }
                 resolve(newComment);
             });
         });
