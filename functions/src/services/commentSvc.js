@@ -215,7 +215,27 @@
                     reject(err);
                 }
                 if (deletedComment) {
-                    modelUserLogSvc.deleteManyModelUserLogs(deletedComment.itemId, deletedComment._id, null);
+                    // Delete other  children comments of this comment and the logs associated with it
+                    Comment.find({
+                        parentCommentId: deletedComment.id
+                    }, (err, comments) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        for (var comm of comments) {
+                            modelUserLogSvc.deleteManyModelUserLogs(deletedComment.itemId, comm.id, null);
+                        }
+                    });
+                    Comment.deleteMany({
+                        parentCommentId: deletedComment.id
+                    }, (err, comments) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
+
+                    //delete logs related to this comment
+                    modelUserLogSvc.deleteManyModelUserLogs(deletedComment.itemId, deletedComment.id, null);
                     if (deletedComment.parentCommentId) {
                         itemSvc.adjustNoOfCommentsOfItem(deletedComment.itemId, -1);
                         adjustNoOfRepliesOfComment(deletedComment.parentCommentId, -1)
