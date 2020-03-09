@@ -16,7 +16,8 @@
         unvote: unvote,
         downvote: downvote,
         adjustNoOfRepliesOfComment: adjustNoOfRepliesOfComment,
-        updateCommentsOfAnUser: updateCommentsOfAnUser
+        updateCommentsOfAnUser: updateCommentsOfAnUser,
+        updateManyComments: updateManyComments
     };
 
     async function upvote(itemId, commentId, userId) {
@@ -192,18 +193,22 @@
                     reject(err);
                 }
                 if (updates.content) {
-                    Comment.updateMany({
+                    updateManyComments({
                         "replyTo._id": conditions._id
                     }, {
                         "replyTo.content": updates.content
-                    }, options, (err, updates) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    });
+                    }, options)
                 }
                 resolve(newComment);
             });
+        });
+    }
+
+    function updateManyComments(conditions, updates, options) {
+        Comment.updateMany(conditions, updates, options, (err, updates) => {
+            if (err) {
+                console.log(err);
+            }
         });
     }
 

@@ -15,6 +15,9 @@
                 if (err) {
                     reject(err);
                 }
+                commentSvc.updateManyComments(
+                    { "replyTo.writtenBy.userId": updatedUser.id },
+                    { "replyTo.writtenBy": { username: updatedUser.username, avatar: updatedUser.avatar } });
                 if (newUserInfo.hasAvatarChanged || newUserInfo.hasUsernameChanged) {
                     commentSvc.updateCommentsOfAnUser(updatedUser);
                     itemSvc.updateItemsOfAnUser(updatedUser);
