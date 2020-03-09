@@ -5,6 +5,7 @@
                 type: String
             },
             content: [Object],
+            replyTo: Object,
             modifiedDate: {
                 type: Date
             },

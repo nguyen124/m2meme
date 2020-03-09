@@ -36,7 +36,7 @@
         saveUninitialized: false,
         resave: false,
         cookie: {
-            maxAge: 1000 * 60 * 3000,
+            maxAge: 1000 * 60 * 60 * 24 * 30,
             httpOnly: false,
             secure: false
         },
