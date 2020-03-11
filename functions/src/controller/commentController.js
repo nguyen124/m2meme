@@ -102,7 +102,7 @@
     Service to get all comment of an item
     */
     router.get('/svc/items/:_itemId/comments', (req, res) => {
-        var options = getOptions(req, { itemId: req.params._itemId });
+        var options = getOptions(req, { itemId: req.params._itemId, parentCommentId: null });
         commentSvc.getComments(options, req.user).then((comments) => {
             return res.status(status.OK).json(comments);
         }).catch(err => {
