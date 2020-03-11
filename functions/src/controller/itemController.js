@@ -91,9 +91,13 @@
         var tag = req.query.tag,
             date = req.query.date,
             createdBy = req.query.createdBy,
+            category = req.query.category,
             id = req.query.id;
 
         // query conditions
+        if (category) {
+            options.conditions = Object.assign(options.conditions, { categories: { $in: [category] } });
+        }
         if (tag) {
             options.conditions = Object.assign(options.conditions, { tags: { $in: [tag] } });
         }
