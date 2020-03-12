@@ -69,10 +69,10 @@
         return newItem;
     }
 
-    function _createVoteNotification(itemId, commentId, newItem, vote) {
+    async function _createVoteNotification(itemId, commentId, newItem, vote) {
         var notification = {
             title: (commentId ? "Comment" : "Item") + " " + vote + ".",
-            message: (newItem.noOfPoints > 0 ? "+" + newItem.noOfPoints : newItem.noOfPoints) + " point.",
+            message: "Current points: " + newItem.noOfPoints + ".",
             userId: (commentId ? newItem.writtenBy.userId : newItem.createdBy.userId),
             itemId: itemId,
             commentId: commentId,
