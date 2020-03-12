@@ -21,7 +21,8 @@
             noOfComments: Number,
             hasUpvoted: Boolean,
             hasDownvoted: Boolean,
-            hasReported: Boolean
+            hasReported: Boolean,
+            fileType: String
         });
     itemSchema.index({ modifiedDate: -1 });
     module.exports = mongoose.model('item', itemSchema);
