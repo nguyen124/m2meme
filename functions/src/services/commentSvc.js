@@ -72,7 +72,7 @@
     function _createVoteNotification(itemId, commentId, newItem, vote) {
         var notification = {
             title: (commentId ? "Comment" : "Item") + " " + vote + ".",
-            message: (commentId ? "Comment" : "Item") + " has " + newItem.noOfPoints + " points.",
+            message: (newItem.noOfPoints > 0 ? "+" + newItem.noOfPoints : newItem.noOfPoints) + " point.",
             userId: (commentId ? newItem.writtenBy.userId : newItem.createdBy.userId),
             itemId: itemId,
             commentId: commentId,

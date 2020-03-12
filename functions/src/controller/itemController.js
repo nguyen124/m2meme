@@ -81,7 +81,7 @@
 
     function getOptions(req) {
         var options = {
-            page: getPageNo(req.query.nextPage),
+            page: getPageNo(req.query.page),
             perPage: getPerPageNo(req.query.perPage),
             temp: req.query.temp || "",
             order: { modifiedDate: -1 },
