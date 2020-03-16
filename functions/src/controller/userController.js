@@ -43,7 +43,7 @@
         return res.status(status.OK).json({ status: "LOGOUT_DONE" });
     });
 
-    /* Reguster user*/
+    /* Register user*/
     router.post('/svc/user/register', (req, res) => {
         if (req.body.passwords.password !== req.body.passwords.confirmPassword) {
             return res.status(status.NOT_IMPLEMENTED).json("Passwords are not matched");
@@ -85,7 +85,8 @@
                         givenName: user.givenName,
                         gender: user.gender,
                         nationality: user.nationality,
-                        dob: user.dob
+                        dob: user.dob,
+                        role: user.role
                     }
                 });
             });

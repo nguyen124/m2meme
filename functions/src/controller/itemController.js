@@ -67,11 +67,13 @@
 
 
     /** Delete item */
-    router.delete('/svc/items/:id', middleware.isValidUser, (req, res) => {
+    router.delete('/svc/items/:id', middleware.isValidUser || req.user.role === "ADMIN", (req, res) => {
         var item = {
-            _id: req.params.id,
-            "createdBy.userId": req.user.id
+            _id: req.params.id
         };
+        if (req.user.role !== "ADMIN") {
+            item = Object.assign(item, { "createdBy.userId": req.user.id });
+        }
         itemSvc.deleteItem(item).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
@@ -156,7 +158,7 @@
     });
 
     function validate(user, item) {
-        if (!item.title || !item.url) {
+        if (!item.title || !item.files || (item.files.length <= 0)) {
             return false;
         }
         item.tags = item.tags.slice(0, 5);

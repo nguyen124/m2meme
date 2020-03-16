@@ -50,7 +50,8 @@
             status: String,
             noOfFollowers: Number,
             googleId: String,
-            accessToken: String
+            accessToken: String,
+            role: String
         });
 
     userSchema.statics.hashPassword = function hashPassword(password) {

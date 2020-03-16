@@ -36,7 +36,8 @@
                 email: info.email,
                 password: User.hashPassword(info.password),
                 avatar: info.avatar,
-                joinedDate: moment().format("YYYY-MM-DD")
+                joinedDate: moment().format("YYYY-MM-DD"),
+                role: "USER"
             };
             return createNewUser(user);
         }

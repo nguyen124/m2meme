@@ -9,10 +9,6 @@
                 type: String,
                 maxlength: 1024
             },
-            filename: {
-                type: String,
-                maxlength: 256
-            },
             modifiedDate: Date,
             createdBy: Object,
             tags: [String],
@@ -22,7 +18,7 @@
             hasUpvoted: Boolean,
             hasDownvoted: Boolean,
             hasReported: Boolean,
-            fileType: String
+            files: [Object]
         });
     itemSchema.index({ modifiedDate: -1 });
     module.exports = mongoose.model('item', itemSchema);

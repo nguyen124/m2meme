@@ -85,12 +85,14 @@
     });
 
     /*Delete comment*/
-    router.delete('/svc/items/:itemId/comments/:commentId', middleware.isValidUser, (req, res) => {
+    router.delete('/svc/items/:itemId/comments/:commentId', middleware.isValidUser || req.user.role === "ADMIN", (req, res) => {
         var comment = {
             _id: req.params.commentId,
-            itemId: req.params.itemId,
-            "writtenBy.userId": req.user.id
+            itemId: req.params.itemId
         };
+        if (req.user.role !== "ADMIN") {
+            comment = Object.assign(comment, { "writtenBy.userId": req.user.id });
+        }
         commentSvc.deleteComment(comment).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {

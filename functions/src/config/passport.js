@@ -26,7 +26,7 @@
             (req, email, password, done) => {
                 User.findOne(
                     { $or: [{ email: email }, { username: email }] },
-                    { email: 1, password: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
+                    { email: 1, password: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1, role: 1 },
                     (err, user) => {
                         if (err) { return done(err); }
                         else if (!user || !user.isValid(password)) {
