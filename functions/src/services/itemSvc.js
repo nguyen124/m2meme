@@ -71,7 +71,9 @@
                     reject(err);
                 } else {
                     deleteAllCommentsOfItem(deletedItem._id);
-                    fileSvc.deleteFile(deletedItem.filename);
+                    for (let i = 0; i < deletedItem.files.length; i++) {
+                        fileSvc.deleteFile(deletedItem.files[i].filename);
+                    }
                     modelUserLogSvc.deleteManyModelUserLogs(deletedItem._id, null, null);
                     reportSvc.deleteAllReportsInsideAnItem(deletedItem._id);
                     resolve(deletedItem);
