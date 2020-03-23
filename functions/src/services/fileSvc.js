@@ -89,7 +89,7 @@
                     let file = data[0];
                     fs.unlinkSync(req.data.file);
                     return res.status(200).json({
-                        fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid,
+                        fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name),
                         filename: file.name
                     });
                 }).catch((err) => {
