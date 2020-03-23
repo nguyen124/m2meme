@@ -80,19 +80,14 @@
             busboy.on('finish', () => {
                 const bucket = gcs.bucket('m2meme.appspot.com');
                 bucket.upload(req.data.file, {
-                    uploadType: 'media',
-                    metadata: {
-                        metadata: {
-                            firebaseStorageDownloadTokens: uuid
-                        }
-                    }
+                    uploadType: 'media'
                 }).then((data) => {
                     let file = data[0];
                     fs.unlinkSync(req.data.file);
-                    return res.status(200).json({
-                        fileLocation: "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid,
-                        filename: file.name
-                    });
+                    var fileName = encodeURIComponent(file.name);
+                    var fileLocation = "https://storage.googleapis.com/m2meme.appspot.com/" + fileName;
+                    var theFile = bucket.file(fileName);
+                    return makeFilePublic(res, theFile, fileLocation, fileName);
                 }).catch((err) => {
                     console.log(err);
                     return res.status(500).json(err);
@@ -102,6 +97,17 @@
             req.pipe(busboy);
         }
         return next();
+    }
+
+    function makeFilePublic(res, theFile, fileLocation, theFilename) {
+        theFile.makePublic().then(data => {
+            return res.status(200).json({
+                fileLocation: fileLocation,
+                filename: theFilename
+            });
+        }).catch(err => {
+            console.log(err);
+        });
     }
 
     function deleteFile(filename) {
