@@ -3,14 +3,16 @@
         router = express.Router();
 
     // Define the home page route
-    router.get('/:id', (req, res) => {
-        res.send('<!DOCTYPE html><head>' +
-            '<title>' + ' | Me2meme Website</title>' +
-            '<meta property="og:title" content="' + '">' +
-            '<meta property="twitter:title" content="' + '">' +
-            '<link rel="icon" href="https://m2meme.firebaseapp.com/assets/image/logo256x215.png">' +
-            '</head><body>' + 'Hello world ' + req.params.id +
-            '</body></html>');
+    router.get('/', (req, res) => {
+        var html = '<!DOCTYPE html><head>' +
+            '<meta property="og:title" content="' + req.query.title + '">' +
+            '<meta property="og:image" content="' + req.query.image + '">' +
+            '<meta property="og:description" content="' + req.query.description + '">' +
+            '<meta property="og:url" content="' + req.query.url + '">' +
+            '</head><body>' + 'Hello world ' + req.query.title +
+            '</body></html>';
+        console.log(html);
+        res.send(html);
     });
 
     module.exports = router;
