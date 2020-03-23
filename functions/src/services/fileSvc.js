@@ -79,12 +79,7 @@
             busboy.on('finish', () => {
                 const bucket = gcs.bucket('m2meme.appspot.com');
                 bucket.upload(req.data.file, {
-                    uploadType: 'media',
-                    metadata: {
-                        metadata: {
-                            firebaseStorageDownloadTokens: uuid
-                        }
-                    }
+                    uploadType: 'media'
                 }).then((data) => {
                     let file = data[0];
                     fs.unlinkSync(req.data.file);
