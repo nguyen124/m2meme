@@ -126,7 +126,7 @@
         if (perPage && !isNaN(perPage)) {
             return Number(perPage);
         }
-        return 4;
+        return 40;
     }
 
     /*
