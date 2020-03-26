@@ -48,7 +48,7 @@
 
     function checkNotifications(userId) {
         return new Promise((resolve, reject) => {
-            Notification.findOne({ hasRead: false, userId: userId }, (err, res) => {
+            Notification.findOne({ userId: userId, hasRead: false }, (err, res) => {
                 if (err) {
                     reject(err);
                 }

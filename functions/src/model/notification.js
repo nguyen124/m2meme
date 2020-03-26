@@ -15,6 +15,6 @@
             notifiedDate: Date,
             hasRead: Boolean
         });
-    notificationSchemma.index({ notifiedDate: 1, status: 1 });
+    notificationSchemma.index({ userId: 1, hasRead: 1 });
     module.exports = mongoose.model('notification', notificationSchemma);
 }());
