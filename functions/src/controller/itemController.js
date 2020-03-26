@@ -11,42 +11,32 @@
     router.get('/svc/items', (req, res, next) => {
         var options = getOptions(req);
         itemSvc.getItems(options).then((items) => {
-            if (req.user) {
-                if (options.temp) {
-                    items = items.filter(item => {
-                        if (options.temp === "cold") {
-                            return item.noOfPoints < 1000;
-                        } else if (options.temp === "warm") {
-                            return item.noOfPoints >= 1000 && item.noOfPoints < 2000;
-                        }
-                        return item.noOfPoints >= 2000;
-                    });
-                }
-                return process(req, res, next, items);
-            }
-            return res.status(status.OK).json(items);
+            return process(req, res, next, items);
         }).catch(err => {
             next(err);
         });
     });
 
     function process(req, res, next, items) {
-        var newItems = items.map(async (item) => {
-            var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
-            if (modelUserLog) {
-                if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
-                    item.hasDownvoted = true;
+        var newItems = null;
+        if (req.user) {
+            newItems = items.map(async (item) => {
+                var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
+                if (modelUserLog) {
+                    if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
+                        item.hasDownvoted = true;
+                    }
+                    else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+                        item.hasUpvoted = true;
+                    }
+                    if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {
+                        item.hasReported = true;
+                    }
                 }
-                else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
-                    item.hasUpvoted = true;
-                }
-                if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {
-                    item.hasReported = true;
-                }
-            }
-            return item;
-        });
-        Promise.all(newItems).then((result) => {
+                return item;
+            });
+        }
+        Promise.all(newItems || items).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             next(err);
@@ -94,7 +84,8 @@
             date = req.query.date,
             createdBy = req.query.createdBy,
             category = req.query.category,
-            id = req.query.id;
+            id = req.query.id,
+            temp = req.query.temp;
 
         // query conditions
         if (category) {
@@ -111,6 +102,15 @@
         }
         if (id) {
             options.conditions = Object.assign(options.conditions, { '_id': id });
+        }
+        if (temp) {
+            if (options.temp === "cold") {
+                options.conditions = Object.assign(options.conditions, { 'noOfPoints': { $lt: 1000 } });
+            } else if (options.temp === "warm") {
+                options.conditions = Object.assign(options.conditions, { 'noOfPoints': { $gte: 1000, $lt: 2000 } });
+            } else if (options.temp === "hot") {
+                options.conditions = Object.assign(options.conditions, { 'noOfPoints': { $gte: 2000 } });
+            }
         }
         return options;
     }
