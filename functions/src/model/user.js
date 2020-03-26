@@ -61,5 +61,6 @@
         return bcrypt.compareSync(hashPassword, this.password);
     };
 
+    userSchema.index({ username: 1, email: 1 });
     module.exports = mongoose.model('user', userSchema);
 }());

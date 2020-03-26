@@ -21,6 +21,6 @@
             files: [Object],
             description: String
         });
-    itemSchema.index({ modifiedDate: -1 });
+    itemSchema.index({ modifiedDate: -1, tags: 1 });
     module.exports = mongoose.model('item', itemSchema);
 }());
