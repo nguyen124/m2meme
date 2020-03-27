@@ -8,10 +8,13 @@
             url: String,
             modifiedDate: Date,
             createdBy: Object,
-            tags: [{
-                type: String,
-                maxlength: 30
-            }],
+            tags: {
+                type: [{
+                    type: String,
+                    maxlength: 30
+                }],
+                validate: [arrayLimit, "{PATH} exceeds the limit of 5"]
+            },
             categories: [String],
             noOfPoints: Number,
             noOfComments: Number,
@@ -24,6 +27,9 @@
                 maxlength: 500
             }
         });
+    function arrayLimit(val) {
+        return val.length <= 5;
+    }
     itemSchema.index({ modifiedDate: -1, tags: 1 });
     module.exports = mongoose.model('item', itemSchema);
 }());
