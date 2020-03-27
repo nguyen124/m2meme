@@ -4,7 +4,14 @@
             parentCommentId: {
                 type: String
             },
-            content: [Object],
+            content: [{
+                url: {
+                    type: String,
+                    maxlength: 1024
+                },
+                filename: String,
+                fileType: String
+            }],
             replyTo: Object,
             modifiedDate: {
                 type: Date

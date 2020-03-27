@@ -3,15 +3,15 @@
         itemSchema = mongoose.Schema({
             title: {
                 type: String,
-                maxlength: 500
+                maxlength: 150
             },
-            url: {
-                type: String,
-                maxlength: 1024
-            },
+            url: String,
             modifiedDate: Date,
             createdBy: Object,
-            tags: [String],
+            tags: [{
+                type: String,
+                maxlength: 30
+            }],
             categories: [String],
             noOfPoints: Number,
             noOfComments: Number,
@@ -19,7 +19,10 @@
             hasDownvoted: Boolean,
             hasReported: Boolean,
             files: [Object],
-            description: String
+            description: {
+                type: String,
+                maxlength: 500
+            }
         });
     itemSchema.index({ modifiedDate: -1, tags: 1 });
     module.exports = mongoose.model('item', itemSchema);
