@@ -38,7 +38,8 @@
             },
             password: {
                 type: String,
-                maxlength: 512
+                maxlength: 50,
+                minlength: 6
             },
             dob: Date,
             joinedDate: Date,
