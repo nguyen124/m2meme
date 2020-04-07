@@ -19,8 +19,10 @@
                 updates,
                 options,
                 (err, newModelUserLog) => {
-                    if (err) { reject(err); }
-                    resolve(newModelUserLog);
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve(newModelUserLog);
                 }
             );
         });
@@ -35,8 +37,10 @@
                 conditions,
                 projections,
                 (err, modelUserLog) => {
-                    if (err) { reject(err); }
-                    resolve(modelUserLog);
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve(modelUserLog);
                 }
             );
         });
@@ -47,9 +51,9 @@
         return new Promise((resolve, reject) => {
             ModelUserLog.deleteOne(conditions, (err, record) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(record);
+                return resolve(record);
             });
         });
     }
@@ -59,9 +63,9 @@
         return new Promise((resolve, reject) => {
             ModelUserLog.deleteMany(conditions, (err, logs) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(logs.n);
+                return resolve(logs.n);
             });
         });
     }

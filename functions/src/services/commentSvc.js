@@ -100,9 +100,9 @@
         return new Promise((resolve, reject) => {
             Comment.create(comment, (err, newComment) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(newComment);
+                return resolve(newComment);
             });
         });
     }
@@ -141,16 +141,16 @@
         return new Promise((resolve, reject) => {
             Comment.find(options.conditions, (err, comments) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 if (user) {
                     getWhatUserDidToTheseComment(comments, user.id).then(mappedComments => {
                         return resolve(mappedComments);
                     }).catch(errr => {
-                        reject(errr);
+                        return reject(errr);
                     });
                 } else {
-                    resolve(comments);
+                    return resolve(comments);
                 }
             }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
         });
@@ -160,10 +160,10 @@
         return new Promise((resolve, reject) => {
             Comment.findById(commentId, (err, comment) => {
                 if (err) {
-                    reject(err)
+                    return reject(err);
                 }
-                resolve(comment);
-            })
+                return resolve(comment);
+            });
         });
     }
 
@@ -190,16 +190,16 @@
         return new Promise((resolve, reject) => {
             Comment.findOneAndUpdate(conditions, updates, options, (err, newComment) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 if (updates.content) {
                     updateManyComments({
                         "replyTo._id": conditions._id
                     }, {
                         "replyTo.content": updates.content
-                    }, options)
+                    }, options);
                 }
-                resolve(newComment);
+                return resolve(newComment);
             });
         });
     }
@@ -217,7 +217,7 @@
         return new Promise((resolve, reject) => {
             Comment.findOneAndDelete(comment, (err, deletedComment) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 if (deletedComment) {
                     // Delete other  children comments of this comment and the logs associated with it
@@ -247,14 +247,14 @@
                             .then(updatedParentCom => {
                                 return resolve(updatedParentCom);
                             }).catch(err => {
-                                reject(err);
+                                return reject(err);
                             });
                     } else {
                         itemSvc.adjustNoOfCommentsOfItem(deletedComment.itemId, -(1 + deletedComment.noOfReplies));
-                        resolve(deletedComment);
+                        return resolve(deletedComment);
                     }
                 } else {
-                    resolve(null);
+                    return resolve(null);
                 }
             });
         });
@@ -273,9 +273,9 @@
                     "writtenBy.avatar": newUserInfo.avatar
                 }, (err, updatedComments) => {
                     if (err) {
-                        reject(err);
+                        return reject(err);
                     }
-                    resolve(updatedComments)
+                    return resolve(updatedComments)
                 });
         })
     }

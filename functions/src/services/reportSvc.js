@@ -15,9 +15,9 @@
     //     return new Promise((resolve, reject) => {
     //         Report.find(options.conditions, {}, function (err, reports) {
     //             if (err) {
-    //                 reject(err);
+    //                 return reject(err);
     //             }
-    //             resolve(reports);
+    //             return resolve(reports);
     //         }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
     //     });
     // }
@@ -27,10 +27,10 @@
         return new Promise((resolve, reject) => {
             Report.create(report, (err, report) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 modelUserLogSvc.updateOrCreateModelUserLog(report.reportedItemId, report.reportedCommentId, report.reportedByUser._id, null, null, ActionType.REPORTED);
-                resolve(report);
+                return resolve(report);
             });
         });
     }
@@ -40,10 +40,10 @@
         return new Promise((resolve, reject) => {
             Report.deleteOne(conditions, (err, report) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 modelUserLogSvc.updateOrCreateModelUserLog(conditions.reportedItemId, conditions.reportedCommentId, conditions["reportedByUser._id"], null, null, ActionType.UNREPORTED);
-                resolve(report);
+                return resolve(report);
             });
         });
     }
@@ -52,9 +52,9 @@
         return new Promise((resolve, reject) => {
             Report.deleteMany({ reportedItemId: itemId }, (err, reports) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(reports);
+                return resolve(reports);
             });
         });
     }

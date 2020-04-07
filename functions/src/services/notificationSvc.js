@@ -12,14 +12,14 @@
         return new Promise((resolve, reject) => {
             Notification.find(options.conditions, {}, (err, notifications) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 for (var noti of notifications) {
                     if (!noti.hasRead) {
                         updateNotification({ _id: noti._id }, { hasRead: true }, {});
                     }
                 }
-                resolve(notifications);
+                return resolve(notifications);
             }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
         });
     }
@@ -28,9 +28,9 @@
         return new Promise((resolve, reject) => {
             Notification.updateOne(conditions, newInfo, options, (err, updatedInfo) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(updatedInfo);
+                return resolve(updatedInfo);
             });
         });
     }
@@ -39,9 +39,9 @@
         return new Promise((resolve, reject) => {
             Notification.create(notification, (err, notification) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(notification);
+                return resolve(notification);
             });
         });
     }
@@ -50,12 +50,12 @@
         return new Promise((resolve, reject) => {
             Notification.findOne({ userId: userId, hasRead: false }, (err, res) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 if (res) {
-                    resolve(true);
+                    return resolve(true);
                 } else {
-                    resolve(false);
+                    return resolve(false);
                 }
             });
         });

@@ -18,6 +18,7 @@
             categories: [String],
             noOfPoints: Number,
             noOfComments: Number,
+            noOfViews: Number,
             hasUpvoted: Boolean,
             hasDownvoted: Boolean,
             hasReported: Boolean,

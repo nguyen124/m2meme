@@ -13,14 +13,14 @@
         return new Promise((resolve, reject) => {
             User.findOneAndUpdate(conditions, newUserInfo, options, (err, updatedUser) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 commentSvc.updateManyComments({ "replyTo.writtenBy.userId": updatedUser.id }, { "replyTo.writtenBy": { username: updatedUser.username, avatar: updatedUser.avatar } });
                 if (newUserInfo.hasAvatarChanged || newUserInfo.hasUsernameChanged) {
                     commentSvc.updateCommentsOfAnUser(updatedUser);
                     itemSvc.updateItemsOfAnUser(updatedUser);
                 }
-                resolve(updatedUser);
+                return resolve(updatedUser);
             });
         });
     }
@@ -46,18 +46,18 @@
         return new Promise((resolve, reject) => {
             User.findOne({ $or: [{ email: info.email }, { username: info.username }] }, (err, user) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
                 if (user) {
                     if (user.email === info.email) {
                         // eslint-disable-next-line prefer-promise-reject-errors
-                        reject('Email has been used!');
+                        return reject('Email has been used!');
                     } else if (user.username === info.username) {
                         // eslint-disable-next-line prefer-promise-reject-errors
-                        reject('Username has been used!');
+                        return reject('Username has been used!');
                     }
                 }
-                resolve(null);
+                return resolve(null);
             });
         });
     }
@@ -66,9 +66,9 @@
         return new Promise((resolve, reject) => {
             User.create(user, (err, newUser) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 } else {
-                    resolve(newUser);
+                    return resolve(newUser);
                 }
             });
         });

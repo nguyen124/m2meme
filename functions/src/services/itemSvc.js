@@ -21,10 +21,21 @@
         return new Promise((resolve, reject) => {
             Item.find(options.conditions, {}, (err, items) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(items);
+                return resolve(items);
             }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
+        });
+    }
+
+    function getItemById(item) {
+        return new Promise((resolve, reject) => {
+            Item.findById(item, (err, foundItem) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve(foundItem);
+            });
         });
     }
 
@@ -33,9 +44,9 @@
         return new Promise((resolve, reject) => {
             Item.create(item, (err, item) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(item);
+                return resolve(item);
             });
         });
     }
@@ -45,20 +56,9 @@
         return new Promise((resolve, reject) => {
             Item.findOneAndUpdate(conditions, newInfo, options, (err, newItem) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(newItem);
-            });
-        });
-    }
-
-    function getItemById(item) {
-        return new Promise((resolve, reject) => {
-            Item.findById(item, (err, foundItem) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(foundItem);
+                return resolve(newItem);
             });
         });
     }
@@ -68,7 +68,7 @@
         return new Promise((resolve, reject) => {
             Item.findOneAndDelete(item, (err, deletedItem) => {
                 if (err || !deletedItem) {
-                    reject(err);
+                    return reject(err);
                 } else {
                     deleteAllCommentsOfItem(deletedItem._id);
                     for (let i = 0; i < deletedItem.files.length; i++) {
@@ -76,7 +76,7 @@
                     }
                     modelUserLogSvc.deleteManyModelUserLogs(deletedItem._id, null, null);
                     reportSvc.deleteAllReportsInsideAnItem(deletedItem._id);
-                    resolve(deletedItem);
+                    return resolve(deletedItem);
                 }
             });
         });
@@ -92,9 +92,9 @@
         return new Promise((resolve, reject) => {
             Comment.deleteMany({ itemId: itemId }, (err, deletedComments) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(deletedComments);
+                return resolve(deletedComments);
             });
         });
     }
@@ -108,9 +108,9 @@
                     "createdBy.avatar": newUserInfo.avatar
                 }, (err, updatedItems) => {
                     if (err) {
-                        reject(err);
+                        return reject(err);
                     }
-                    resolve(updatedItems);
+                    return resolve(updatedItems);
                 });
         });
     }
