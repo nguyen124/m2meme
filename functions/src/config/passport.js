@@ -17,19 +17,15 @@
             });
         });
 
-        passport.use('local', new LocalStrategy(
-            {
-                usernameField: "email",
-                passwordField: "password",
-                passReqToCallback: true
-            },
+        passport.use('local', new LocalStrategy({
+            usernameField: "email",
+            passwordField: "password",
+            passReqToCallback: true
+        },
             (req, email, password, done) => {
-                User.findOne(
-                    { $or: [{ email: email }, { username: email }] },
-                    { email: 1, password: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1, role: 1 },
+                User.findOne({ $or: [{ email: email }, { username: email }] }, { email: 1, password: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1, role: 1 },
                     (err, user) => {
-                        if (err) { return done(err); }
-                        else if (!user || !user.isValid(password)) {
+                        if (err) { return done(err); } else if (!user || !user.isValid(password)) {
                             return done(null, false, 'Incorrect username or password!');
                         }
                         return done(null, user);
@@ -38,12 +34,11 @@
             }
         ));
 
-        passport.use(new GoogleStrategy(
-            {
-                clientID: '325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com',
-                clientSecret: 'GKfVQghfAYBmXhvGbb0oLftZ',
-                callbackURL: "https://me2meme.com/svc/auth/google/callback"
-            },
+        passport.use(new GoogleStrategy({
+            clientID: '325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com',
+            clientSecret: 'GKfVQghfAYBmXhvGbb0oLftZ',
+            callbackURL: "https://me2meme.com/svc/auth/google/callback"
+        },
             (accessToken, refreshToken, profile, done) => {
                 saveGoogleUser(accessToken, refreshToken, profile, done);
             }
@@ -62,10 +57,7 @@
     };
 
     function saveGoogleUser(accessToken, refreshToken, profile, done) {
-        User.findOne(
-            { email: profile.emails[0].value },
-            { email: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
-            {},
+        User.findOne({ email: profile.emails[0].value }, { email: 1, avatar: 1, username: 1, familyName: 1, givenName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 }, {},
             async (err, user) => {
                 if (err) {
                     return done(err);
@@ -78,8 +70,8 @@
                         username: profile.displayName,
                         familyName: profile.name.familyName,
                         givenName: profile.name.givenName,
-                        joinedDate: moment().format("YYYY-MM-DD"),
-                        modifiedDate: moment().format("YYYY-MM-DD")
+                        joinedDate: moment().format("YYYY-MM-DD HH:mm Z"),
+                        modifiedDate: moment().format("YYYY-MM-DD HH:mm Z")
                     });
                     var newCreatedUser = await User.create(newUser);
                     return done(null, newCreatedUser);
@@ -88,10 +80,7 @@
     }
 
     function saveFacebookUser(accessToken, refreshToken, profile, done) {
-        User.findOne(
-            { email: profile._json.email },
-            { email: 1, avatar: 1, username: 1, givenName: 1, familyName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 },
-            {},
+        User.findOne({ email: profile._json.email }, { email: 1, avatar: 1, username: 1, givenName: 1, familyName: 1, joinedDate: 1, gender: 1, nationality: 1, dob: 1 }, {},
             async (err, user) => {
                 if (err) {
                     return done(err);

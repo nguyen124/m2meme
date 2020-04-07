@@ -25,8 +25,7 @@
                 if (modelUserLog) {
                     if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
                         item.hasDownvoted = true;
-                    }
-                    else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+                    } else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                         item.hasUpvoted = true;
                     }
                     if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {

@@ -1,4 +1,4 @@
-(function () {
+(function() {
     var User = require('../model/user'),
         commentSvc = require('./commentSvc'),
         itemSvc = require('./itemSvc'),
@@ -15,9 +15,7 @@
                 if (err) {
                     reject(err);
                 }
-                commentSvc.updateManyComments(
-                    { "replyTo.writtenBy.userId": updatedUser.id },
-                    { "replyTo.writtenBy": { username: updatedUser.username, avatar: updatedUser.avatar } });
+                commentSvc.updateManyComments({ "replyTo.writtenBy.userId": updatedUser.id }, { "replyTo.writtenBy": { username: updatedUser.username, avatar: updatedUser.avatar } });
                 if (newUserInfo.hasAvatarChanged || newUserInfo.hasUsernameChanged) {
                     commentSvc.updateCommentsOfAnUser(updatedUser);
                     itemSvc.updateItemsOfAnUser(updatedUser);
@@ -36,7 +34,7 @@
                 email: info.email,
                 password: User.hashPassword(info.password),
                 avatar: info.avatar,
-                joinedDate: moment().format("YYYY-MM-DD"),
+                joinedDate: moment().format("YYYY-MM-DD HH:mm Z"),
                 role: "USER"
             };
             return createNewUser(user);
