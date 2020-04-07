@@ -1,6 +1,7 @@
 (function () {
     var router = require('express').Router(),
         notificationSvc = require('../services/notificationSvc'),
+        sharedSvc = require('../shared/utilSvc'),
         middleware = require('../../util/middleware'),
         status = require('http-status');
 
@@ -24,8 +25,8 @@
 
     function getOptions(req) {
         var options = {
-            page: getPageNo(req.query.page),
-            perPage: getPerPageNo(req.query.perPage),
+            page: sharedSvc.getPageNo(req.query.page, 0),
+            perPage: sharedSvc.getPageNo(req.query.perPage, 5),
             order: { notifiedDate: -1 },
             conditions: {
                 userId: req.user.id
@@ -37,20 +38,6 @@
             options.page = page;
         }
         return options;
-    }
-
-    function getPageNo(page) {
-        if (page && !isNaN(page)) {
-            return Number(page);
-        }
-        return 0;
-    }
-
-    function getPerPageNo(perPage) {
-        if (perPage && !isNaN(perPage)) {
-            return Number(perPage);
-        }
-        return 5;
     }
 
     module.exports = router;

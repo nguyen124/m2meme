@@ -9,7 +9,16 @@
         }
     }
 
+    function isAdmin(req, res, next) {
+        if (req.isAuthenticated() && req.user.role === "ADMIN") {
+            return next();
+        } else {
+            return res.status(status.UNAUTHORIZED).json("Unauthorized request");
+        }
+    }
+
     module.exports = {
-        isValidUser: isValidUser
+        isValidUser: isValidUser,
+        isAdmin: isAdmin
     };
 }());

@@ -1,9 +1,34 @@
 (function () {
     var router = require('express').Router(),
         reportSvc = require('../services/reportSvc'),
+        sharedSvc = require('../shared/utilSvc'),
         middleware = require('../../util/middleware'),
         status = require('http-status'),
         moment = require('moment');
+
+    /*
+    Service to get reports 
+    */
+    router.get('/svc/reports', middleware.isAdmin, (req, res) => {
+        var options = getOptions(req);
+        reportSvc.getReports(options).then((reports) => {
+            return res.status(status.OK).json(reports);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    function getOptions(req) {
+        var options = {
+            page: sharedSvc.getPageNo(req.query.page, 0),
+            perPage: sharedSvc.getPageNo(req.query.perPage, 40),
+            order: { modifiedDate: 1 },
+            conditions: {
+                status: "NEW"
+            }
+        };
+        return options;
+    }
 
     /*
     Service to create new report

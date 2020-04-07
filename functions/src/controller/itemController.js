@@ -3,6 +3,7 @@
         itemSvc = require('../services/itemSvc'),
         middleware = require('../../util/middleware'),
         modelUserLogSvc = require('../services/modelUserLogSvc'),
+        sharedSvc = require('../shared/utilSvc'),
         status = require('http-status'),
         moment = require('moment'),
         ActionType = require('../shared/actionType');
@@ -11,13 +12,13 @@
     router.get('/svc/items', (req, res, next) => {
         var options = getOptions(req);
         itemSvc.getItems(options).then((items) => {
-            return process(req, res, next, items);
+            return process(req, res, items);
         }).catch(err => {
-            next(err);
+            return res.status(status.NOT_IMPLEMENTED).json(err);
         });
     });
 
-    function process(req, res, next, items) {
+    function process(req, res, items) {
         var newItems = null;
         if (req.user) {
             newItems = items.map(async (item) => {
@@ -38,7 +39,7 @@
         Promise.all(newItems || items).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
-            return next(err);
+            return res.status(status.NOT_IMPLEMENTED).json(err);
         });
     }
 
@@ -76,14 +77,14 @@
     }
 
     /** Delete item */
-    router.delete('/svc/items/:id', middleware.isValidUser || req.user.role === "ADMIN", (req, res) => {
-        var item = {
+    router.delete('/svc/items/:id', middleware.isValidUser, (req, res) => {
+        var conditions = {
             _id: req.params.id
         };
         if (req.user.role !== "ADMIN") {
-            item = Object.assign(item, { "createdBy.userId": req.user.id });
+            conditions = Object.assign(conditions, { "createdBy.userId": req.user.id });
         }
-        itemSvc.deleteItem(item).then((result) => {
+        itemSvc.deleteItem(conditions).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -92,8 +93,8 @@
 
     function getOptions(req) {
         var options = {
-            page: getPageNo(req.query.page),
-            perPage: getPerPageNo(req.query.perPage),
+            page: sharedSvc.getPageNo(req.query.page, 0),
+            perPage: sharedSvc.getPageNo(req.query.perPage, 40),
             temp: req.query.temp || "",
             order: { modifiedDate: -1 },
             conditions: {}
@@ -132,20 +133,6 @@
             }
         }
         return options;
-    }
-
-    function getPageNo(page) {
-        if (page && !isNaN(page)) {
-            return Number(page);
-        }
-        return 0;
-    }
-
-    function getPerPageNo(perPage) {
-        if (perPage && !isNaN(perPage)) {
-            return Number(perPage);
-        }
-        return 40;
     }
 
     /*

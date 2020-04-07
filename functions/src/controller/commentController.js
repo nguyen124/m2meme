@@ -1,6 +1,7 @@
 (function () {
     var router = require('express').Router(),
         commentSvc = require('../services/commentSvc'),
+        sharedSvc = require('../shared/utilSvc'),
         middleware = require('../../util/middleware'),
         moment = require('moment'),
         status = require('http-status');
@@ -85,15 +86,15 @@
     });
 
     /*Delete comment*/
-    router.delete('/svc/items/:itemId/comments/:commentId', middleware.isValidUser || req.user.role === "ADMIN", (req, res) => {
-        var comment = {
+    router.delete('/svc/items/:itemId/comments/:commentId', middleware.isValidUser, (req, res) => {
+        var conditions = {
             _id: req.params.commentId,
             itemId: req.params.itemId
         };
         if (req.user.role !== "ADMIN") {
-            comment = Object.assign(comment, { "writtenBy.userId": req.user.id });
+            conditions = Object.assign(conditions, { "writtenBy.userId": req.user.id });
         }
-        commentSvc.deleteComment(comment).then((result) => {
+        commentSvc.deleteComment(conditions).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -132,26 +133,12 @@
 
     function getOptions(req, conditions) {
         var options = {
-            page: getPageNo(req.query.page),
-            perPage: getPerPageNo(req.query.perPage),
+            page: sharedSvc.getPageNo(req.query.page, 0),
+            perPage: sharedSvc.getPageNo(req.query.perPage, 10),
             order: { noOfPoints: -1 },
             conditions: conditions
         };
         return options;
-    }
-
-    function getPageNo(page) {
-        if (page && !isNaN(page)) {
-            return Number(page);
-        }
-        return 0;
-    }
-
-    function getPerPageNo(perPage) {
-        if (perPage && !isNaN(perPage)) {
-            return Number(perPage);
-        }
-        return 10;
     }
 
     module.exports = router;

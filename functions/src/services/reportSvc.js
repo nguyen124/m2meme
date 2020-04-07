@@ -3,24 +3,23 @@
         modelUserLogSvc = require('../services/modelUserLogSvc'),
         ActionType = require('../shared/actionType');
 
-
     module.exports = {
+        getReports: getReports,
         addReport: addReport,
         deleteReport: deleteReport,
         deleteAllReportsInsideAnItem: deleteAllReportsInsideAnItem
     };
 
-    /* Get reports */
-    // function getReports(options) {
-    //     return new Promise((resolve, reject) => {
-    //         Report.find(options.conditions, {}, function (err, reports) {
-    //             if (err) {
-    //                 return reject(err);
-    //             }
-    //             return resolve(reports);
-    //         }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
-    //     });
-    // }
+    function getReports(options) {
+        return new Promise((resolve, reject) => {
+            Report.find(options.conditions, {}, (err, reports) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve(reports);
+            }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
+        });
+    }
 
     /** Add report */
     function addReport(report) {
