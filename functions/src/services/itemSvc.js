@@ -29,14 +29,7 @@
     }
 
     function getItemById(item) {
-        return new Promise((resolve, reject) => {
-            Item.findById(item, (err, foundItem) => {
-                if (err) {
-                    return reject(err);
-                }
-                return resolve(foundItem);
-            });
-        });
+        return updateItem(item, { $inc: { noOfViews: 1 } }, { upsert: true, new: true });
     }
 
     /** Add item */

@@ -38,7 +38,7 @@
         Promise.all(newItems || items).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
-            next(err);
+            return next(err);
         });
     }
 
@@ -47,13 +47,33 @@
         var item = {
             _id: req.params.id
         };
-        itemSvc.getItemById(item).then((result) => {
-            return res.status(status.OK).json(result);
+        itemSvc.getItemById(item).then((item) => {
+            return processOne(req, res, item).then(result => {
+                return res.status(status.OK).json(result);
+            }).catch(err => {
+                return res.status(status.NOT_IMPLEMENTED).json(err);
+            });
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });
     });
 
+    async function processOne(req, res, item) {
+        if (req.user) {
+            var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
+            if (modelUserLog) {
+                if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
+                    item.hasDownvoted = true;
+                } else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+                    item.hasUpvoted = true;
+                }
+                if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {
+                    item.hasReported = true;
+                }
+            }
+        }
+        return item;
+    }
 
     /** Delete item */
     router.delete('/svc/items/:id', middleware.isValidUser || req.user.role === "ADMIN", (req, res) => {
