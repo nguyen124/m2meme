@@ -3,6 +3,7 @@
         reportSchema = mongoose.Schema({
             reportedItemId: String,
             reportedCommentId: String,
+            content: [Object],
             reasons: [String],
             reportedByUser: Object,
             reportedDate: Date,

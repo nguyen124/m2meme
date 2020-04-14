@@ -5,7 +5,7 @@
                 type: String,
                 maxlength: 150
             },
-            url: String,
+            files: [Object],
             modifiedDate: Date,
             createdBy: Object,
             tags: {
@@ -22,7 +22,6 @@
             hasUpvoted: Boolean,
             hasDownvoted: Boolean,
             hasReported: Boolean,
-            files: [Object],
             description: {
                 type: String,
                 maxlength: 500
