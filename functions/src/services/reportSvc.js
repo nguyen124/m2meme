@@ -37,7 +37,7 @@
     /** Delete report */
     function deleteReport(conditions) {
         return new Promise((resolve, reject) => {
-            Report.deleteOne(conditions, (err, report) => {
+            Report.deleteMany(conditions, (err, report) => {
                 if (err) {
                     return reject(err);
                 }

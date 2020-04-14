@@ -54,12 +54,14 @@
     /** Delete report */
     router.delete('/svc/reports', middleware.isValidUser, (req, res) => {
         var conditions = {
-            reportedItemId: req.query.reportedItemId,
-            "reportedByUser._id": req.user.id
+            reportedItemId: req.query.reportedItemId
         };
+        if (req.user.role != 'ADMIN') {
+            conditions = Object.assign(conditions, { "reportedByUser._id": req.user.id });
+        }
         var reportedCommentId = req.query.reportedCommentId;
         if (reportedCommentId) {
-            conditions = Object.assign(conditions, { reportedCommentId: reportedCommentId })
+            conditions = Object.assign(conditions, { reportedCommentId: reportedCommentId });
         }
         reportSvc.deleteReport(conditions).then((result) => {
             return res.status(status.OK).json(result);

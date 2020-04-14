@@ -3,6 +3,7 @@
         modelUserLogSvc = require('./modelUserLogSvc'),
         itemSvc = require('./itemSvc'),
         notificationSvc = require('./notificationSvc'),
+        reportSvc = require('./reportSvc'),
         moment = require('moment'),
         ActionType = require('../shared/actionType');
 
@@ -237,10 +238,11 @@
                         if (err) {
                             console.log(err);
                         }
-                    })
+                    });
 
                     //delete logs related to this comment
                     modelUserLogSvc.deleteManyModelUserLogs(deletedComment.itemId, deletedComment.id, null);
+                    reportSvc.deleteReport({ reportedItemId: deletedComment.itemId, reportedCommentId: deletedComment.id });
                     if (deletedComment.parentCommentId) {
                         itemSvc.adjustNoOfCommentsOfItem(deletedComment.itemId, -1);
                         adjustNoOfRepliesOfComment(deletedComment.parentCommentId, -1)
