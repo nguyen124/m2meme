@@ -24,12 +24,26 @@
     /** Add report */
     function addReport(report) {
         return new Promise((resolve, reject) => {
-            Report.create(report, (err, report) => {
-                if (err) {
-                    return reject(err);
+            Report.findOne({
+                "reportedByUser._id": report.reportedByUser._id,
+                "reportedItemId": report.reportedItemId,
+                "reportedCommentId": report.reportedCommentId
+            }, (err, existingReport) => {
+                if (existingReport) {
+                    return reject({
+                        "errors": {
+                            "name": "DuplicateReportError",
+                            "message": "You've already reported this"
+                        }
+                    });
                 }
-                modelUserLogSvc.updateOrCreateModelUserLog(report.reportedItemId, report.reportedCommentId, report.reportedByUser._id, null, null, ActionType.REPORTED);
-                return resolve(report);
+                Report.create(report, (err, report) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    modelUserLogSvc.updateOrCreateModelUserLog(report.reportedItemId, report.reportedCommentId, report.reportedByUser._id, null, null, ActionType.REPORTED);
+                    return resolve(report);
+                });
             });
         });
     }
