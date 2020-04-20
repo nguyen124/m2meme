@@ -28,7 +28,10 @@
                 "reportedByUser._id": report.reportedByUser._id,
                 "reportedItemId": report.reportedItemId,
                 "reportedCommentId": report.reportedCommentId
-            }, (err, existingReport) => {
+            }, (error, existingReport) => {
+                if (error) {
+
+                }
                 if (existingReport) {
                     return reject({
                         "errors": {
