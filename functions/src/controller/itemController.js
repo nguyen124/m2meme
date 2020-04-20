@@ -29,7 +29,7 @@
                     } else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                         item.hasUpvoted = true;
                     }
-                    if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {
+                    if (modelUserLog.itemId === item.id && !modelUserLog.commentId && modelUserLog.reported === ActionType.REPORTED) {
                         item.hasReported = true;
                     }
                 }
@@ -66,7 +66,7 @@
                 } else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                     item.hasUpvoted = true;
                 }
-                if (modelUserLog.itemId === item._id && modelUserLog.commentId === null && modelUserLog.reported === ActionType.REPORTED) {
+                if (modelUserLog.itemId === item.id && !modelUserLog.commentId && modelUserLog.reported === ActionType.REPORTED) {
                     item.hasReported = true;
                 }
             }
