@@ -24,29 +24,16 @@
     /** Add report */
     function addReport(report) {
         return new Promise((resolve, reject) => {
-            Report.findOne({
+            Report.findOneAndUpdate({
                 "reportedByUser._id": report.reportedByUser._id,
                 "reportedItemId": report.reportedItemId,
                 "reportedCommentId": report.reportedCommentId
-            }, (error, existingReport) => {
-                if (error) {
-
+            }, report, { upsert: true, 'new': true}, (err, newReport) => {
+                if (err) {
+                    return reject(err);
                 }
-                if (existingReport) {
-                    return reject({
-                        "errors": {
-                            "name": "DuplicateReportError",
-                            "message": "You've already reported this"
-                        }
-                    });
-                }
-                Report.create(report, (err, report) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    modelUserLogSvc.updateOrCreateModelUserLog(report.reportedItemId, report.reportedCommentId, report.reportedByUser._id, null, null, ActionType.REPORTED);
-                    return resolve(report);
-                });
+                modelUserLogSvc.updateOrCreateModelUserLog(newReport.reportedItemId, newReport.reportedCommentId, newReport.reportedByUser._id, null, null, ActionType.REPORTED);
+                return resolve(newReport);
             });
         });
     }
