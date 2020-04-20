@@ -150,8 +150,9 @@
                     }).catch(errr => {
                         return reject(errr);
                     });
+                } else {
+                    return resolve(comments);
                 }
-                return resolve(comments);                
             }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
         });
     }
@@ -177,7 +178,7 @@
                 else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                     comment.hasUpvoted = true;
                 }
-                if (modelUserLog.itemId === comment.itemId && modelUserLog.commentId === comment._id && modelUserLog.reported === ActionType.REPORTED) {
+                if (modelUserLog.itemId === comment.itemId && modelUserLog.commentId === comment.id && modelUserLog.reported === ActionType.REPORTED) {
                     comment.hasReported = true;
                 }
             }
@@ -255,7 +256,7 @@
                         return resolve(deletedComment);
                     }
                 }
-                return resolve(null);                
+                return resolve(null);
             });
         });
     }
