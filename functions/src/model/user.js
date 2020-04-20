@@ -38,7 +38,7 @@
             },
             password: {
                 type: String,
-                maxlength: 50,
+                maxlength: 72,
                 minlength: 6
             },
             dob: Date,
