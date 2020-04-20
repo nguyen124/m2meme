@@ -53,7 +53,7 @@
             password: req.body.passwords.password,
             avatar: '../../assets/image/default-avatar.png',
             joinedDate: moment().format("YYYY-MM-DD HH:mm Z")
-        }
+        };
         return userSvc.registerUser(user).then(newUser => {
             return res.status(status.OK).json(newUser);
         }).catch(err => {

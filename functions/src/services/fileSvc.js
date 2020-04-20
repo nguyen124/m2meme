@@ -55,7 +55,7 @@
             busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
                 filename = filename.trim();
                 file.on('data', data => {
-                    fileBuffer = Buffer.concat([fileBuffer, data])
+                    fileBuffer = Buffer.concat([fileBuffer, data]);
                 });
 
                 file.on('end', () => {
@@ -69,7 +69,7 @@
                     req.file = file_object;
                 });
                 const filepath = path.join(os.tmpdir(), uuid + path.extname(filename));
-                req.data['file'] = filepath;
+                req.data.file = filepath;
                 file.pipe(fs.createWriteStream(filepath));
             });
 

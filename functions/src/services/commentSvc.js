@@ -150,9 +150,8 @@
                     }).catch(errr => {
                         return reject(errr);
                     });
-                } else {
-                    return resolve(comments);
                 }
+                return resolve(comments);                
             }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
         });
     }
@@ -255,9 +254,8 @@
                         itemSvc.adjustNoOfCommentsOfItem(deletedComment.itemId, -(1 + deletedComment.noOfReplies));
                         return resolve(deletedComment);
                     }
-                } else {
-                    return resolve(null);
                 }
+                return resolve(null);                
             });
         });
     }

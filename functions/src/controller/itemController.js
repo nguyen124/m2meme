@@ -49,11 +49,9 @@
             _id: req.params.id
         };
         itemSvc.getItemById(item).then((item) => {
-            return processOne(req, res, item).then(result => {
-                return res.status(status.OK).json(result);
-            }).catch(err => {
-                return res.status(status.NOT_IMPLEMENTED).json(err);
-            });
+            return processOne(req, res, item);
+        }).then(result => {
+            return res.status(status.OK).json(result);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });

@@ -56,7 +56,7 @@
         var conditions = {
             reportedItemId: req.query.reportedItemId
         };
-        if (req.user.role != 'ADMIN') {
+        if (req.user.role !== 'ADMIN') {
             conditions = Object.assign(conditions, { "reportedByUser._id": req.user.id });
         }
         var reportedCommentId = req.query.reportedCommentId;
