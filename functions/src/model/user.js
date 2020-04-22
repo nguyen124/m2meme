@@ -5,7 +5,8 @@
         userSchema = new Schema({
             email: {
                 type: String,
-                maxlength: 50
+                maxlength: 50,
+                minlength: 6
             },
             avatar: {
                 type: String,
@@ -41,6 +42,8 @@
                 maxlength: 72,
                 minlength: 6
             },
+            resetPasswordToken: String,
+            resetPasswordExpires: Date,
             dob: Date,
             joinedDate: Date,
             modifiedDate: Date,

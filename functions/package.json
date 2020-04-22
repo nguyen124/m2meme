@@ -29,6 +29,7 @@
     "http-status": "^1.4.0",
     "moment": "^2.24.0",
     "mongoose": "^5.8.9",
+    "nodemailer": "^6.4.6",
     "os": "^0.1.1",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",

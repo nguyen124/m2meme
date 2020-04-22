@@ -44,8 +44,13 @@
 
     /* Register user*/
     router.post('/svc/user/register', (req, res) => {
-        if (req.body.passwords.password !== req.body.passwords.confirmPassword) {
-            return res.status(status.NOT_IMPLEMENTED).json("Passwords are not matched");
+        if (!req.body.passwords.password ||
+            !req.body.passwords.confirmPassword ||
+            (req.body.passwords.password !== req.body.passwords.confirmPassword)) {
+            return res.status(status.NOT_IMPLEMENTED).json("Passwords are not qualified!");
+        }
+        if (!req.body.username || !req.body.email) {
+            return res.status(status.NOT_IMPLEMENTED).json("Username and email have to be entered!");
         }
         var user = {
             username: req.body.username,
@@ -56,6 +61,29 @@
         };
         return userSvc.registerUser(user).then(newUser => {
             return res.status(status.OK).json(newUser);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    /* Request Reset password*/
+    router.post('/svc/requestResetPassword', (req, res) => {
+        return userSvc.requestResetPassword(req.body).then(isTempPassSent => {
+            return res.status(status.OK).json(isTempPassSent);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    /* Reset password*/
+    router.post('/svc/resetPassword', (req, res) => {
+        if (!req.body.password ||
+            !req.body.confirmPassword ||
+            (req.body.password !== req.body.confirmPassword)) {
+            return res.status(status.NOT_IMPLEMENTED).json("Passwords are not qualified!");
+        }
+        return userSvc.resetPassword(req.body).then(isPasswordResetOk => {
+            return res.status(status.OK).json(isPasswordResetOk);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });

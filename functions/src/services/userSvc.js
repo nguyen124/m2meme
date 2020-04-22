@@ -1,13 +1,71 @@
-(function() {
+(function () {
     var User = require('../model/user'),
         commentSvc = require('./commentSvc'),
         itemSvc = require('./itemSvc'),
-        moment = require('moment');
+        moment = require('moment'),
+        emailSvc = require('../services/emailSvc');
 
     module.exports = {
         updateUser: updateUser,
-        registerUser: registerUser
+        registerUser: registerUser,
+        requestResetPassword: requestResetPassword,
+        resetPassword: resetPassword
     };
+
+    function requestResetPassword(obj) {
+        return new Promise((resolve, reject) => {
+            let tempPass = makeid(9);
+            let expriredDate = Date.now() + 300000; // expire in 5 minutes;
+
+            User.findOneAndUpdate({ email: obj.email },
+                { resetPasswordToken: tempPass, resetPasswordExpires: expriredDate },
+                { 'new': true }, (err, newUser) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    if (newUser) {
+                        //Send temp pass to email
+                        emailSvc.sendEmail({ targetEmail: newUser.email, resetPasswordToken: newUser.resetPasswordToken }).then(result => {
+                            return resolve(result);
+                        }).catch(err => {
+                            return reject(err);
+                        });
+                    } else {
+                        return resolve(false);
+                    }
+                });
+        });
+    }
+
+    function resetPassword(obj) {
+        var cutoff = new Date();
+        cutoff.setMinutes(cutoff.getMinutes() - 5);
+
+        return new Promise((resolve, reject) => {
+            User.findOneAndUpdate({ email: obj.email, resetPasswordToken: obj.resetPasscode, resetPasswordExpires: { $gt: cutoff } },
+                { resetPasswordToken: undefined, password: User.hashPassword(obj.password) },
+                { 'new': true }, (err, newUser) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    if (newUser) {
+                        return resolve(true);
+                    } else {
+                        return resolve(false);
+                    }
+                });
+        });
+    }
+
+    function makeid(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
 
     function updateUser(conditions, newUserInfo, options) {
         return new Promise((resolve, reject) => {
