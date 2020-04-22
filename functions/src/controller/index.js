@@ -11,7 +11,7 @@
             '<meta property="og:image:height" content="' + 314 + '">' +
             '<meta property="og:description" content="' + req.query.description + '">' +
             '<meta property="og:url" content="' + req.query.url + '">' +
-            '<meta name="twitter:card" content="' + req.query.title + '">' +
+            '<meta name="twitter:card" content="summary_large_image">' +
             '<meta name="twitter:image" content="' + req.query.image + '">' +
             '<meta name="twitter:title" content="' + req.query.title + '">' +
             '<meta name="twitter:description" content="' + req.query.description + '">' +
