@@ -13,6 +13,7 @@
     "node": "10"
   },
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@google-cloud/storage": "^2.4.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "*",
@@ -26,6 +27,7 @@
     "express-session": "^1.17.0",
     "firebase-admin": "^8.9.1",
     "firebase-functions": "^3.3.0",
+    "fluent-ffmpeg": "^2.1.2",
     "http-status": "^1.4.0",
     "moment": "^2.24.0",
     "mongoose": "^5.8.9",

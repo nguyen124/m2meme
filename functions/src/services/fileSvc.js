@@ -11,7 +11,11 @@
             projectId: 'm2meme',
             keyFilename: 'm2meme-firebase-adminsdk-rvmhz-dff76c1bfa.json'
         },
-        gcs = new Storage(gcconfig);
+        gcs = new Storage(gcconfig),
+        ffmpegPath = require('@ffmpeg-installer/ffmpeg').path,
+        ffmpeg = require('fluent-ffmpeg');
+
+    ffmpeg.setFfmpegPath(ffmpegPath);
 
     module.exports = {
         middleF1: middleF1,
@@ -79,19 +83,19 @@
 
             busboy.on('finish', () => {
                 const bucket = gcs.bucket('m2meme.appspot.com');
-                bucket.upload(req.data.file, {
-                    uploadType: 'media'
-                }).then((data) => {
-                    let file = data[0];
-                    fs.unlinkSync(req.data.file);
-                    var fileName = encodeURIComponent(file.name);
-                    var fileLocation = "https://storage.googleapis.com/m2meme.appspot.com/" + fileName;
-                    var theFile = bucket.file(fileName);
-                    return makeFilePublic(res, theFile, fileLocation, fileName);
-                }).catch((err) => {
-                    console.log(err);
-                    return res.status(500).json(err);
-                });
+                //convert other video type to mp4 to support safari and other less popular browser
+                if (req.file.mimetype === 'video/mp4') {
+                    return ensureCodeMp4IsLibx264(res, bucket, req.data.file);
+                } else {
+                    bucket.upload(req.data.file, {
+                        uploadType: 'media'
+                    }).then(uploadedNonMp4File => {
+                        return createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, req.data.file);
+                    }).catch(err => {
+                        console.log(err);
+                        return res.status(500).json(err);
+                    });
+                }
             });
             busboy.end(req.rawBody);
             req.pipe(busboy);
@@ -99,15 +103,81 @@
         return next();
     }
 
-    function makeFilePublic(res, theFile, fileLocation, theFilename) {
-        theFile.makePublic().then(data => {
-            return res.status(200).json({
-                fileLocation: fileLocation,
-                filename: theFilename
+    /*
+    *    Ensure mp4 file playable on safari and other browsers
+    */
+    function ensureCodeMp4IsLibx264(res, bucket, mp4Format) {
+        var newMp4Format = mp4Format.replace(/\.[^.]+$/, "_new.mp4");
+        convertFile(mp4Format, newMp4Format).then(() => {
+            return bucket.upload(newMp4Format, {
+                uploadType: 'media'
+            });
+        }).then(uploadedFile => {
+            unlinkFile(mp4Format);
+            unlinkFile(newMp4Format);
+            return makeFilePublic(bucket, uploadedFile).then(() => {
+                return res.status(200).json({
+                    fileLocation: "https://storage.googleapis.com/m2meme.appspot.com/" + encodeURIComponent(uploadedFile[0].name),
+                    filename: uploadedFile[0].name
+                });
             });
         }).catch(err => {
             console.log(err);
+            return res.status(500).json(err);
         });
+    }
+
+    /*
+    *   If user upload other types of video different then mp4 then we need to create mp4 file
+    */
+    function createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, nonMp4Format) {
+        const mp4Format = nonMp4Format.replace(/\.[^.]+$/, ".mp4");
+        convertFile(nonMp4Format, mp4Format).then(() => {
+            return bucket.upload(mp4Format, {
+                uploadType: 'media'
+            });
+        }).then(uploadedSecondFile => {
+            unlinkFile(mp4Format);
+            unlinkFile(nonMp4Format);
+            makeFilePublic(bucket, uploadedSecondFile);
+            return makeFilePublic(bucket, uploadedNonMp4File);
+        }).then(() => {
+            return res.status(200).json({
+                fileLocation: "https://storage.googleapis.com/m2meme.appspot.com/" + encodeURIComponent(uploadedNonMp4File[0].name),
+                filename: uploadedNonMp4File[0].name
+            });
+        }).catch(err => {
+            console.log(err);
+            return res.status(500).json(err);
+        });
+    }
+
+    function convertFile(input, output) {
+        return new Promise((resolve, reject) => {
+            console.log("Entering converting file");
+            ffmpeg(input)
+                .format("mp4")
+                .videoCodec("libx264")
+                .on('error', function (err) {
+                    console.log("Error in converting file");
+                    reject(err);
+                })
+                .on('end', function () {
+                    console.log("Success in converting file");
+                    resolve(output);
+                }).saveToFile(output);
+        });
+    }
+
+    function makeFilePublic(bucket, uploadedFile) {
+        let file = uploadedFile[0];
+        var fileName = encodeURIComponent(file.name);
+        var theFile = bucket.file(fileName);
+        return theFile.makePublic();
+    }
+
+    function unlinkFile(pathToTempFile) {
+        fs.unlinkSync(pathToTempFile);
     }
 
     function deleteFile(filename) {
