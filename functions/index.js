@@ -10,14 +10,14 @@
         passportCfg = require('./src/config/passport'),
         session = require('express-session'),
         flash = require('connect-flash'),
-        cookieParser = require('cookie-parser');
+        cookieParser = require('cookie-parser'),
+        environment = require('./env.json')[process.env.NODE_ENV || 'development'];
 
     const functions = require('firebase-functions');
     const MongoStore = require('connect-mongo')(session);
     passportCfg(passport);
     // connect to mongoose
-    mongoose.connect('mongodb+srv://admin:Nguy3nH0H@1@cluster0-wq5um.gcp.mongodb.net/architect?retryWrites=true&w=majority', { useNewUrlParser: true });
-    //mongoose.connect('mongodb://localhost/architect', { useNewUrlParser: true });
+    mongoose.connect(environment.MONGO_URI, { useNewUrlParser: true });
     mongoose.set('useNewUrlParser', true);
     mongoose.set('useFindAndModify', false);
     mongoose.set('useCreateIndex', true);

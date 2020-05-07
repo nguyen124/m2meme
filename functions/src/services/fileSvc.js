@@ -13,7 +13,8 @@
         },
         gcs = new Storage(gcconfig),
         ffmpegPath = require('@ffmpeg-installer/ffmpeg').path,
-        ffmpeg = require('fluent-ffmpeg');
+        ffmpeg = require('fluent-ffmpeg'),
+        environment = require('../../env.json')[process.env.NODE_ENV || 'development'];
 
     ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -38,12 +39,10 @@
                     if (err) return next(err);
                     req.rawBody = string;
                     return next();
-                    //next();
                 }
             );
         }
         return next();
-        //next();
     }
 
     function middleF2(req, res, next) {
@@ -82,7 +81,7 @@
             });
 
             busboy.on('finish', () => {
-                const bucket = gcs.bucket('m2meme.appspot.com');
+                const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
                 //convert other video type to mp4 to support safari and other less popular browser
                 if (req.file.mimetype === 'video/mp4') {
                     return ensureCodeMp4IsLibx264(res, bucket, req.data.file);
@@ -95,7 +94,7 @@
                         } else {
                             return makeFilePublic(bucket, uploadedNonMp4File).then(() => {
                                 return res.status(200).json({
-                                    fileLocation: "https://storage.googleapis.com/m2meme.appspot.com/" + encodeURIComponent(uploadedNonMp4File[0].name),
+                                    fileLocation: environment.FILE_LOCATION + encodeURIComponent(uploadedNonMp4File[0].name),
                                     filename: uploadedNonMp4File[0].name
                                 });
                             });
@@ -126,7 +125,7 @@
             unlinkFile(newMp4Format);
             return makeFilePublic(bucket, uploadedFile).then(() => {
                 return res.status(200).json({
-                    fileLocation: "https://storage.googleapis.com/m2meme.appspot.com/" + encodeURIComponent(uploadedFile[0].name),
+                    fileLocation: environment.FILE_LOCATION + encodeURIComponent(uploadedFile[0].name),
                     filename: uploadedFile[0].name
                 });
             });
@@ -152,7 +151,7 @@
             return makeFilePublic(bucket, uploadedNonMp4File);
         }).then(() => {
             return res.status(200).json({
-                fileLocation: "https://storage.googleapis.com/m2meme.appspot.com/" + encodeURIComponent(uploadedNonMp4File[0].name),
+                fileLocation: environment.FILE_LOCATION + encodeURIComponent(uploadedNonMp4File[0].name),
                 filename: uploadedNonMp4File[0].name
             });
         }).catch(err => {
@@ -191,6 +190,6 @@
 
     function deleteFile(filename) {
         // Create a reference to the file to delete
-        return gcs.bucket('m2meme.appspot.com').file(filename).delete();
+        return gcs.bucket(environment.FIREBASE_BUCKET).file(filename).delete();
     }
 }());
