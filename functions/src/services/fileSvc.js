@@ -90,7 +90,16 @@
                     bucket.upload(req.data.file, {
                         uploadType: 'media'
                     }).then(uploadedNonMp4File => {
-                        return createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, req.data.file);
+                        if (req.file.mimetype.startsWith('video')) {
+                            return createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, req.data.file);
+                        } else {
+                            return makeFilePublic(bucket, uploadedNonMp4File).then(() => {
+                                return res.status(200).json({
+                                    fileLocation: "https://storage.googleapis.com/m2meme.appspot.com/" + encodeURIComponent(uploadedNonMp4File[0].name),
+                                    filename: uploadedNonMp4File[0].name
+                                });
+                            });
+                        }
                     }).catch(err => {
                         console.log(err);
                         return res.status(500).json(err);
