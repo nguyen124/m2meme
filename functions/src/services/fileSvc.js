@@ -16,6 +16,9 @@
         ffmpeg = require('fluent-ffmpeg'),
         environment = require('../../env.json')[process.env.NODE_ENV || 'development'];
 
+    var today = new Date(),
+        filePath = today.getFullYear() + "/" + today.getMonth() + "/" + today.getDate() + "/";
+
     ffmpeg.setFfmpegPath(ffmpegPath);
 
     module.exports = {
@@ -87,14 +90,15 @@
                     return ensureCodeMp4IsLibx264(res, bucket, req.data.file);
                 } else {
                     bucket.upload(req.data.file, {
-                        uploadType: 'media'
+                        uploadType: 'media',
+                        destination: filePath + path.basename(req.data.file)
                     }).then(uploadedNonMp4File => {
                         if (req.file.mimetype.startsWith('video')) {
                             return createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, req.data.file);
                         } else {
                             return makeFilePublic(bucket, uploadedNonMp4File).then(() => {
                                 return res.status(200).json({
-                                    fileLocation: environment.FILE_LOCATION + encodeURIComponent(uploadedNonMp4File[0].name),
+                                    fileLocation: environment.FILE_LOCATION + uploadedNonMp4File[0].name,
                                     filename: uploadedNonMp4File[0].name
                                 });
                             });
@@ -118,14 +122,15 @@
         var newMp4Format = mp4Format.replace(/\.[^.]+$/, "_new.mp4");
         convertFile(mp4Format, newMp4Format).then(() => {
             return bucket.upload(newMp4Format, {
-                uploadType: 'media'
+                uploadType: 'media',
+                destination: filePath + path.basename(mp4Format)
             });
         }).then(uploadedFile => {
             unlinkFile(mp4Format);
             unlinkFile(newMp4Format);
             return makeFilePublic(bucket, uploadedFile).then(() => {
                 return res.status(200).json({
-                    fileLocation: environment.FILE_LOCATION + encodeURIComponent(uploadedFile[0].name),
+                    fileLocation: environment.FILE_LOCATION + uploadedFile[0].name,
                     filename: uploadedFile[0].name
                 });
             });
@@ -142,7 +147,8 @@
         const mp4Format = nonMp4Format.replace(/\.[^.]+$/, ".mp4");
         convertFile(nonMp4Format, mp4Format).then(() => {
             return bucket.upload(mp4Format, {
-                uploadType: 'media'
+                uploadType: 'media',
+                destination: filePath + path.basename(mp4Format)
             });
         }).then(uploadedSecondFile => {
             unlinkFile(mp4Format);
@@ -151,7 +157,7 @@
             return makeFilePublic(bucket, uploadedNonMp4File);
         }).then(() => {
             return res.status(200).json({
-                fileLocation: environment.FILE_LOCATION + encodeURIComponent(uploadedNonMp4File[0].name),
+                fileLocation: environment.FILE_LOCATION + uploadedNonMp4File[0].name,
                 filename: uploadedNonMp4File[0].name
             });
         }).catch(err => {
@@ -179,7 +185,7 @@
 
     function makeFilePublic(bucket, uploadedFile) {
         let file = uploadedFile[0];
-        var fileName = encodeURIComponent(file.name);
+        var fileName = file.name;
         var theFile = bucket.file(fileName);
         return theFile.makePublic();
     }
