@@ -109,10 +109,14 @@
                     });
                 }
             });
-            busboy.end(req.rawBody);
+            if (process.env.NODE_ENV) {
+                busboy.end(req.rawBody); // only on production
+            }
             req.pipe(busboy);
         }
-        return next();
+        if (process.env.NODE_ENV) {
+            return next(); // only on production
+        }
     }
 
     /*
