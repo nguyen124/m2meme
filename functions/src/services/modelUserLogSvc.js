@@ -89,19 +89,19 @@
         if (VOTE_TYPE !== null && VOTE_TYPE !== undefined) {
             updates = Object.assign(updates, {
                 hasVoted: VOTE_TYPE,
-                votedDate: moment().format("YYYY-MM-DD HH:mm Z")
+                votedDate: moment().format("YYYY-MM-DD HH:mm:ss Z")
             });
         }
         if (COMMENTED) {
             updates = Object.assign(updates, {
                 commented: COMMENTED,
-                commentedDate: moment().format("YYYY-MM-DD HH:mm Z")
+                commentedDate: moment().format("YYYY-MM-DD HH:mm:ss Z")
             });
         }
         if (REPORTED) {
             updates = Object.assign(updates, {
                 reported: REPORTED,
-                reportedDate: moment().format("YYYY-MM-DD HH:mm Z")
+                reportedDate: moment().format("YYYY-MM-DD HH:mm:ss Z")
             });
         }
         return updates;

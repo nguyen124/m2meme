@@ -35,7 +35,7 @@
     */
     router.post('/svc/reports', middleware.isValidUser, (req, res) => {
         var report = req.body;
-        report.reportedDate = moment().format("YYYY-MM-DD HH:mm Z");
+        report.reportedDate = moment().format("YYYY-MM-DD HH:mm:ss Z");
         report.status = "NEW";
         report.reportedByUser = {
             _id: req.user.id,

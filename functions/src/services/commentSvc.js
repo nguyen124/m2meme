@@ -33,7 +33,7 @@
         }
         modelUserLogSvc.updateOrCreateModelUserLog(itemId, commentId, userId, ActionType.UPVOTED, null, null);
         let newItem = await updatePoint(itemId, commentId, adjustPoint);
-        _createVoteNotification(itemId, commentId, newItem, "upvoted");
+        _createVoteNotification(itemId, commentId, newItem, "upvoted", userId);
         return newItem;
     }
 
@@ -66,21 +66,27 @@
         }
         modelUserLogSvc.updateOrCreateModelUserLog(itemId, commentId, userId, ActionType.DOWNVOTED, null, null);
         let newItem = await updatePoint(itemId, commentId, adjustPoint);
-        _createVoteNotification(itemId, commentId, newItem, "downvoted");
+        _createVoteNotification(itemId, commentId, newItem, "downvoted", userId);
         return newItem;
     }
 
-    async function _createVoteNotification(itemId, commentId, newItem, vote) {
-        var notification = {
-            title: (commentId ? "Comment" : "Item") + " " + vote + ".",
-            message: "Current points: " + newItem.noOfPoints + ".",
+    async function _createVoteNotification(itemId, commentId, newItem, vote, userId) {
+        let notification = {
+            noOfPoints: newItem.noOfPoints,
+            notifiedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
+            $push: {
+                actionDoneByUsers: userId
+            }
+        }, condition = {
+            action: vote,
             userId: (commentId ? newItem.writtenBy.userId : newItem.createdBy.userId),
             itemId: itemId,
-            commentId: commentId,
-            notifiedDate: moment().format("YYYY-MM-DD HH:mm Z"),
             hasRead: false
+        };
+        if (commentId) {
+            condition = Object.assign(condition, { commentId: commentId });
         }
-        notificationSvc.createNotification(notification);
+        notificationSvc.createOrUpdateNotification(condition, notification);
     }
 
     async function addComment(parentCommentId, comment) {

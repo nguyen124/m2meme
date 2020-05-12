@@ -70,8 +70,8 @@
                         username: profile.displayName,
                         familyName: profile.name.familyName,
                         givenName: profile.name.givenName,
-                        joinedDate: moment().format("YYYY-MM-DD HH:mm Z"),
-                        modifiedDate: moment().format("YYYY-MM-DD HH:mm Z")
+                        joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
+                        modifiedDate: moment().format("YYYY-MM-DD HH:mm:ss Z")
                     });
                     var newCreatedUser = await User.create(newUser);
                     return done(null, newCreatedUser);

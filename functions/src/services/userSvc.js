@@ -92,7 +92,7 @@
                 email: info.email,
                 password: User.hashPassword(info.password),
                 avatar: info.avatar,
-                joinedDate: moment().format("YYYY-MM-DD HH:mm Z"),
+                joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
                 role: "USER"
             };
             return createNewUser(user);

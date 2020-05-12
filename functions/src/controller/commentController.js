@@ -53,7 +53,7 @@
             parentCommentId = req.body.parentCommentId;
         comment.noOfPoints = 0;
         comment.noOfReplies = 0;
-        comment.modifiedDate = moment().format("YYYY-MM-DD HH:mm Z");
+        comment.modifiedDate = moment().format("YYYY-MM-DD HH:mm:ss Z");
         comment.writtenBy = {
             userId: req.user.id,
             username: req.user.username,

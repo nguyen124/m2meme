@@ -57,7 +57,7 @@
             email: req.body.email,
             password: req.body.passwords.password,
             avatar: '../../assets/image/default-avatar.png',
-            joinedDate: moment().format("YYYY-MM-DD HH:mm Z")
+            joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z")
         };
         return userSvc.registerUser(user).then(newUser => {
             return res.status(status.OK).json(newUser);
