@@ -85,29 +85,22 @@
 
             busboy.on('finish', () => {
                 const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
-                //convert other video type to mp4 to support safari and other less popular browser
-                if (req.file.mimetype === 'video/mp4') {
-                    return ensureCodeMp4IsLibx264(res, bucket, req.data.file);
-                } else {
-                    bucket.upload(req.data.file, {
-                        uploadType: 'media',
-                        destination: filePath + path.basename(req.data.file)
-                    }).then(uploadedNonMp4File => {
-                        if (req.file.mimetype.startsWith('video')) {
-                            return createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, req.data.file);
-                        } else {
-                            return makeFilePublic(bucket, uploadedNonMp4File).then(() => {
-                                return res.status(200).json({
-                                    fileLocation: environment.FILE_LOCATION + uploadedNonMp4File[0].name,
-                                    filename: uploadedNonMp4File[0].name
-                                });
-                            });
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                        return res.status(500).json(err);
+                bucket.upload(req.data.file, {
+                    uploadType: 'media',
+                    destination: filePath + path.basename(req.data.file),
+                    resumable: false,
+                    public: true,
+                    metadata: { gzip: true, cacheControl: "public, max-age=31536000" }
+                }).then(uploadedNonMp4File => {
+                    fs.unlinkSync(req.data.file);
+                    return res.status(200).json({
+                        fileLocation: environment.FILE_LOCATION + uploadedNonMp4File[0].name,
+                        filename: uploadedNonMp4File[0].name
                     });
-                }
+                }).catch(err => {
+                    console.log(err);
+                    return res.status(500).json(err);
+                });
             });
             if (process.env.NODE_ENV) {
                 busboy.end(req.rawBody); // only on production
@@ -119,87 +112,19 @@
         }
     }
 
-    /*
-    *    Ensure mp4 file playable on safari and other browsers
-    */
-    function ensureCodeMp4IsLibx264(res, bucket, mp4Format) {
-        var newMp4Format = mp4Format.replace(/\.[^.]+$/, "_new.mp4");
-        convertFile(mp4Format, newMp4Format).then(() => {
-            return bucket.upload(newMp4Format, {
-                uploadType: 'media',
-                destination: filePath + path.basename(mp4Format)
-            });
-        }).then(uploadedFile => {
-            unlinkFile(mp4Format);
-            unlinkFile(newMp4Format);
-            return makeFilePublic(bucket, uploadedFile).then(() => {
-                return res.status(200).json({
-                    fileLocation: environment.FILE_LOCATION + uploadedFile[0].name,
-                    filename: uploadedFile[0].name
-                });
-            });
-        }).catch(err => {
-            console.log(err);
-            return res.status(500).json(err);
-        });
-    }
-
-    /*
-    *   If user upload other types of video different then mp4 then we need to create mp4 file
-    */
-    function createMp4FromNoneMp4(res, bucket, uploadedNonMp4File, nonMp4Format) {
-        const mp4Format = nonMp4Format.replace(/\.[^.]+$/, ".mp4");
-        convertFile(nonMp4Format, mp4Format).then(() => {
-            return bucket.upload(mp4Format, {
-                uploadType: 'media',
-                destination: filePath + path.basename(mp4Format)
-            });
-        }).then(uploadedSecondFile => {
-            unlinkFile(mp4Format);
-            unlinkFile(nonMp4Format);
-            makeFilePublic(bucket, uploadedSecondFile);
-            return makeFilePublic(bucket, uploadedNonMp4File);
-        }).then(() => {
-            return res.status(200).json({
-                fileLocation: environment.FILE_LOCATION + uploadedNonMp4File[0].name,
-                filename: uploadedNonMp4File[0].name
-            });
-        }).catch(err => {
-            console.log(err);
-            return res.status(500).json(err);
-        });
-    }
-
-    function convertFile(input, output) {
-        return new Promise((resolve, reject) => {
-            console.log("Entering converting file");
-            ffmpeg(input)
-                .format("mp4")
-                .videoCodec("libx264")
-                .on('error', function (err) {
-                    console.log("Error in converting file");
-                    reject(err);
-                })
-                .on('end', function () {
-                    console.log("Success in converting file");
-                    resolve(output);
-                }).saveToFile(output);
-        });
-    }
-
-    function makeFilePublic(bucket, uploadedFile) {
-        let file = uploadedFile[0];
-        var fileName = file.name;
-        var theFile = bucket.file(fileName);
-        return theFile.makePublic();
-    }
-
-    function unlinkFile(pathToTempFile) {
-        fs.unlinkSync(pathToTempFile);
-    }
-
-    function deleteFile(filename) {
+    function deleteFile(filename, fileType) {
         // Create a reference to the file to delete
-        return gcs.bucket(environment.FIREBASE_BUCKET).file(filename).delete();
+        const basename = path.basename(filename);
+        const dir = path.dirname(filename);
+        const THUMB_PREFIX = 'thumb_'
+        const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
+        if (fileType.startsWith('image/')) {
+            var thumb_file_name = `${THUMB_PREFIX}${basename}`;
+            bucket.file(dir + "/" + thumb_file_name).delete();
+        } else if (fileType.startsWith('video/')) {
+            var mp4_file = filename.replace(/\.[^.]+$/, "_output.mp4");
+            bucket.file(mp4_file).delete();
+        }
+        return bucket.file(filename).delete();
     }
 }());

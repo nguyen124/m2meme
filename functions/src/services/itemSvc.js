@@ -65,7 +65,7 @@
                 } else {
                     deleteAllCommentsOfItem(deletedItem._id);
                     for (let i = 0; i < deletedItem.files.length; i++) {
-                        fileSvc.deleteFile(deletedItem.files[i].filename);
+                        fileSvc.deleteFile(deletedItem.files[i].filename, deletedItem.files[i].fileType);
                     }
                     modelUserLogSvc.deleteManyModelUserLogs(deletedItem._id, null, null);
                     reportSvc.deleteAllReportsInsideAnItem(deletedItem._id);
