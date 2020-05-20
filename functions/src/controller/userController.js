@@ -5,7 +5,8 @@
         passport = require('passport'),
         status = require('http-status'),
         moment = require('moment'),
-        functions = require('firebase-functions');
+        functions = require('firebase-functions'),
+        fileSvc = require('../services/fileSvc');
 
 
     //********************USER*********************** */
@@ -30,6 +31,9 @@
             };
 
         userSvc.updateUser(conditions, newUserInfo, options).then(newUser => {
+            if (newUserInfo.hasAvatarChanged) {
+                fileSvc.deleteByUrl(req.user.avatar, 'image/')
+            }
             return res.status(status.OK).json(newUser);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);

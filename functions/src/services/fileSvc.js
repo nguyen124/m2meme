@@ -24,7 +24,8 @@
     module.exports = {
         middleF1: middleF1,
         middleF2: middleF2,
-        deleteFile: deleteFile
+        deleteFile: deleteFile,
+        deleteByUrl: deleteByUrl
     };
 
     function middleF1(req, res, next) {
@@ -124,7 +125,14 @@
         } else if (fileType.startsWith('video/')) {
             var mp4_file = filename.replace(/\.[^.]+$/, "_output.mp4");
             bucket.file(mp4_file).delete();
+            var mp4_file_thumb = filename.replace(/\.[^.]+$/, "_thumb_output.mp4");
+            bucket.file(mp4_file_thumb).delete();
         }
         return bucket.file(filename).delete();
+    }
+
+    function deleteByUrl(url, fileType) {
+        var name = url.replace(environment.FILE_LOCATION, '');
+        deleteFile(name, fileType)
     }
 }());
