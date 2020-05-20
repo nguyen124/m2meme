@@ -5,7 +5,8 @@
         notificationSvc = require('./notificationSvc'),
         reportSvc = require('./reportSvc'),
         moment = require('moment'),
-        ActionType = require('../shared/actionType');
+        ActionType = require('../shared/actionType'),
+        fileSvc = require('./fileSvc');
 
     module.exports = {
         getComments: getComments,
@@ -249,6 +250,11 @@
                     //delete logs related to this comment
                     modelUserLogSvc.deleteManyModelUserLogs(deletedComment.itemId, deletedComment.id, null);
                     reportSvc.deleteReport({ reportedItemId: deletedComment.itemId, reportedCommentId: deletedComment.id });
+                    for (var content of deletedComment.content) {
+                        if (content.fileType === "image" || content.fileType === "sound") {
+                            fileSvc.deleteByUrl(content.url, content.fileType);
+                        }
+                    }
                     if (deletedComment.parentCommentId) {
                         itemSvc.adjustNoOfCommentsOfItem(deletedComment.itemId, -1);
                         adjustNoOfRepliesOfComment(deletedComment.parentCommentId, -1)

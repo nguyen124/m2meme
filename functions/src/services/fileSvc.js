@@ -119,10 +119,10 @@
         const dir = path.dirname(filename);
         const THUMB_PREFIX = 'thumb_'
         const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
-        if (fileType.startsWith('image/')) {
+        if (fileType.startsWith('image')) {
             var thumb_file_name = `${THUMB_PREFIX}${basename}`;
             bucket.file(dir + "/" + thumb_file_name).delete();
-        } else if (fileType.startsWith('video/')) {
+        } else if (fileType.startsWith('video')) {
             var mp4_file = filename.replace(/\.[^.]+$/, "_output.mp4");
             bucket.file(mp4_file).delete();
             var mp4_file_thumb = filename.replace(/\.[^.]+$/, "_thumb_output.mp4");
@@ -132,7 +132,7 @@
     }
 
     function deleteByUrl(url, fileType) {
-        var name = url.replace(environment.FILE_LOCATION, '');
-        deleteFile(name, fileType)
+        var filename = url.replace(environment.FILE_LOCATION, '');
+        deleteFile(filename, fileType);
     }
 }());

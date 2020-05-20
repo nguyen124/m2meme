@@ -32,7 +32,7 @@
 
         userSvc.updateUser(conditions, newUserInfo, options).then(newUser => {
             if (newUserInfo.hasAvatarChanged) {
-                fileSvc.deleteByUrl(req.user.avatar, 'image/')
+                fileSvc.deleteByUrl(req.user.avatar, 'image')
             }
             return res.status(status.OK).json(newUser);
         }).catch(err => {
