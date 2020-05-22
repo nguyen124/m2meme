@@ -3,7 +3,7 @@
         router = express.Router();
 
     // Define the home page route
-    router.get('/', (req, res) => {
+    router.get('/svc/share/image', (req, res) => {
         var html = '<html><head>' +
             '<meta property="og:title" content="' + req.query.title + '">' +
             '<meta property="og:image" content="' + req.query.image + '">' +
@@ -20,7 +20,7 @@
         res.send(html);
     });
 
-    router.get('/share/video', (req, res) => {
+    router.get('/svc/share/video', (req, res) => {
         var html = '<html><head>' +
             '<meta property="og:title" content="' + req.query.title + '">' +
             '<meta property="og:video" content="' + req.query.video + '">' +
