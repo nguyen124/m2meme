@@ -15,6 +15,7 @@
         ffmpegPath = require('@ffmpeg-installer/ffmpeg').path,
         ffmpeg = require('fluent-ffmpeg'),
         environment = require('../../env.json')[process.env.NODE_ENV || 'development'];
+    //{ exec } = require("child_process");
 
     var today = new Date(),
         filePath = today.getFullYear() + "/" + today.getMonth() + "/" + today.getDate() + "/";
@@ -85,21 +86,26 @@
             });
 
             busboy.on('finish', () => {
-                const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
+                const bucket = gcs.bucket(environment.FIREBASE_BUCKET),
+                    baseNameOfFile = path.basename(req.data.file);
+
                 bucket.upload(req.data.file, {
                     uploadType: 'media',
-                    destination: filePath + path.basename(req.data.file),
+                    destination: filePath + baseNameOfFile,
                     resumable: false,
                     public: true,
                     metadata: { gzip: true, cacheControl: "public, max-age=31536000" }
-                }).then(uploadedNonMp4File => {
-                    fs.unlinkSync(req.data.file);
+                }).then(async uploadedNonMp4File => {
+                    if (req.file.mimetype.startsWith('video')) {
+                        await createPoster(bucket, path, baseNameOfFile, req.data.file);
+                        fs.unlinkSync(req.data.file);
+                    }
                     return res.status(200).json({
                         fileLocation: environment.FILE_LOCATION + uploadedNonMp4File[0].name,
                         filename: uploadedNonMp4File[0].name
                     });
                 }).catch(err => {
-                    console.log(err);
+                    console.log("Upload error: " + err);
                     return res.status(500).json(err);
                 });
             });
@@ -111,6 +117,48 @@
         if (process.env.NODE_ENV) {
             return next(); // only on production
         }
+    }
+
+    async function createPoster(bucket, path, baseNameOfFile, tempLocalFile) {
+        const gifPosterPath = baseNameOfFile.replace(/\.[^/.]+$/, '_poster.gif');
+        const posterPath = path.join(os.tmpdir(), gifPosterPath);
+        await createPosterFromVideo(tempLocalFile, posterPath);
+        await bucket.upload(posterPath, {
+            destination: filePath + gifPosterPath,
+            uploadType: 'media',
+            resumable: false,
+            public: true,
+            metadata: { gzip: true, cacheControl: "public, max-age=31536000" }
+        });
+        fs.unlinkSync(posterPath);
+    }
+
+    function createPosterFromVideo(input, output) {
+        return new Promise((resolve, reject) => {
+            ffmpeg(input)
+                .format("gif")
+                .fps(5)
+                .duration(3)
+                .on('error', (err) => {
+                    console.log("Error in create poster: " + err);
+                    reject(err);
+                })
+                .on('end', () => {
+                    //console.log("Success in create poster");
+                    resolve(output);
+                })
+                .saveToFile(output);
+            //DONOT DELETE THIS COMMENT
+            // exec('ffmpeg -t 2.5 -i ' + input + ' -filter_complex "[0:v] fps=5,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" ' + output, (error, stdout) => {
+            //     if (error) {
+            //         console.log(`error: ${error.message}`);
+            //         reject(error);
+            //         return;
+            //     }
+            //     resolve(output);
+            //     console.log(`stdout: ${stdout}`);
+            // });
+        });
     }
 
     function deleteFile(filename, fileType) {
@@ -127,6 +175,8 @@
             bucket.file(mp4_file).delete();
             var mp4_file_thumb = filename.replace(/\.[^.]+$/, "_thumb_output.mp4");
             bucket.file(mp4_file_thumb).delete();
+            var poster = filename.replace(/\.[^.]+$/, "_poster.gif");
+            bucket.file(poster).delete();
         }
         return bucket.file(filename).delete();
     }
