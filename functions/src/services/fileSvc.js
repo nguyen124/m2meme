@@ -120,7 +120,7 @@
     }
 
     async function createPoster(bucket, path, baseNameOfFile, tempLocalFile) {
-        const gifPosterPath = baseNameOfFile.replace(/\.[^/.]+$/, '_poster.gif');
+        const gifPosterPath = baseNameOfFile.replace(/\.[^/.]+$/, '_poster.jpg');
         const posterPath = path.join(os.tmpdir(), gifPosterPath);
         await createPosterFromVideo(tempLocalFile, posterPath);
         await bucket.upload(posterPath, {
@@ -136,9 +136,8 @@
     function createPosterFromVideo(input, output) {
         return new Promise((resolve, reject) => {
             ffmpeg(input)
-                .format("gif")
-                .fps(5)
-                .duration(3)
+                .seek(1)
+                .frames(1)
                 .on('error', (err) => {
                     console.log("Error in create poster: " + err);
                     reject(err);
@@ -175,8 +174,10 @@
             bucket.file(mp4_file).delete();
             var mp4_file_thumb = filename.replace(/\.[^.]+$/, "_thumb_output.mp4");
             bucket.file(mp4_file_thumb).delete();
-            var poster = filename.replace(/\.[^.]+$/, "_poster.gif");
+            var poster = filename.replace(/\.[^.]+$/, "_poster.jpg");
             bucket.file(poster).delete();
+            var posterGif = filename.replace(/\.[^.]+$/, "_poster.gif");
+            bucket.file(posterGif).delete();
         }
         return bucket.file(filename).delete();
     }
