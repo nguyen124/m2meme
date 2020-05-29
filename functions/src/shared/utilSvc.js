@@ -1,7 +1,9 @@
 (function () {
     function getPageNo(page, defaultValue) {
         if (page && !isNaN(page)) {
-            return Number(page);
+            if (page <= 100) {
+                return Number(page);
+            }
         }
         return defaultValue;
     }
