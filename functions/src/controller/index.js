@@ -1,6 +1,7 @@
 (function () {
     var express = require('express'),
-        router = express.Router();
+        router = express.Router(),
+        itemSvc = require('../services/itemSvc');
 
     // Define the home page route
     router.get('/svc/share/image', (req, res) => {
@@ -17,6 +18,41 @@
             '</head><body>' + '<script>window.location="' + req.query.url + '"</script>' +
             '</body></html>';
         res.send(html);
+    });
+
+    router.get('/svc/metatags', (req, res) => {
+        var itemId = req.query.id;
+        var options = {
+            conditions: {
+                _id: itemId
+            }
+        }
+        itemSvc.getItems(options).then(items => {
+            if (items.length > 0) {
+                var fileType = items[0].files[0].fileType;
+                var imageLink = items[0].files[0].url;
+                if (fileType.startsWith('video')) {
+                    imageLink = imageLink.replace(/\.[^.]+$/, "_poster.jpg");
+                }
+                var html = '<html><head>' +
+                    '<meta property="og:title" content="' + items[0].title + '">' +
+                    '<meta property="og:image" content="' + imageLink + '">' +
+                    '<meta property="og:image:width" content="' + 600 + '">' +
+                    '<meta property="og:image:height" content="' + 314 + '">' +
+                    '<meta property="og:description" content="' + items[0].description + '">' +
+                    '<meta name="twitter:card" content="summary_large_image">' +
+                    '<meta name="twitter:image" content="' + imageLink + '">' +
+                    '<meta name="twitter:title" content="' + items[0].title + '">' +
+                    '<meta name="twitter:description" content="' + items[0].description + '">' +
+                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + items[0].id + '"</script>' +
+                    '</body></html>';
+                return res.send(html);
+            } else {
+                return res.status(status.NOT_IMPLEMENTED).json(err);
+            }
+        }).catch(err => {
+            console.log(err);
+        });
     });
 
     module.exports = router;

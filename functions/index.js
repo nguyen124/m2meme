@@ -45,6 +45,7 @@
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
+    app.use(require('prerender-node').set('prerenderToken', 'de3yrhaaRPZXl1df3a3k'));
     app.use(require('./src/controller/index'));
     app.use(require('./src/controller/itemController'));
     app.use(require('./src/controller/commentController'));
