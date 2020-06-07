@@ -44,7 +44,7 @@
                     '<meta name="twitter:image" content="' + imageLink + '">' +
                     '<meta name="twitter:title" content="' + items[0].title + '">' +
                     '<meta name="twitter:description" content="' + items[0].description + '">' +
-                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + items[0].id + '"</script>' +
+                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + items[0].id + '&keep=true"</script>' +
                     '</body></html>';
                 return res.send(html);
             } else {
