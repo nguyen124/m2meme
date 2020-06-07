@@ -27,28 +27,31 @@
                 _id: itemId
             }
         }
-        itemSvc.getItems(options).then(items => {
-            if (items.length > 0) {
-                var fileType = items[0].files[0].fileType;
-                var imageLink = items[0].files[0].url;
+        itemSvc.getOneItem(options).then(item => {
+            if (item) {
+                var fileType = item.files[0].fileType;
+                var imageLink = item.files[0].url;
                 if (fileType.startsWith('video')) {
                     imageLink = imageLink.replace(/\.[^.]+$/, "_poster.jpg");
                 }
                 var html = '<html><head>' +
-                    '<meta property="og:title" content="' + items[0].title + '">' +
+                    '<meta property="og:title" content="' + item.title + '">' +
                     '<meta property="og:image" content="' + imageLink + '">' +
                     '<meta property="og:image:width" content="' + 600 + '">' +
                     '<meta property="og:image:height" content="' + 314 + '">' +
-                    '<meta property="og:description" content="' + items[0].description + '">' +
+                    '<meta property="og:description" content="' + item.description + '">' +
                     '<meta name="twitter:card" content="summary_large_image">' +
                     '<meta name="twitter:image" content="' + imageLink + '">' +
-                    '<meta name="twitter:title" content="' + items[0].title + '">' +
-                    '<meta name="twitter:description" content="' + items[0].description + '">' +
-                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + items[0].id + '&keep=true"</script>' +
+                    '<meta name="twitter:title" content="' + item.title + '">' +
+                    '<meta name="twitter:description" content="' + item.description + '">' +
+                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + item.id + '&keep=true"</script>' +
                     '</body></html>';
                 return res.send(html);
             } else {
-                return res.status(status.NOT_IMPLEMENTED).json(err);
+                var defaultHtml = '<html><head></head>' +
+                    '<body>' + '<script>window.location="https://me2meme.com"</script>' +
+                    '</body></html>';
+                return res.send(defaultHtml);
             }
         }).catch(err => {
             console.log(err);

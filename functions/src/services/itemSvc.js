@@ -13,7 +13,8 @@
         deleteItem: deleteItem,
         adjustNoOfCommentsOfItem: adjustNoOfCommentsOfItem,
         deleteAllCommentsOfItem: deleteAllCommentsOfItem,
-        updateItemsOfAnUser: updateItemsOfAnUser
+        updateItemsOfAnUser: updateItemsOfAnUser,
+        getOneItem: getOneItem
     };
 
     /* Get items */
@@ -25,6 +26,17 @@
                 }
                 return resolve(items);
             }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
+        });
+    }
+
+    function getOneItem(options) {
+        return new Promise((resolve, reject) => {
+            Item.findOne(options.conditions, {}, (err, item) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve(item);
+            });
         });
     }
 
