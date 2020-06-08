@@ -22,12 +22,10 @@
 
     router.get('/svc/metatags', (req, res) => {
         var itemId = req.query.id;
-        var options = {
-            conditions: {
-                _id: itemId
-            }
+        var conditions = {
+            _id: itemId
         }
-        itemSvc.getOneItem(options).then(item => {
+        itemSvc.getOneItem(conditions).then(item => {
             if (item) {
                 var fileType = item.files[0].fileType;
                 var imageLink = item.files[0].url;
@@ -44,7 +42,7 @@
                     '<meta name="twitter:image" content="' + imageLink + '">' +
                     '<meta name="twitter:title" content="' + item.title + '">' +
                     '<meta name="twitter:description" content="' + item.description + '">' +
-                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + item.id + '&keep=true"</script>' +
+                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + item.id + '"</script>' +
                     '</body></html>';
                 return res.send(html);
             } else {

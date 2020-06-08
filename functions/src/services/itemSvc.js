@@ -29,9 +29,9 @@
         });
     }
 
-    function getOneItem(options) {
+    function getOneItem(conditions) {
         return new Promise((resolve, reject) => {
-            Item.findOne(options.conditions, {}, (err, item) => {
+            Item.findOne(conditions, (err, item) => {
                 if (err) {
                     return reject(err);
                 }
