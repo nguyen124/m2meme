@@ -32,23 +32,23 @@
                 if (fileType.startsWith('video')) {
                     imageLink = imageLink.replace(/\.[^.]+$/, "_poster.jpg");
                 }
-                var html = '<html><head>' +
-                    '<meta property="og:title" content="' + item.title + '">' +
-                    '<meta property="og:image" content="' + imageLink + '">' +
-                    '<meta property="og:image:width" content="' + 600 + '">' +
-                    '<meta property="og:image:height" content="' + 314 + '">' +
-                    '<meta property="og:description" content="' + item.description + '">' +
-                    '<meta name="twitter:card" content="summary_large_image">' +
-                    '<meta name="twitter:image" content="' + imageLink + '">' +
-                    '<meta name="twitter:title" content="' + item.title + '">' +
-                    '<meta name="twitter:description" content="' + item.description + '">' +
-                    '</head><body>' + '<script>window.location="https://me2meme.com/items?id=' + item.id + '"</script>' +
-                    '</body></html>';
+                var html =
+                    '<html><head><meta property="og:title" content="' + item.title +
+                    '"><meta property="og:url" content="https://me2meme.com/svc/metatags?id=' + itemId +
+                    '"><meta property="fb:app_id" content="2341935745914929' +
+                    '"><meta property="og:type" content="website' +
+                    '"><meta property="og:image" content="' + imageLink +
+                    '"><meta property="og:image:width" content="' + 1200 +
+                    '"><meta property="og:image:height" content="' + 630 +
+                    '"><meta property="og:description" content="' + item.description +
+                    '"><meta name="twitter:card" content="summary_large_image' +
+                    '"><meta name="twitter:image" content="' + imageLink +
+                    '"><meta name="twitter:title" content="' + item.title +
+                    '"><meta name="twitter:description" content="' + item.description +
+                    '"></head><body><script>window.location="https://me2meme.com/items?id=' + item.id + '"</script></body></html>';
                 return res.send(html);
             } else {
-                var defaultHtml = '<html><head></head>' +
-                    '<body>' + '<script>window.location="https://me2meme.com"</script>' +
-                    '</body></html>';
+                var defaultHtml = '<html><head></head><body><script>window.location="https://me2meme.com"</script></body></html>';
                 return res.send(defaultHtml);
             }
         }).catch(err => {
