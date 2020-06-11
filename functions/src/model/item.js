@@ -24,7 +24,7 @@
             hasReported: Boolean,
             description: {
                 type: String,
-                maxlength: 500
+                maxlength: 10000
             }
         });
     function arrayLimit(val) {

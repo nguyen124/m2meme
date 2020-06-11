@@ -38,7 +38,6 @@
     "passport-google-oauth": "^2.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "prerender-node": "^3.2.5",
     "request": "^2.88.0",
     "rxjs": "^6.5.3",
     "uuid-v4": "^0.1.0"

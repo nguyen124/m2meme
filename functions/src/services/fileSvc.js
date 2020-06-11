@@ -37,11 +37,14 @@
                 req,
                 {
                     length: req.headers['content-length'],
-                    limit: '10mb',
+                    limit: '50mb',
                     encoding: contentType.parse(req).parameters.charset,
                 },
                 (err, string) => {
-                    if (err) return next(err);
+                    if (err) {
+                        console.log("Error: " + err);
+                        return next(err);
+                    }
                     req.rawBody = string;
                     return next();
                 }

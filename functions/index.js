@@ -25,7 +25,7 @@
     //Bind connection to error event (to get notification of connection errors)
     db.on('error', console.error.bind(console, 'MongoDB connection error:'));
     app.use(cors({
-        origin: ['https://m2meme.firebaseapp.com', 'httt://localhost:4200', 'http://127.0.0.1:4200'],
+        origin: ['https://m2meme.firebaseapp.com', 'https://m2meme-dev.web.app', 'httt://localhost:4200', 'http://127.0.0.1:4200'],
         credentials: true
     }));
     app.use(bodyParser.json());
@@ -45,7 +45,7 @@
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
-    app.use(require('prerender-node').set('prerenderToken', 'de3yrhaaRPZXl1df3a3k'));
+    // app.use(require('prerender-node').set('prerenderToken', 'de3yrhaaRPZXl1df3a3k'));
     app.use(require('./src/controller/index'));
     app.use(require('./src/controller/itemController'));
     app.use(require('./src/controller/commentController'));
