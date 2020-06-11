@@ -59,6 +59,9 @@
             let uuid = UUID();
             const busboy = new Busboy({
                 headers: req.headers,
+                limits: {
+                    fileSize: 50 * 1024 * 1024
+                }
             });
 
             var fileBuffer = new Buffer('');
