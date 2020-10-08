@@ -2,7 +2,6 @@
 (function () {
     var express = require('express'),
         app = express(),
-        bodyParser = require('body-parser'),
         mongoose = require('mongoose'),
         port = 3000,
         cors = require('cors'),
@@ -28,8 +27,8 @@
         origin: ['https://m2meme.firebaseapp.com', 'https://m2meme-dev.web.app', 'httt://localhost:4200', 'http://127.0.0.1:4200'],
         credentials: true
     }));
-    app.use(express.json({ limit: '50mb' }));
-    app.use(express.urlencoded({ limit: '50mb', extended: true }));
+    app.use(express.json({ limit: environment.MAX_FILE + 'mb' }));
+    app.use(express.urlencoded({ limit: environment.MAX_FILE + 'mb', extended: true }));
     app.use(cookieParser());
     app.use(session({
         name: '__session',

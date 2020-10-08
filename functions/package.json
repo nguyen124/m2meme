@@ -16,7 +16,6 @@
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@google-cloud/storage": "^2.4.2",
     "bcryptjs": "^2.4.3",
-    "body-parser": "*",
     "busboy": "^0.3.0",
     "child-process-promise": "^2.2.1",
     "connect-flash": "^0.1.1",
@@ -39,8 +38,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "request": "^2.88.0",
-    "rxjs": "^6.5.3",
-    "uuid-v4": "^0.1.0"
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
     "eslint": "^5.12.0",

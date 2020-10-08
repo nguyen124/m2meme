@@ -13,6 +13,6 @@
         var body = req.body;
         fileSvc.deleteByUrl(body.url, body.fileType);
         return res.status(status.OK);
-    })
+    });
     module.exports = router;
 }());
