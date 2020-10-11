@@ -6,8 +6,8 @@
         getRawBody = require('raw-body'),
         contentType = require('content-type'),
         { Storage } = require('@google-cloud/storage'),
-        ffmpegPath = require('@ffmpeg-installer/ffmpeg').path,
-        ffmpeg = require('fluent-ffmpeg'),
+        //ffmpegPath = require('@ffmpeg-installer/ffmpeg').path,
+        //ffmpeg = require('fluent-ffmpeg'),
         environment = require('../../env.json')[process.env.NODE_ENV || 'development'],
         MAX_FILE = environment.MAX_FILE,
         gcconfig = {
@@ -20,7 +20,7 @@
     let today = new Date(),
         filePath = today.getFullYear() + "/" + today.getMonth() + "/" + today.getDate() + "/";
 
-    ffmpeg.setFfmpegPath(ffmpegPath);
+    //ffmpeg.setFfmpegPath(ffmpegPath);
 
     module.exports = {
         middleF1: middleF1,
@@ -101,10 +101,10 @@
                     resumable: false,
                     metadata: { gzip: true, cacheControl: "public, max-age=31536000" }
                 }).then(async uploadedNonMp4File => {
-                    if (req.file.mimetype.startsWith('video')) {
-                        await createPoster(bucket, destination, path, req.user.username, req.data.fileName, req.data.file);
+                    //if (req.file.mimetype.startsWith('video')) {
+                        // await createPoster(bucket, destination, path, req.user.username, req.data.fileName, req.data.file);
                         fs.unlinkSync(req.data.file);
-                    }
+                    //}
                     return res.end();
                 }).catch(err => {
                     console.log("Upload error: " + err);
@@ -126,45 +126,45 @@
         }
     }
 
-    async function createPoster(bucket, destination, path, username, fileName, tempLocalFile) {
-        const gifPosterPath = fileName.replace(/\.[^/.]+$/, '_poster.jpg');
-        const posterPath = path.join(os.tmpdir(), username + "_" + gifPosterPath);
-        await createPosterFromVideo(tempLocalFile, posterPath);
-        await bucket.upload(posterPath, {
-            destination: destination + gifPosterPath,
-            uploadType: 'media',
-            resumable: false,
-            metadata: { gzip: true, cacheControl: "public, max-age=31536000" }
-        });
-        fs.unlinkSync(posterPath);
-    }
+    // async function createPoster(bucket, destination, path, username, fileName, tempLocalFile) {
+    //     const gifPosterPath = fileName.replace(/\.[^/.]+$/, '_poster.jpg');
+    //     const posterPath = path.join(os.tmpdir(), username + "_" + gifPosterPath);
+    //     await createPosterFromVideo(tempLocalFile, posterPath);
+    //     await bucket.upload(posterPath, {
+    //         destination: destination + gifPosterPath,
+    //         uploadType: 'media',
+    //         resumable: false,
+    //         metadata: { gzip: true, cacheControl: "public, max-age=31536000" }
+    //     });
+    //     fs.unlinkSync(posterPath);
+    // }
 
-    function createPosterFromVideo(input, output) {
-        return new Promise((resolve, reject) => {
-            ffmpeg(input)
-                .seek(1)
-                .frames(1)
-                .on('error', (err) => {
-                    console.log("Error in create poster: " + err);
-                    reject(err);
-                })
-                .on('end', () => {
-                    //console.log("Success in create poster");
-                    resolve(output);
-                })
-                .saveToFile(output);
-            //DONOT DELETE THIS COMMENT
-            // exec('ffmpeg -t 2.5 -i ' + input + ' -filter_complex "[0:v] fps=5,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" ' + output, (error, stdout) => {
-            //     if (error) {
-            //         console.log(`error: ${error.message}`);
-            //         reject(error);
-            //         return;
-            //     }
-            //     resolve(output);
-            //     console.log(`stdout: ${stdout}`);
-            // });
-        });
-    }
+    // function createPosterFromVideo(input, output) {
+    //     return new Promise((resolve, reject) => {
+    //         ffmpeg(input)
+    //             .seek(1)
+    //             .frames(1)
+    //             .on('error', (err) => {
+    //                 console.log("Error in create poster: " + err);
+    //                 reject(err);
+    //             })
+    //             .on('end', () => {
+    //                 //console.log("Success in create poster");
+    //                 resolve(output);
+    //             })
+    //             .saveToFile(output);
+    //         //DONOT DELETE THIS COMMENT
+    //         // exec('ffmpeg -t 2.5 -i ' + input + ' -filter_complex "[0:v] fps=5,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" ' + output, (error, stdout) => {
+    //         //     if (error) {
+    //         //         console.log(`error: ${error.message}`);
+    //         //         reject(error);
+    //         //         return;
+    //         //     }
+    //         //     resolve(output);
+    //         //     console.log(`stdout: ${stdout}`);
+    //         // });
+    //     });
+    // }
 
     function deleteFile(filename, fileType) {
         // Create a reference to the file to delete
