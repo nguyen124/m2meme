@@ -15,8 +15,10 @@
     const functions = require('firebase-functions');
     const MongoStore = require('connect-mongo')(session);
     passportCfg(passport);
-    // connect to mongoose
-    mongoose.connect(environment.MONGO_URI, { useNewUrlParser: true });
+    // connect to mongoose regular
+    // mongoose.connect(environment.MONGO_URI, { useNewUrlParser: true });
+    // connect to mongoose docker
+    mongoose.connect('mongodb://mongo:27017/architect', { useNewUrlParser: true });
     mongoose.set('useNewUrlParser', true);
     mongoose.set('useFindAndModify', false);
     mongoose.set('useCreateIndex', true);
