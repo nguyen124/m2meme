@@ -69,7 +69,7 @@
             if (numberPipe > 1) {
                 other = " others ";
             }
-            notification.title = output + "and " + numberPipe + other + notification.action + " your " + commentOrPost(notification.commentId);
+            notification.title = output + " and " + numberPipe + other + notification.action + " your " + commentOrPost(notification.commentId);
         } else {
             notification.title = output + " " + notification.action + " your " + commentOrPost(notification.commentId);
         }
