@@ -2,7 +2,8 @@
     var express = require('express'),
         router = express.Router(),
         itemSvc = require('../services/itemSvc'),
-        environment = require('../../env.json')[process.env.NODE_ENV || 'development'];
+        environment = require('../../env.json')[process.env.NODE_ENV || 'development'],
+        host = environment.host;
 
     // Define the home page route
     router.get('/svc/share/image', (req, res) => {
@@ -35,7 +36,7 @@
                 }
                 var html =
                     '<html><head><meta property="og:title" content="' + item.title +
-                    '"><meta property="og:url" content="https://me2meme.com/svc/metatags?id=' + itemId +
+                    '"><meta property="og:url" content="' + host + 'svc/metatags?id=' + itemId +
                     '"><meta property="fb:app_id" content="2341935745914929' +
                     '"><meta property="og:type" content="website' +
                     '"><meta property="og:image" content="' + imageLink +
@@ -49,7 +50,7 @@
                     '"></head><body><script>window.location="' + environment.host + '/items?id=' + item.id + '"</script></body></html>';
                 return res.send(html);
             } else {
-                var defaultHtml = '<html><head></head><body><script>window.location="https://me2meme.com"</script></body></html>';
+                var defaultHtml = '<html><head></head><body><script>window.location="' + host + '"</script></body></html>';
                 return res.send(defaultHtml);
             }
         }).catch(err => {

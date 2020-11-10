@@ -4,7 +4,9 @@
         FacebookStrategy = require('passport-facebook').Strategy,
         LocalStrategy = require('passport-local').Strategy,
         moment = require('moment'),
-        User = require('../model/user');
+        User = require('../model/user'),
+        environment = require('../../env.json')[process.env.NODE_ENV || 'development'],
+        host = environment.host;
 
     var passportConfig = function (passport) {
         passport.serializeUser((user, done) => {
@@ -37,7 +39,7 @@
         passport.use(new GoogleStrategy({
             clientID: '325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com',
             clientSecret: 'GKfVQghfAYBmXhvGbb0oLftZ',
-            callbackURL: "https://me2meme.com/svc/auth/google/callback"
+            callbackURL: host + "svc/auth/google/callback"
         },
             (accessToken, refreshToken, profile, done) => {
                 saveGoogleUser(accessToken, refreshToken, profile, done);
@@ -47,7 +49,7 @@
         passport.use(new FacebookStrategy({
             clientID: '2341935745914929',
             clientSecret: 'f9b60ab65360841ab7377664348eba75',
-            callbackURL: "https://me2meme.com/svc/auth/facebook/callback",
+            callbackURL: host + "svc/auth/facebook/callback",
             profileFields: ["email", "name", "displayName", "photos"]
         },
             (accessToken, refreshToken, profile, done) => {
