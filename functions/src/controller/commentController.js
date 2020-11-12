@@ -9,7 +9,7 @@
     /*
     Service to upvote an item
     */
-    router.put('/svc/current-user/upvote', middleware.isValidUser, (req, res) => {
+    router.put('/svc/comments/upvote', middleware.isValidUser, (req, res) => {
         var itemId = req.body.itemId,
             commentId = req.body.commentId;
         commentSvc.upvote(itemId, commentId, req.user.id).then(newItem => {
@@ -22,7 +22,7 @@
     /*
     Service to unUpvote an item
     */
-    router.put('/svc/current-user/unvote', middleware.isValidUser, (req, res) => {
+    router.put('/svc/comments/unvote', middleware.isValidUser, (req, res) => {
         var itemId = req.body.itemId,
             commentId = req.body.commentId;
         commentSvc.unvote(itemId, commentId, req.user.id).then(newItem => {
@@ -35,7 +35,7 @@
     /*
     Service to downVote an item
     */
-    router.put('/svc/current-user/downvote', middleware.isValidUser, (req, res) => {
+    router.put('/svc/comments/downvote', middleware.isValidUser, (req, res) => {
         var itemId = req.body.itemId,
             commentId = req.body.commentId;
         commentSvc.downvote(itemId, commentId, req.user.id).then(newItem => {
@@ -48,7 +48,7 @@
     /*
     Service to comment over an item
     */
-    router.post('/svc/current-user/comment', middleware.isValidUser, (req, res) => {
+    router.post('/svc/comments/create', middleware.isValidUser, (req, res) => {
         var comment = req.body,
             parentCommentId = req.body.parentCommentId;
         comment.noOfPoints = 0;
@@ -68,14 +68,14 @@
     });
 
     /* Edit comment */
-    router.put('/svc/items/:itemId/comments/:commentId', middleware.isValidUser, (req, res) => {
+    router.put('/svc/comments/:commentId/update', middleware.isValidUser, (req, res) => {
         var comment = req.body;
         var info = {
             comment: {
                 _id: req.params.commentId,
-                itemId: req.params.itemId
+                itemId: comment.itemId
             },
-            updates: comment,
+            updates: { content: comment.content },
             options: { new: true }
         };
         commentSvc.updateComment(info.comment, info.updates, info.options).then((result) => {
@@ -86,28 +86,15 @@
     });
 
     /*Delete comment*/
-    router.delete('/svc/items/:itemId/comments/:commentId', middleware.isValidUser, (req, res) => {
+    router.delete('/svc/comments/:commentId/delete', middleware.isValidUser, (req, res) => {
         var conditions = {
-            _id: req.params.commentId,
-            itemId: req.params.itemId
+            _id: req.params.commentId
         };
         if (req.user.role !== "ADMIN") {
             conditions = Object.assign(conditions, { "writtenBy.userId": req.user.id });
         }
         commentSvc.deleteComment(conditions).then((result) => {
             return res.status(status.OK).json(result);
-        }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
-        });
-    });
-
-    /*
-    Service to get all comment of an item
-    */
-    router.get('/svc/items/:_itemId/comments', (req, res) => {
-        var options = getOptions(req, { itemId: req.params._itemId, parentCommentId: null });
-        commentSvc.getComments(options, req.user).then((comments) => {
-            return res.status(status.OK).json(comments);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });

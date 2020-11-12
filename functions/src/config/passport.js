@@ -39,7 +39,7 @@
         passport.use(new GoogleStrategy({
             clientID: '325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com',
             clientSecret: 'GKfVQghfAYBmXhvGbb0oLftZ',
-            callbackURL: host + "svc/auth/google/callback"
+            callbackURL: host + "svc/users/google-auth-callback"
         },
             (accessToken, refreshToken, profile, done) => {
                 saveGoogleUser(accessToken, refreshToken, profile, done);
@@ -49,7 +49,7 @@
         passport.use(new FacebookStrategy({
             clientID: '2341935745914929',
             clientSecret: 'f9b60ab65360841ab7377664348eba75',
-            callbackURL: host + "svc/auth/facebook/callback",
+            callbackURL: host + "svc/users/facebook-auth-callback",
             profileFields: ["email", "name", "displayName", "photos"]
         },
             (accessToken, refreshToken, profile, done) => {

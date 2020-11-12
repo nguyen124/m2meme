@@ -1,6 +1,7 @@
 (function () {
     var router = require('express').Router(),
         itemSvc = require('../services/itemSvc'),
+        commentSvc = require('../services/commentSvc'),
         middleware = require('../../util/middleware'),
         modelUserLogSvc = require('../services/modelUserLogSvc'),
         sharedSvc = require('../shared/utilSvc'),
@@ -75,7 +76,7 @@
     }
 
     /** Delete item */
-    router.delete('/svc/items/:id', middleware.isValidUser, (req, res) => {
+    router.delete('/svc/items/:id/delete', middleware.isValidUser, (req, res) => {
         var conditions = {
             _id: req.params.id
         };
@@ -89,13 +90,13 @@
         });
     });
 
-    function getOptions(req) {
+    function getOptions(req, conditions) {
         var options = {
             page: sharedSvc.getPageNo(req.query.page, 0),
             perPage: sharedSvc.getPageNo(req.query.perPage, 40),
             temp: req.query.temp || "",
             order: { modifiedDate: -1 },
-            conditions: {}
+            conditions: conditions || {}
         };
 
         var tag = req.query.tag,
@@ -136,19 +137,19 @@
     /*
     Service to update an item
     */
-    router.put('/svc/items/:id', (req, res) => {
-        var newItemInfo = req.body;
-        itemSvc.updateItem({ _id: req.params.id }, newItemInfo, {}).then(result => {
-            return res.status(status.OK).json(result);
-        }).catch(err => {
-            res.status(status.NOT_IMPLEMENTED).json(err);
-        });
-    });
+    // router.put('/svc/items/:id/update', (req, res) => {
+    //     var newItemInfo = req.body;
+    //     itemSvc.updateItem({ _id: req.params.id }, newItemInfo, {}).then(result => {
+    //         return res.status(status.OK).json(result);
+    //     }).catch(err => {
+    //         res.status(status.NOT_IMPLEMENTED).json(err);
+    //     });
+    // });
 
     /*
     Service to create new item
     */
-    router.post('/svc/current-user/items', middleware.isValidUser, (req, res) => {
+    router.post('/svc/items/create', middleware.isValidUser, (req, res) => {
         var item = req.body;
         var isValid = validate(req.user, item);
         if (!isValid) {
@@ -156,6 +157,18 @@
         }
         return itemSvc.addItem(item).then(newItem => {
             return res.status(status.OK).json(newItem);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    /*
+   Service to get all comment of an item
+   */
+    router.get('/svc/items/:_itemId/comments', (req, res) => {
+        var options = getOptions(req, { itemId: req.params._itemId, parentCommentId: null });
+        commentSvc.getComments(options, req.user).then((comments) => {
+            return res.status(status.OK).json(comments);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });

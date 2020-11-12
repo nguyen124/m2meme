@@ -33,7 +33,7 @@
     /*
     Service to create new report
     */
-    router.post('/svc/reports', middleware.isValidUser, (req, res) => {
+    router.post('/svc/reports/create', middleware.isValidUser, (req, res) => {
         var report = req.body;
         report.reportedDate = moment().format("YYYY-MM-DD HH:mm:ss Z");
         report.status = "NEW";
@@ -52,7 +52,7 @@
     });
 
     /** Delete report */
-    router.delete('/svc/reports', middleware.isValidUser, (req, res) => {
+    router.delete('/svc/reports/delete', middleware.isValidUser, (req, res) => {
         var conditions = {
             reportedItemId: req.query.reportedItemId
         };

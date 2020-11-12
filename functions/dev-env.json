@@ -3,10 +3,10 @@
     "MONGO_URI": "mongodb://localhost/architect",
     "FIREBASE_BUCKET": "m2meme-dev.appspot.com",
     "FILE_LOCATION": "https://storage.googleapis.com/m2meme-dev.appspot.com/",
-    "host": "http://localhost:4200",
+    "host": "http://localhost:4200/",
     "MAX_FILE": "10",
     "projectId": "m2meme-dev",
-    "keyFileName": "m2meme-dev-firebase-adminsdk-6tku0-55299bd0d1.json"
+    "keyFileName": "./functions/m2meme-dev-firebase-adminsdk-6tku0-55299bd0d1.json"
   },
   "production": {
     "MONGO_URI": "mongodb+srv://admin:Nguy3nH0H@1@cluster0-wq5um.gcp.mongodb.net/architect-dev?retryWrites=true&w=majority",

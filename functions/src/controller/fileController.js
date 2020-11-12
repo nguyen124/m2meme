@@ -5,11 +5,11 @@
         fileSvc = require('../services/fileSvc'),
         status = require('http-status');
 
-    router.post('/svc/uploadFile', [middleware.isValidUser, fileSvc.middleF1, fileSvc.middleF2], functions.https.onRequest((req, res) => {
+    router.post('/svc/files/upload', [middleware.isValidUser, fileSvc.middleF1, fileSvc.middleF2], functions.https.onRequest((req, res) => {
 
     }));
 
-    router.post('/svc/deleteFile', (req, res) => {
+    router.post('/svc/files/delete', (req, res) => {
         var body = req.body;
         fileSvc.deleteByUrl(body.url, body.fileType);
         return res.status(status.OK);

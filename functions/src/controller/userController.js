@@ -12,7 +12,7 @@
     //********************USER*********************** */
 
     /** Update profile of a user */
-    router.put('/svc/users/:_id', middleware.isValidUser, (req, res) => {
+    router.put('/svc/users/:_id/update', middleware.isValidUser, (req, res) => {
         var id = req.params._id,
             conditions = {
                 _id: id
@@ -41,13 +41,13 @@
     });
 
     /** Logout user */
-    router.post('/svc/user/logout', middleware.isValidUser, (req, res) => {
+    router.post('/svc/users/logout', middleware.isValidUser, (req, res) => {
         req.logout();
         return res.status(status.OK).json({ status: "LOGOUT_DONE" });
     });
 
     /* Register user*/
-    router.post('/svc/user/register', (req, res) => {
+    router.post('/svc/users/register', (req, res) => {
         if (!req.body.passwords.password ||
             !req.body.passwords.confirmPassword ||
             (req.body.passwords.password !== req.body.passwords.confirmPassword)) {
@@ -71,7 +71,7 @@
     });
 
     /* Request Reset password*/
-    router.post('/svc/requestResetPassword', (req, res) => {
+    router.post('/svc/users/password/request-reset', (req, res) => {
         return userSvc.requestResetPassword(req.body).then(isTempPassSent => {
             return res.status(status.OK).json(isTempPassSent);
         }).catch(err => {
@@ -80,7 +80,7 @@
     });
 
     /* Reset password*/
-    router.post('/svc/resetPassword', (req, res) => {
+    router.post('/svc/users/password/reset', (req, res) => {
         if (!req.body.password ||
             !req.body.confirmPassword ||
             (req.body.password !== req.body.confirmPassword)) {
@@ -94,7 +94,7 @@
     });
 
     /** Login user with local auth */
-    router.post('/svc/user/auth/local', functions.https.onRequest((req, res, next) => {
+    router.post('/svc/users/local-auth', functions.https.onRequest((req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) {
                 return res.status(status.NOT_IMPLEMENTED).json(err);
@@ -125,18 +125,18 @@
     }));
 
     /* Google login. This route navigate user to google authentication page */
-    router.get('/svc/user/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+    router.get('/svc/users/google-auth', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
     /* Google login. This route navigate user to google authentication page */
-    router.get('/svc/user/auth/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+    router.get('/svc/users/facebook-auth', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 
     //Google login. This route navigate user to back to application after google authenticated successfully
-    router.get('/svc/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+    router.get('/svc/users/google-auth-callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
         res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
     });
 
     //Google login. This route navigate user to back to application after google authenticated successfully
-    router.get('/svc/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
+    router.get('/svc/users/facebook-auth-callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
         res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
     });
 
