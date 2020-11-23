@@ -186,7 +186,7 @@
             rank: user.rank,
             noOfFollowers: user.noOfFollowers
         };
-        item.modifiedDate = moment().format("YYYY-MM-DD");
+        item.modifiedDate = moment().format();
         item.noOfPoints = 0;
         item.noOfSeens = 0;
         item.noOfShares = 0;

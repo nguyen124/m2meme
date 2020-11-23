@@ -52,16 +52,16 @@
     // app.use(require('prerender-node').set('prerenderToken', 'de3yrhaaRPZXl1df3a3k'));
     var app = getExpressInstance();
     app.use(require('./src/controller/index'));
-    // if (!process.env.NODE_ENV) {
-    //     app.use(require('./src/controller/itemController'));
-    //     app.use(require('./src/controller/commentController'));
-    //     app.use(require('./src/controller/userController'));
-    //     app.use(require('./src/controller/reportController'));
-    //     app.use(require('./src/controller/notificationController'));
-    //     app.use(require('./src/controller/fileController'));
-    //     app.listen(3000);
-    //     console.log("listening port 3000");
-    // } else {
+    if (!process.env.NODE_ENV) {
+        app.use(require('./src/controller/itemController'));
+        app.use(require('./src/controller/commentController'));
+        app.use(require('./src/controller/userController'));
+        app.use(require('./src/controller/reportController'));
+        app.use(require('./src/controller/notificationController'));
+        app.use(require('./src/controller/fileController'));
+        app.listen(3000);
+        console.log("listening port 3000");
+    }
     var itemController = getExpressInstance();
     itemController.use(require('./src/controller/itemController'));
     var commentController = getExpressInstance();
@@ -82,5 +82,4 @@
     exports.reportController = functions.https.onRequest(reportController);
     exports.notificationController = functions.https.onRequest(notificationController);
     exports.fileController = functions.https.onRequest(fileController);
-    //}
 }());

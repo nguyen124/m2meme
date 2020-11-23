@@ -25,7 +25,7 @@
                     return reject(err);
                 }
                 return resolve(items);
-            }).sort(options.order).skip(options.page * options.perPage).limit(options.perPage);
+            }).hint({ $natural: -1 }).skip(options.page * options.perPage).limit(options.perPage);
         });
     }
 
