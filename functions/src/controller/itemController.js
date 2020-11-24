@@ -167,6 +167,7 @@
    */
     router.get('/svc/items/:_itemId/comments', (req, res) => {
         var options = getOptions(req, { itemId: req.params._itemId, parentCommentId: null });
+        options.order = { noOfPoints: -1 }; // overide default order
         commentSvc.getComments(options, req.user).then((comments) => {
             return res.status(status.OK).json(comments);
         }).catch(err => {
