@@ -24,8 +24,8 @@
     "cors": "^2.8.5",
     "express": "*",
     "express-session": "^1.17.0",
-    "firebase-admin": "^8.9.1",
-    "firebase-functions": "^3.3.0",
+    "firebase-admin": "^10.0.0",
+    "firebase-functions": "^3.16.0",
     "fluent-ffmpeg": "^2.1.2",
     "http-status": "^1.4.0",
     "moment": "^2.24.0",
@@ -41,7 +41,7 @@
     "rxjs": "^6.5.3"
   },
   "devDependencies": {
-    "eslint": "^5.12.0",
+    "eslint": "^8.4.0",
     "eslint-plugin-promise": "^4.0.1",
     "firebase-functions-test": "^0.1.6"
   },
