@@ -24,11 +24,11 @@
             hasReported: Boolean,
             description: {
                 type: String,
-                maxlength: 100000
+                maxlength: 2000
             },
             overview: {
                 type: String,
-                maxlength: 1000
+                maxlength: 500
             }
         });
     function arrayLimit(val) {
