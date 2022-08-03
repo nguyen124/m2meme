@@ -1,4 +1,4 @@
-
+//remmber to set Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass before running deploy
 (function () {
     var express = require('express'),
         mongoose = require('mongoose'),
@@ -59,6 +59,7 @@
         app.use(require('./src/controller/reportController'));
         app.use(require('./src/controller/notificationController'));
         app.use(require('./src/controller/fileController'));
+        app.use(require('./src/controller/checkoutController'));
         app.listen(3000);
         console.log("listening port 3000");
     }
@@ -74,6 +75,8 @@
     notificationController.use(require('./src/controller/notificationController'));
     var fileController = getExpressInstance();
     fileController.use(require('./src/controller/fileController'));
+    var checkoutController = getExpressInstance();
+    checkoutController.use(require('./src/controller/checkoutController'));
 
     exports.app = functions.https.onRequest(app);
     exports.itemController = functions.https.onRequest(itemController);
@@ -82,4 +85,5 @@
     exports.reportController = functions.https.onRequest(reportController);
     exports.notificationController = functions.https.onRequest(notificationController);
     exports.fileController = functions.https.onRequest(fileController);
+    exports.checkoutController = functions.https.onRequest(checkoutController);
 }());

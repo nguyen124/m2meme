@@ -8,6 +8,8 @@
         status = require('http-status'),
         moment = require('moment'),
         ActionType = require('../shared/actionType');
+    //const environment = require("../../env.json")[process.env.NODE_ENV || "development"];
+    //const stripe = require("stripe")(environment.stripeSk);
 
     //********************ITEM*********************** */
     router.get('/svc/items', (req, res, next) => {
@@ -176,7 +178,27 @@
     });
 
     function validate(user, item) {
-        if (!item.title || !item.files || (item.files.length <= 0)) {
+        let charge = item.charge;
+        // will turn this on if neccessary in future
+        // stripe.charges.retrieve(charge.id).then(charge=>{            
+        // }).catch((err) => {
+        //     console.log("Can't get charge by id");
+        //     console.log(err);            
+        // });
+        let duration = +item.duration;
+        if(duration === 1 && charge.amount !== 2000) {
+            return false;
+        }
+        if(duration === 3 && charge.amount !== 4000) {
+            return false;
+        }
+        if(duration === 6 && charge.amount !== 6000) {
+            return false;
+        }
+        if(duration === 12 && charge.amount !== 8000) {
+            return false;
+        }
+        if (!item.title || !item.files || (item.files.length <= 0 || !item.businessName)) {
             return false;
         }
         item.tags = item.tags.slice(0, 5);

@@ -53,6 +53,7 @@
         type: String,
         maxlength: 500,
       },
+      charge: Object
     });
   function arrayLimit(val) {
     return val.length <= 5;
