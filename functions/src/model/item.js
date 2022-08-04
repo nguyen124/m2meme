@@ -30,6 +30,7 @@
       hasReported: Boolean,
       price: Number,
       address: String,
+      address2: String,
       zipcode: String,
       city: String,
       state: String,
