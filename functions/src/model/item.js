@@ -55,7 +55,8 @@
         maxlength: 500,
       },
       charge: Object,
-      status: String
+      status: String,
+      geometry: Object
     });
   function arrayLimit(val) {
     return val.length <= 5;

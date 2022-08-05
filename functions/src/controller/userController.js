@@ -98,7 +98,7 @@
         passport.authenticate('local', (err, user, info) => {
             if (err) {
                 return res.status(status.NOT_IMPLEMENTED).json(err);
-            } else if (!user) {
+            } else if (!user || user.status === "SUSPENDED") {
                 return res.status(status.UNAUTHORIZED).json(info);
             }
             return req.logIn(user, (err) => {

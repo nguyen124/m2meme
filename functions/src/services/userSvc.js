@@ -93,7 +93,8 @@
                 password: User.hashPassword(info.password),
                 avatar: info.avatar,
                 joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
-                role: "USER"
+                role: "USER",
+                status: "ACTIVE"
             };
             return createNewUser(user);
         }
