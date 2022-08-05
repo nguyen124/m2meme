@@ -106,7 +106,12 @@
             createdBy = req.query.createdBy,
             category = req.query.category,
             id = req.query.id,
-            temp = req.query.temp;
+            temp = req.query.temp,
+            address = req.query.address,            
+            zipcode = req.query.zipcode,
+            city = req.query.city,
+            state = req.query.state,
+            country = req.query.country;
 
         // query conditions
         if (category) {
@@ -124,6 +129,23 @@
         if (id) {
             options.conditions = Object.assign(options.conditions, { '_id': id });
         }
+        if (address) {
+          options.conditions = Object.assign(options.conditions, { address: address });
+        } else {
+          if (zipcode) {
+            options.conditions = Object.assign(options.conditions, { zipcode });
+          } else {
+            if (city) {
+              options.conditions = Object.assign(options.conditions, { city });
+            } else {
+              if (state) {
+                options.conditions = Object.assign(options.conditions, { state });
+              } else if (country) {
+                  options.conditions = Object.assign(options.conditions, { country });
+                }
+              }
+            }          
+        }
         if (temp) {
             if (options.temp === "cold") {
                 options.conditions = Object.assign(options.conditions, { 'noOfPoints': { $lt: 1000 } });
@@ -133,6 +155,8 @@
                 options.conditions = Object.assign(options.conditions, { 'noOfPoints': { $gte: 2000 } });
             }
         }
+
+
         return options;
     }
 
@@ -214,6 +238,7 @@
         item.noOfSeens = 0;
         item.noOfShares = 0;
         item.noOfComments = 0;
+        item.status = "NEW";
         return true;
     }
 

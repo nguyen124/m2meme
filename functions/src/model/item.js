@@ -54,7 +54,8 @@
         type: String,
         maxlength: 500,
       },
-      charge: Object
+      charge: Object,
+      status: String
     });
   function arrayLimit(val) {
     return val.length <= 5;
