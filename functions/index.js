@@ -1,4 +1,4 @@
-//remmber to set Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass before running deploy
+//remmber to set "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass" before running deploy
 (function () {
     var express = require('express'),
         mongoose = require('mongoose'),
