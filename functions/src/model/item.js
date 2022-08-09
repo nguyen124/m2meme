@@ -46,14 +46,15 @@
       leaseEnd: Date,
       yearOld: Number,
       area: Number,
-      description: {
-        type: String,
-        maxlength: 2000,
-      },
+      duration: Number,
       overview: {
         type: String,
         maxlength: 500,
       },
+      description: {
+        type: String,
+        maxlength: 2000,
+      },     
       charge: Object,
       status: String,
       geometry: Object

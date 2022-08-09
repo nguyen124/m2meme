@@ -47,12 +47,26 @@
     }
 
     /** Get item */
+    router.post('/svc/items/:id/upview', (req, res) => {
+        var condition = {
+            _id: req.params.id
+        };
+        itemSvc.getItemByIdAndIncreaseView(condition).then((item) => {
+            return processOne(req, res, item);
+        }).then(result => {
+            return res.status(status.OK).json(result);
+        }).catch(err => {
+            return res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
+
+    /** Get item */
     router.get('/svc/items/:id', (req, res) => {
         var item = {
             _id: req.params.id
         };
-        itemSvc.getItemById(item).then((item) => {
-            return processOne(req, res, item);
+        itemSvc.getOneItem(item).then((item) => {
+            return item;
         }).then(result => {
             return res.status(status.OK).json(result);
         }).catch(err => {
@@ -163,14 +177,14 @@
     /*
     Service to update an item
     */
-    // router.put('/svc/items/:id/update', (req, res) => {
-    //     var newItemInfo = req.body;
-    //     itemSvc.updateItem({ _id: req.params.id }, newItemInfo, {}).then(result => {
-    //         return res.status(status.OK).json(result);
-    //     }).catch(err => {
-    //         res.status(status.NOT_IMPLEMENTED).json(err);
-    //     });
-    // });
+    router.put('/svc/items/:id/update', (req, res) => {
+        var newItemInfo = req.body;
+        itemSvc.updateItem({ _id: req.params.id }, newItemInfo, {}).then(result => {
+            return res.status(status.OK).json(result);
+        }).catch(err => {
+            res.status(status.NOT_IMPLEMENTED).json(err);
+        });
+    });
 
     /*
     Service to create new item

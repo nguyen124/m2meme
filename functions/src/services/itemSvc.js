@@ -9,7 +9,7 @@
         getItems: getItems,
         addItem: addItem,
         updateItem: updateItem,
-        getItemById: getItemById,
+        getItemByIdAndIncreaseView: getItemByIdAndIncreaseView,
         deleteItem: deleteItem,
         adjustNoOfCommentsOfItem: adjustNoOfCommentsOfItem,
         deleteAllCommentsOfItem: deleteAllCommentsOfItem,
@@ -40,7 +40,7 @@
         });
     }
 
-    function getItemById(item) {
+    function getItemByIdAndIncreaseView(item) {
         return updateItem(item, { $inc: { noOfViews: 1 } }, { upsert: true, new: true });
     }
 
