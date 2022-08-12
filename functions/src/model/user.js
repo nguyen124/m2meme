@@ -39,7 +39,7 @@
             },
             password: {
                 type: String,
-                maxlength: 50,
+                maxlength: 60,
                 minlength: 6
             },
             resetPasswordToken: {

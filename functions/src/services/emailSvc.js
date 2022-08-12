@@ -1,11 +1,16 @@
 (function () {
     const nodemailer = require('nodemailer');
-
+    environment = require('../../env.json')[process.env.NODE_ENV || 'development'];
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: environment.EMAIL_SERVER_HOST,
+        secure: false,
+        port: 587,
         auth: {
-            user: 'me2meme.entertainment@gmail.com',
-            pass: 'Nguy3nH0H@1'
+            user: environment.USERNAME,
+            pass: environment.PASSWORD
+        },
+        tls: {
+          rejectUnauthorized: false
         }
     });
 
