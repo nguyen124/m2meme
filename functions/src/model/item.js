@@ -3,11 +3,11 @@
     itemSchema = mongoose.Schema({
       title: {
         type: String,
-        maxlength: 150,
+        maxlength: 50
       },
       businessName: {
         type: String,
-        maxlength: 150,
+        maxlength: 50
       },
       files: [Object],
       modifiedDate: Date,
@@ -29,17 +29,41 @@
       hasDownvoted: Boolean,
       hasReported: Boolean,
       price: Number,
-      address: String,
-      address2: String,
-      zipcode: String,
-      city: String,
-      state: String,
-      country: String,
+      address: {
+        type: String,
+        maxlength: 50
+      },
+      address2: {
+        type: String,
+        maxlength: 50
+      },
+      zipcode: {
+        type: String,
+        maxlength: 10
+      },
+      city: {
+        type: String,
+        maxlength: 20
+      },
+      state: {
+        type: String,
+        maxlength: 20
+      },
+      country: {
+        type: String,
+        maxlength: 20
+      },
       noOfEmployees: Number,
       noOfChairs: Number,
       noOfTables: Number,
-      contactPhoneNo: String,
-      contactEmail: String,
+      contactPhoneNo: {
+        type: String,
+        maxlength: 18
+      },
+      contactEmail: {
+        type: String,
+        maxlength: 50
+      },
       income: Number,
       rentCost: Number,
       otherCost: Number,
@@ -49,14 +73,17 @@
       duration: Number,
       overview: {
         type: String,
-        maxlength: 500,
+        maxlength: 180,
       },
       description: {
         type: String,
-        maxlength: 2000,
+        maxlength: 1000,
       },     
       charge: Object,
-      status: String,
+      status: {
+        type: String,
+        maxlength: 20
+      },
       geometry: Object
     });
   function arrayLimit(val) {

@@ -12,10 +12,22 @@
             noOfPoints: Number,
             notifiedDate: Date,
             actionDoneByUsers: [String],
-            action: String,
-            userId: String,
-            itemId: String,
-            commentId: String,
+            action: {
+                type: String,
+                maxlength: 24
+            },
+            userId: {
+                type: String,
+                maxlength: 24
+            },
+            itemId: {
+                type: String,
+                maxlength: 24
+            },
+            commentId: {
+                type: String,
+                maxlength: 24
+            },
             hasRead: Boolean
         });
     notificationSchemma.index({ userId: 1, hasRead: 1 });

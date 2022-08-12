@@ -2,15 +2,22 @@
     var mongoose = require('mongoose'),
         commentSchemma = mongoose.Schema({
             parentCommentId: {
-                type: String
+                type: String,
+                maxlength: 24
             },
             content: [{
                 url: {
                     type: String,
                     maxlength: 1024
                 },
-                filename: String,
-                fileType: String
+                filename: {
+                    type: String,
+                    maxlength: 64
+                },
+                fileType: {
+                    type: String,
+                    maxlength: 24
+                }
             }],
             replyTo: Object,
             modifiedDate: {
@@ -20,7 +27,8 @@
                 type: Object
             },
             itemId: {
-                type: String
+                type: String,
+                maxlength: 24
             },
             noOfPoints: {
                 type: Number

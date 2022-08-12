@@ -39,10 +39,13 @@
             },
             password: {
                 type: String,
-                maxlength: 72,
+                maxlength: 50,
                 minlength: 6
             },
-            resetPasswordToken: String,
+            resetPasswordToken: {
+                type: String,
+                maxlength: 512
+            },
             resetPasswordExpires: Date,
             dob: Date,
             joinedDate: Date,
@@ -51,11 +54,23 @@
                 type: String,
                 maxlength: 20
             },
-            status: String,
+            status: {
+                type: String,
+                maxlength: 24
+            },
             noOfFollowers: Number,
-            googleId: String,
-            accessToken: String,
-            role: String
+            googleId: {
+                type: String,
+                maxlength: 128
+            },
+            accessToken: {
+                type: String,
+                maxlength: 512
+            },
+            role: {
+                type: String,
+                maxlength: 24
+            }
         });
 
     userSchema.statics.hashPassword = function hashPassword(password) {

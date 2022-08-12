@@ -2,13 +2,16 @@
     var mongoose = require('mongoose'),
         modelUserLogSchema = mongoose.Schema({
             userId: {
-                type: String
+                type: String,
+                maxlength: 24
             },
             itemId: {
-                type: String
+                type: String,
+                maxlength: 24
             },
             commentId: {
-                type: String
+                type: String,
+                maxlength: 24
             },
             hasVoted: Number,
             votedDate: Date,
