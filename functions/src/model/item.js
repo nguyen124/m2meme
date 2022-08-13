@@ -26,7 +26,6 @@
       noOfComments: Number,
       noOfViews: Number,
       hasUpvoted: Boolean,
-      hasDownvoted: Boolean,
       hasReported: Boolean,
       price: Number,
       address: {

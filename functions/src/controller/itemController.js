@@ -15,21 +15,19 @@
     router.get('/svc/items', (req, res, next) => {
         var options = getOptions(req);
         itemSvc.getItems(options).then((items) => {
-            return process(req, res, items);
+            return processItems(req, res, items);
         }).catch(err => {
             return res.status(status.NOT_IMPLEMENTED).json(err);
         });
     });
 
-    function process(req, res, items) {
+    function processItems(req, res, items) {
         var newItems = null;
         if (req.user) {
             newItems = items.map(async (item) => {
                 var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
                 if (modelUserLog) {
-                    if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
-                        item.hasDownvoted = true;
-                    } else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+                    if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                         item.hasUpvoted = true;
                     }
                     if (modelUserLog.itemId === item.id && !modelUserLog.commentId && modelUserLog.reported === ActionType.REPORTED) {
@@ -78,9 +76,7 @@
         if (req.user) {
             var modelUserLog = await modelUserLogSvc.getModelUserLog(item._id, null, req.user.id);
             if (modelUserLog) {
-                if (modelUserLog.hasVoted === ActionType.DOWNVOTED) {
-                    item.hasDownvoted = true;
-                } else if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+                if (modelUserLog.hasVoted === ActionType.UPVOTED) {
                     item.hasUpvoted = true;
                 }
                 if (modelUserLog.itemId === item.id && !modelUserLog.commentId && modelUserLog.reported === ActionType.REPORTED) {
