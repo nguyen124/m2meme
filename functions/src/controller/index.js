@@ -47,7 +47,7 @@
                     '"><meta name="twitter:image" content="' + imageLink +
                     '"><meta name="twitter:title" content="' + item.title +
                     '"><meta name="twitter:description" content="' + item.description +
-                    '"></head><body><script>window.location="' + environment.host + '/items?id=' + item.id + '"</script></body></html>';
+                    '"></head><body><script>window.location="' + environment.host + '/business?id=' + item.id + '"</script></body></html>';
                 return res.send(html);
             } else {
                 var defaultHtml = '<html><head></head><body><script>window.location="' + host + '"</script></body></html>';

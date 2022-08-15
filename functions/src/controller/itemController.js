@@ -12,7 +12,7 @@
     //const stripe = require("stripe")(environment.stripeSk);
 
     //********************ITEM*********************** */
-    router.get('/svc/items', (req, res, next) => {
+    router.get('/svc/business', (req, res, next) => {
         var options = getOptions(req);
         itemSvc.getItems(options).then((items) => {
             return processItems(req, res, items);
@@ -45,7 +45,7 @@
     }
 
     /** Get item */
-    router.post('/svc/items/:id/upview', (req, res) => {
+    router.post('/svc/business/:id/upview', (req, res) => {
         var condition = {
             _id: req.params.id
         };
@@ -59,7 +59,7 @@
     });
 
     /** Get item */
-    router.get('/svc/items/:id', (req, res) => {
+    router.get('/svc/business/:id', (req, res) => {
         var item = {
             _id: req.params.id
         };
@@ -88,7 +88,7 @@
     }
 
     /** Delete item */
-    router.delete('/svc/items/:id/delete', middleware.isValidUser, (req, res) => {
+    router.delete('/svc/business/:id/delete', middleware.isValidUser, (req, res) => {
         var conditions = {
             _id: req.params.id
         };
@@ -173,7 +173,7 @@
     /*
     Service to update an item
     */
-    router.put('/svc/items/:id/update', (req, res) => {
+    router.put('/svc/business/:id/update', (req, res) => {
         var newItemInfo = req.body;
         itemSvc.updateItem({ _id: req.params.id }, newItemInfo, {}).then(result => {
             return res.status(status.OK).json(result);
@@ -185,7 +185,7 @@
     /*
     Service to create new item
     */
-    router.post('/svc/items/create', middleware.isValidUser, (req, res) => {
+    router.post('/svc/business/create', middleware.isValidUser, (req, res) => {
         var item = req.body;
         var isValid = validate(req.user, item);
         if (!isValid) {
@@ -201,7 +201,7 @@
     /*
    Service to get all comment of an item
    */
-    router.get('/svc/items/:_itemId/comments', (req, res) => {
+    router.get('/svc/business/:_itemId/comments', (req, res) => {
         var options = getOptions(req, { itemId: req.params._itemId, parentCommentId: null });
         options.order = { noOfPoints: -1 }; // overide default order
         commentSvc.getComments(options, req.user).then((comments) => {
