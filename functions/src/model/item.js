@@ -94,6 +94,8 @@
         maxlength: 20,
       },
       geometry: Object,
+      expired: Boolean,
+      refundable: Boolean,
     });
   function arrayLimit(val) {
     return val.length <= 5;
