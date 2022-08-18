@@ -10,7 +10,10 @@
         maxlength: 50,
       },
       files: [Object],
-      modifiedDate: Date,
+      modifiedDate: {
+        type: Date,
+        expires: 157680000,
+      },
       createdBy: Object,
       tags: {
         type: [
@@ -94,12 +97,40 @@
         maxlength: 20,
       },
       geometry: Object,
-      expired: Boolean,
-      refundable: Boolean,
+      expired: {
+        type: Boolean,
+        default: function () {
+          const date1 = new Date();
+          const date2 = new Date(this.modifiedDate);
+          const diffTime = Math.abs(date2 - date1);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays > this.duration * 31) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+      },
+      refundable: {
+        type: Boolean,
+        default: function () {
+          const date1 = new Date();
+          const date2 = new Date(this.modifiedDate);
+          const diffTime = Math.abs(date2 - date1);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays > 1) {
+            return false;
+          } else {
+            return true;
+          }
+        },
+      },
     });
   function arrayLimit(val) {
     return val.length <= 5;
   }
   itemSchema.index({ modifiedDate: -1, tags: 1 });
+  //TTL of modifiedDate.
+  //157680000 is 5years , 94608000 is 3 years, 63072000 is 2 years , 34190000 is 13 months
   module.exports = mongoose.model("item", itemSchema);
 })();

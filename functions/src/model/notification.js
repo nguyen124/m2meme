@@ -10,7 +10,10 @@
                 maxlength: 100
             },
             noOfPoints: Number,
-            notifiedDate: Date,
+            notifiedDate: {
+                type: Date,
+                expires: 34190000
+            },
             actionDoneByUsers: [String],
             action: {
                 type: String,
@@ -30,6 +33,8 @@
             },
             hasRead: Boolean
         });
+    //TTL of modifiedDate.
+    //157680000 is 5years , 94608000 is 3 years, 63072000 is 2 years , 34190000 is 13 months
     notificationSchemma.index({ userId: 1, hasRead: 1 });
     module.exports = mongoose.model('notification', notificationSchemma);
 }());

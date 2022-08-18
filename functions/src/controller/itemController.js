@@ -14,6 +14,9 @@
   //********************ITEM*********************** */
   router.get("/svc/business", (req, res, next) => {
     var options = getOptions(req);
+    options.conditions = Object.assign(options.conditions, {
+      expired: { $ne: true },
+    });
     itemSvc
       .getItems(options)
       .then((items) => {
@@ -39,37 +42,26 @@
   function processItems(req, res, items) {
     var newItems = null;
     if (req.user) {
-      newItems = items
-        .filter((item) => {
-          const date1 = new Date();
-          const date2 = new Date(item.modifiedDate);
-          const diffTime = Math.abs(date2 - date1);
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          if (diffDays > 30 * item.duration) {
-            return false;
+      newItems = items.map(async (item) => {
+        var modelUserLog = await modelUserLogSvc.getModelUserLog(
+          item._id,
+          null,
+          req.user.id
+        );
+        if (modelUserLog) {
+          if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+            item.hasUpvoted = true;
           }
-          return true;
-        })
-        .map(async (item) => {
-          var modelUserLog = await modelUserLogSvc.getModelUserLog(
-            item._id,
-            null,
-            req.user.id
-          );
-          if (modelUserLog) {
-            if (modelUserLog.hasVoted === ActionType.UPVOTED) {
-              item.hasUpvoted = true;
-            }
-            if (
-              modelUserLog.itemId === item.id &&
-              !modelUserLog.commentId &&
-              modelUserLog.reported === ActionType.REPORTED
-            ) {
-              item.hasReported = true;
-            }
+          if (
+            modelUserLog.itemId === item.id &&
+            !modelUserLog.commentId &&
+            modelUserLog.reported === ActionType.REPORTED
+          ) {
+            item.hasReported = true;
           }
-          return item;
-        });
+        }
+        return item;
+      });
     }
     Promise.all(newItems || items)
       .then((result) => {
@@ -84,21 +76,6 @@
     var newItems = null;
     if (req.user) {
       newItems = items.map(async (item) => {
-        const date1 = new Date();
-        const date2 = new Date(item.modifiedDate);
-        const diffTime = Math.abs(date2 - date1);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays > 30 * item.duration) {
-          item.expired = true;
-        } else {
-          item.expired = false;
-        }
-        if (diffDays > 1) {
-          item.refundable = false;
-        } else {
-          item.refundable = true;
-        }
-
         var modelUserLog = await modelUserLogSvc.getModelUserLog(
           item._id,
           null,
@@ -187,9 +164,32 @@
     return item;
   }
 
-  /** Delete item */
-  router.delete(
-    "/svc/business/:id/delete",
+  /** Delete item NO EXPOSED TO CLIENT YET*/
+  // router.delete(
+  //   "/svc/business/:id/delete",
+  //   middleware.isValidUser,
+  //   (req, res) => {
+  //     var conditions = {
+  //       _id: req.params.id,
+  //     };
+  //     if (req.user.role !== "ADMIN") {
+  //       conditions = Object.assign(conditions, {
+  //         "createdBy.userId": req.user.id,
+  //       });
+  //     }
+  //     itemSvc
+  //       .deleteItem(conditions)
+  //       .then((result) => {
+  //         return res.status(status.OK).json(result);
+  //       })
+  //       .catch((err) => {
+  //         return res.status(status.NOT_IMPLEMENTED).json(err);
+  //       });
+  //   }
+  // );
+
+  router.put(
+    "/svc/business/:id/fakedelete",
     middleware.isValidUser,
     (req, res) => {
       var conditions = {
@@ -201,7 +201,7 @@
         });
       }
       itemSvc
-        .deleteItem(conditions)
+        .fakeDeleteItem(conditions)
         .then((result) => {
           return res.status(status.OK).json(result);
         })
@@ -219,6 +219,7 @@
       order: { modifiedDate: -1 },
       conditions: conditions || {},
     };
+    options.conditions = Object.assign( options.conditions, { status: { $ne: "DELETED" } });
 
     var tag = req.query.tag,
       date = req.query.date,

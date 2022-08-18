@@ -79,6 +79,7 @@
     function commentOrPost(commentId) {
         return (commentId ? "comment" : "post");
     }
+
     function toUserNamesString(users) {
         var output = "";
         if (users) {

@@ -85,7 +85,7 @@
     }
 
     function getUpdates(VOTE_TYPE, COMMENTED, REPORTED) {
-        var updates = {};
+        var updates = { modifiedDate: moment().format() };
         if (VOTE_TYPE !== null && VOTE_TYPE !== undefined) {
             updates = Object.assign(updates, {
                 hasVoted: VOTE_TYPE,
