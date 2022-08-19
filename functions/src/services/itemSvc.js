@@ -16,7 +16,32 @@
     updateItemsOfAnUser: updateItemsOfAnUser,
     getOneItem: getOneItem,
     fakeDeleteItem: fakeDeleteItem,
+    isExpired: isExpired,
+    isRefundable: isRefundable,
   };
+
+  function isExpired(item) {
+    const date1 = new Date();
+    const date2 = new Date(item.modifiedDate);
+    const diffTime = Math.abs(date2 - date1);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > item.duration * 31) {
+      return true;
+    }
+    return false;
+  }
+
+  function isRefundable(item) {
+    const date1 = new Date();
+    const date2 = new Date(item.modifiedDate);
+    const diffTime = Math.abs(date2 - date1);
+    const diffHrs = diffTime / (1000 * 60 * 60);
+    if (diffHrs > 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   /* Get items */
   function getItems(options) {

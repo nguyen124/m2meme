@@ -15,7 +15,7 @@
         commentSvc.upvote(itemId, commentId, req.user.id).then(newItem => {
             return res.status(status.OK).json(newItem.noOfPoints);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -28,7 +28,7 @@
         commentSvc.unvote(itemId, commentId, req.user.id).then(newItem => {
             return res.status(status.OK).json(newItem.noOfPoints);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -41,7 +41,7 @@
         commentSvc.downvote(itemId, commentId, req.user.id).then(newItem => {
             return res.status(status.OK).json(newItem.noOfPoints);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -63,7 +63,7 @@
         commentSvc.addComment(parentCommentId, comment).then(newComment => {
             return res.status(status.OK).json(newComment);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -81,7 +81,7 @@
         commentSvc.updateComment(info.comment, info.updates, info.options).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -96,7 +96,7 @@
         commentSvc.deleteComment(conditions).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -105,7 +105,7 @@
         commentSvc.getComments(options, req.user).then((comments) => {
             return res.status(status.OK).json(comments);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -114,7 +114,7 @@
         commentSvc.getCommentById(req.params.id).then((comment) => {
             return res.status(status.OK).json(comment);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 

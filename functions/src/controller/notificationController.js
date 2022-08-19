@@ -11,7 +11,7 @@
         notificationSvc.getNotifications(options).then((notifications) => {
             return res.status(status.OK).json(notifications);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -19,7 +19,7 @@
         notificationSvc.checkNotifications(req.user.id).then((yesno) => {
             return res.status(status.OK).json(yesno);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 

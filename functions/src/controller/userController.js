@@ -36,7 +36,7 @@
             }
             return res.status(status.OK).json(newUser);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -51,10 +51,10 @@
         if (!req.body.passwords.password ||
             !req.body.passwords.confirmPassword ||
             (req.body.passwords.password !== req.body.passwords.confirmPassword)) {
-            return res.status(status.NOT_IMPLEMENTED).json("Passwords are not qualified!");
+            return res.status(status.INTERNAL_SERVER_ERROR).json("Passwords are not qualified!");
         }
         if (!req.body.username || !req.body.email) {
-            return res.status(status.NOT_IMPLEMENTED).json("Username and email have to be entered!");
+            return res.status(status.INTERNAL_SERVER_ERROR).json("Username and email have to be entered!");
         }
         var user = {
             username: req.body.username,
@@ -66,7 +66,7 @@
         return userSvc.registerUser(user).then(newUser => {
             return res.status(status.OK).json(newUser);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -75,7 +75,7 @@
         return userSvc.requestResetPassword(req.body).then(isTempPassSent => {
             return res.status(status.OK).json(isTempPassSent);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -84,12 +84,12 @@
         if (!req.body.password ||
             !req.body.confirmPassword ||
             (req.body.password !== req.body.confirmPassword)) {
-            return res.status(status.NOT_IMPLEMENTED).json("Passwords are not qualified!");
+            return res.status(status.INTERNAL_SERVER_ERROR).json("Passwords are not qualified!");
         }
         return userSvc.resetPassword(req.body).then(isPasswordResetOk => {
             return res.status(status.OK).json(isPasswordResetOk);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -97,13 +97,13 @@
     router.post('/svc/users/local-auth', functions.https.onRequest((req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) {
-                return res.status(status.NOT_IMPLEMENTED).json(err);
+                return res.status(status.INTERNAL_SERVER_ERROR).json(err);
             } else if (!user || user.status === "SUSPENDED") {
                 return res.status(status.UNAUTHORIZED).json(info);
             }
             return req.logIn(user, (err) => {
                 if (err) {
-                    return res.status(status.NOT_IMPLEMENTED).json(err);
+                    return res.status(status.INTERNAL_SERVER_ERROR).json(err);
                 }
                 return res.status(status.OK).json({
                     user: {

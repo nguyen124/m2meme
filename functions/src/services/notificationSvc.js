@@ -129,11 +129,11 @@
 
     function checkNotifications(userId) {
         return new Promise((resolve, reject) => {
-            Notification.findOne({ userId: userId, hasRead: false }, (err, res) => {
+            Notification.findOne({ userId: userId, hasRead: false }, (err, result) => {
                 if (err) {
                     return reject(err);
                 }
-                if (res) {
+                if (result) {
                     return resolve(true);
                 } else {
                     return resolve(false);

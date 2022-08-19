@@ -14,7 +14,7 @@
         reportSvc.getReports(options).then((reports) => {
             return res.status(status.OK).json(reports);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -47,7 +47,7 @@
         reportSvc.addReport(report).then(newReport => {
             return res.status(status.OK).json(newReport);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
 
@@ -66,7 +66,7 @@
         reportSvc.deleteReport(conditions).then((result) => {
             return res.status(status.OK).json(result);
         }).catch(err => {
-            return res.status(status.NOT_IMPLEMENTED).json(err);
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
     module.exports = router;

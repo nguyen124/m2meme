@@ -99,31 +99,9 @@
       geometry: Object,
       expired: {
         type: Boolean,
-        default: function () {
-          const date1 = new Date();
-          const date2 = new Date(this.modifiedDate);
-          const diffTime = Math.abs(date2 - date1);
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          if (diffDays > this.duration * 31) {
-            return true;
-          } else {
-            return false;
-          }
-        },
       },
       refundable: {
         type: Boolean,
-        default: function () {
-          const date1 = new Date();
-          const date2 = new Date(this.modifiedDate);
-          const diffTime = Math.abs(date2 - date1);
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          if (diffDays > 1) {
-            return false;
-          } else {
-            return true;
-          }
-        },
       },
     });
   function arrayLimit(val) {

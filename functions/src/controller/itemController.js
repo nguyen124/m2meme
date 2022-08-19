@@ -8,6 +8,8 @@
     status = require("http-status"),
     moment = require("moment"),
     ActionType = require("../shared/actionType");
+  const paymentSvc = require("../services/paymentSvc");
+
   //const environment = require("../../env.json")[process.env.NODE_ENV || "development"];
   //const stripe = require("stripe")(environment.stripeSk);
 
@@ -23,7 +25,7 @@
         return processItems(req, res, items);
       })
       .catch((err) => {
-        return res.status(status.NOT_IMPLEMENTED).json(err);
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
@@ -35,33 +37,39 @@
         return processMyItems(req, res, items);
       })
       .catch((err) => {
-        return res.status(status.NOT_IMPLEMENTED).json(err);
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
   function processItems(req, res, items) {
     var newItems = null;
     if (req.user) {
-      newItems = items.map(async (item) => {
-        var modelUserLog = await modelUserLogSvc.getModelUserLog(
-          item._id,
-          null,
-          req.user.id
-        );
-        if (modelUserLog) {
-          if (modelUserLog.hasVoted === ActionType.UPVOTED) {
-            item.hasUpvoted = true;
+      newItems = items
+        .filter((item) => {
+          //filter out expired items
+          return item.status !== "REFUNDED" && !itemSvc.isExpired(item);
+        })
+        .map(async (item) => {
+          item.refundable = itemSvc.isRefundable(item);
+          var modelUserLog = await modelUserLogSvc.getModelUserLog(
+            item._id,
+            null,
+            req.user.id
+          );
+          if (modelUserLog) {
+            if (modelUserLog.hasVoted === ActionType.UPVOTED) {
+              item.hasUpvoted = true;
+            }
+            if (
+              modelUserLog.itemId === item.id &&
+              !modelUserLog.commentId &&
+              modelUserLog.reported === ActionType.REPORTED
+            ) {
+              item.hasReported = true;
+            }
           }
-          if (
-            modelUserLog.itemId === item.id &&
-            !modelUserLog.commentId &&
-            modelUserLog.reported === ActionType.REPORTED
-          ) {
-            item.hasReported = true;
-          }
-        }
-        return item;
-      });
+          return item;
+        });
     }
     Promise.all(newItems || items)
       .then((result) => {
@@ -76,6 +84,8 @@
     var newItems = null;
     if (req.user) {
       newItems = items.map(async (item) => {
+        item.expired = itemSvc.isExpired(item);
+        item.refundable = itemSvc.isRefundable(item);
         var modelUserLog = await modelUserLogSvc.getModelUserLog(
           item._id,
           null,
@@ -119,7 +129,7 @@
         return res.status(status.OK).json(result);
       })
       .catch((err) => {
-        return res.status(status.NOT_IMPLEMENTED).json(err);
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
@@ -137,7 +147,7 @@
         return res.status(status.OK).json(result);
       })
       .catch((err) => {
-        return res.status(status.NOT_IMPLEMENTED).json(err);
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
@@ -183,7 +193,7 @@
   //         return res.status(status.OK).json(result);
   //       })
   //       .catch((err) => {
-  //         return res.status(status.NOT_IMPLEMENTED).json(err);
+  //         return res.status(status.INTERNAL_SERVER_ERROR).json(err);
   //       });
   //   }
   // );
@@ -206,8 +216,36 @@
           return res.status(status.OK).json(result);
         })
         .catch((err) => {
-          return res.status(status.NOT_IMPLEMENTED).json(err);
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
+    }
+  );
+
+  router.put(
+    "/svc/business/:id/deleteRefund",
+    middleware.isValidUser,
+    (req, res) => {
+      var conditions = {
+        _id: req.params.id,
+      };
+      itemSvc.getOneItem(conditions).then((item) => {
+        if (itemSvc.isRefundable(item)) {
+          paymentSvc
+            .refund(item.charge.id, req.user.id)
+            .then((result) => {
+              if (result.status === "success") {
+                return res.status(status.OK).json(result);
+              }
+            })
+            .catch((err) => {
+              return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+            });
+        } else {
+          return res
+            .status(status.INTERNAL_SERVER_ERROR)
+            .json({ message: "No longer refundable" });
+        }
+      });
     }
   );
 
@@ -219,7 +257,9 @@
       order: { modifiedDate: -1 },
       conditions: conditions || {},
     };
-    options.conditions = Object.assign( options.conditions, { status: { $ne: "DELETED" } });
+    options.conditions = Object.assign(options.conditions, {
+      status: { $ne: "DELETED" },
+    });
 
     var tag = req.query.tag,
       date = req.query.date,
@@ -320,7 +360,7 @@
         return res.status(status.OK).json(result);
       })
       .catch((err) => {
-        res.status(status.NOT_IMPLEMENTED).json(err);
+        res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
@@ -331,7 +371,7 @@
     var item = req.body;
     var isValid = validate(req.user, item);
     if (!isValid) {
-      return res.status(status.NOT_IMPLEMENTED).json("Invalid form");
+      return res.status(status.INTERNAL_SERVER_ERROR).json("Invalid form");
     }
     return itemSvc
       .addItem(item)
@@ -339,7 +379,7 @@
         return res.status(status.OK).json(newItem);
       })
       .catch((err) => {
-        return res.status(status.NOT_IMPLEMENTED).json(err);
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
@@ -358,7 +398,7 @@
         return res.status(status.OK).json(comments);
       })
       .catch((err) => {
-        return res.status(status.NOT_IMPLEMENTED).json(err);
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
 
