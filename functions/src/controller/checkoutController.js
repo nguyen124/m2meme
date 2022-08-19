@@ -1,7 +1,9 @@
 (function () {
   var router = require("express").Router(),
     middleware = require("../../util/middleware"),
-    status = require("http-status");
+    status = require("http-status"),
+    paymentSvc = require("../services/paymentSvc"),
+    moment = require("moment");
   const environment =
     require("../../env.json")[process.env.NODE_ENV || "development"];
 
@@ -11,7 +13,7 @@
     Service to get reports 
     */
   router.post("/svc/stripe/checkout", middleware.isValidUser, (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     let duration = req.body.duration;
     let cost = 0;
     let description = "";
@@ -50,16 +52,24 @@
         });
       })
       .then((charge) => {
-        console.log("Charge success: ");
-        console.log(charge);
+        paymentSvc.savePayment({
+          userId: req.user.id,
+          charge,
+          modifiedDate: moment().format(),
+        });
         return res.status(status.OK).json({
           status: "success",
-          charge,
+          charge: {
+            id: charge.id,
+            amount: charge.amount,
+            description: charge.description,
+            created: charge.created,
+          },
         });
       })
       .catch((err) => {
-        console.log("Charge failure: ");
-        console.log(err);
+        // console.log("Charge failure: ");
+        // console.log(err);
         return res.status(status.INTERNAL_SERVER_ERROR).json({
           status: "failure",
         });
