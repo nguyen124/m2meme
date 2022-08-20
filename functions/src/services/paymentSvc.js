@@ -41,10 +41,6 @@
       let cost = 0;
       let description = "";
       if (!duration || isNaN(duration)) {
-        reject({
-          status: "failure",
-          message: "Not valid input",
-        });
         return;
       }
       switch (duration) {
@@ -79,13 +75,13 @@
             receipt_email: stripeToken.email,
           });
         })
-        .then((charge) => {
-          savePayment({
+        .then(async (charge) => {
+          await savePayment({
             userId: userId,
             charge,
             modifiedDate: moment().format(),
-          });
-          resolve({
+          });          
+          return resolve({
             status: "success",
             charge: {
               id: charge.id,
@@ -96,9 +92,9 @@
           });
         })
         .catch((err) => {
-          reject({
-            status: "failure",
-          });
+          // console.log("Save payment in checkout err: ");
+          // console.log(err);
+          reject(err);
         });
     });
   }
@@ -110,31 +106,31 @@
           charge: chargeId,
         })
         .then((refund) => {
-          saveRefund({
+          return saveRefund({
             userId: userId,
             refund,
             modifiedDate: moment().format(),
           });
-          itemSvc
-            .updateItem(
-              {
-                "charge.id": chargeId,
-              },
-              { $set: { status: "REFUNDED" } },
-              { new: true }
-            )
-            .then((result) => {
-              resolve({
-                status: "success",
-                result
-              });
-            })
-            .catch((err) => {
-              reject({
-                status: "failure",
-                err: err,
-              });
-            });
+        })
+        .then((result) => {
+          return itemSvc.updateItem(
+            {
+              "charge.id": chargeId,
+            },
+            { $set: { status: "REFUNDED" } },
+            { new: true }
+          );
+        })
+        .then((result) => {
+          return resolve({
+            status: "success",
+            result,
+          });
+        })
+        .catch((err) => {
+          // console.log("Error in save refund");
+          // console.log(err);
+          reject(err);
         });
     });
   }

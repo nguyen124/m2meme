@@ -29,7 +29,7 @@
       });
   });
 
-  router.get("/svc/user/business", (req, res, next) => {
+  router.get("/svc/business/user/", (req, res, next) => {
     var options = getOptions(req);
     itemSvc
       .getItems(options)
@@ -228,24 +228,20 @@
       var conditions = {
         _id: req.params.id,
       };
-      itemSvc.getOneItem(conditions).then((item) => {
-        if (itemSvc.isRefundable(item)) {
-          paymentSvc
-            .refund(item.charge.id, req.user.id)
-            .then((result) => {
-              if (result.status === "success") {
-                return res.status(status.OK).json(result);
-              }
-            })
-            .catch((err) => {
-              return res.status(status.INTERNAL_SERVER_ERROR).json(err);
-            });
-        } else {
-          return res
-            .status(status.INTERNAL_SERVER_ERROR)
-            .json({ message: "No longer refundable" });
-        }
-      });
+      itemSvc
+        .getOneItem(conditions)
+        .then((item) => {
+          if (itemSvc.isRefundable(item)) {
+            return paymentSvc.refund(item.charge.id, req.user.id);
+          }
+          return Promise.reject(new Error("Not refundable"));
+        })
+        .then((result) => {
+          return res.status(status.OK).json(result);
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+        });
     }
   );
 
@@ -379,6 +375,8 @@
         return res.status(status.OK).json(newItem);
       })
       .catch((err) => {
+        // console.log("Business/create err: ");
+        // console.log(err);
         return res.status(status.INTERNAL_SERVER_ERROR).json(err);
       });
   });
@@ -410,7 +408,7 @@
     //     console.log("Can't get charge by id");
     //     console.log(err);
     // });
-    let duration = +item.duration;
+    let duration = Number(item.duration);
     if (duration === 1 && charge.amount !== 2000) {
       return false;
     }
