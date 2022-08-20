@@ -21,14 +21,16 @@
                 { resetPasswordToken: tempPass, resetPasswordExpires: expriredDate },
                 { 'new': true }, (err, newUser) => {
                     if (err) {
-                        return reject(err);
+                        // eslint-disable-next-line prefer-promise-reject-errors
+                        return reject("resetPassword.validate.error");
                     }
                     if (newUser) {
                         //Send temp pass to email
                         emailSvc.sendEmail({ targetEmail: newUser.email, resetPasswordToken: newUser.resetPasswordToken }).then(result => {
                             return resolve(result);
                         }).catch(err => {
-                            return reject(err);
+                            // eslint-disable-next-line prefer-promise-reject-errors
+                            return reject("resetPassword.validate.sendTempPassError");
                         });
                     } else {
                         return resolve(false);
@@ -105,15 +107,16 @@
         return new Promise((resolve, reject) => {
             User.findOne({ $or: [{ email: info.email }, { username: info.username }] }, (err, user) => {
                 if (err) {
-                    return reject(err);
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    return reject("register.validate.error");
                 }
                 if (user) {
                     if (user.email === info.email) {
                         // eslint-disable-next-line prefer-promise-reject-errors
-                        return reject('Email has been used!');
+                        return reject("register.validate.existingEmail");
                     } else if (user.username === info.username) {
                         // eslint-disable-next-line prefer-promise-reject-errors
-                        return reject('Username has been used!');
+                        return reject("register.validate.existingUsername");
                     }
                 }
                 return resolve(null);

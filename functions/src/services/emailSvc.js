@@ -20,7 +20,7 @@
 
     function sendEmail(obj) {
         var mailOptions = {
-            from: 'me2meme.entertainment@gmail.com',
+            from: 'troivietcompany@gmail.com',
             to: obj.targetEmail,
             subject: 'Reset password passcode!',
             text: 'Please use this temporary passcode ' + obj.resetPasswordToken + ' to reset password. The passcode will be expired in 5 minutes.',

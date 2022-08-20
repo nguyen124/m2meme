@@ -97,13 +97,13 @@
     router.post('/svc/users/local-auth', functions.https.onRequest((req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) {
-                return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+                return res.status(status.INTERNAL_SERVER_ERROR).json("login.validate.error");
             } else if (!user || user.status === "SUSPENDED") {
-                return res.status(status.UNAUTHORIZED).json(info);
+                return res.status(status.UNAUTHORIZED).json("login.validate.error");
             }
             return req.logIn(user, (err) => {
                 if (err) {
-                    return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+                    return res.status(status.INTERNAL_SERVER_ERROR).json("login.validate.error");
                 }
                 return res.status(status.OK).json({
                     user: {
