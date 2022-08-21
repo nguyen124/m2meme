@@ -29,6 +29,7 @@
                         emailSvc.sendEmail({ targetEmail: newUser.email, resetPasswordToken: newUser.resetPasswordToken }).then(result => {
                             return resolve(result);
                         }).catch(err => {
+                            console.log(err);
                             // eslint-disable-next-line prefer-promise-reject-errors
                             return reject("resetPassword.validate.sendTempPassError");
                         });
