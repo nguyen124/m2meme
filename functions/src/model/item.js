@@ -1,20 +1,60 @@
 (function () {
   var mongoose = require("mongoose"),
+    FileSchema = mongoose.Schema({
+      url: {
+        type: String,
+        maxlength: 256,
+      },
+      filename: {
+        type: String,
+        maxlength: 128,
+      },
+      fileType: {
+        type: String,
+        maxlength: 50,
+      },
+    }),
+    CreateBySchema = mongoose.Schema({
+      userId: {
+        type: String,
+        maxlength: 24,
+      },
+      avatar: {
+        type: String,
+        maxlength: 256,
+      },
+      username: {
+        type: String,
+        maxlength: 50,
+      },
+    }),
+    ChargeSchema = mongoose.Schema({
+      id: {
+        type: String,
+        maxlength: 50,
+      },
+      amount: Number,
+      description: {
+        type: String,
+        maxlength: 100,
+      },
+      created: Number,
+    }),
     itemSchema = mongoose.Schema({
       title: {
         type: String,
-        maxlength: 50,
+        maxlength: 100,
       },
       businessName: {
         type: String,
         maxlength: 50,
       },
-      files: [Object],
+      files: [FileSchema],
       modifiedDate: {
         type: Date,
         expires: 157680000,
       },
-      createdBy: Object,
+      createdBy: CreateBySchema,
       tags: {
         type: [
           {
@@ -34,7 +74,12 @@
         validate: [arrayLimit, "{PATH} exceeds the limit of 5"],
       },
       wage: Number,
-      categories: [String],
+      categories: [
+        {
+          type: String,
+          maxlength: 50,
+        },
+      ],
       noOfPoints: Number,
       noOfComments: Number,
       noOfViews: Number,
@@ -91,7 +136,7 @@
         type: String,
         maxlength: 1000,
       },
-      charge: Object,
+      charge: ChargeSchema,
       status: {
         type: String,
         maxlength: 20,

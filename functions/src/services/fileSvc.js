@@ -10,7 +10,7 @@
     //ffmpeg = require('fluent-ffmpeg'),
     environment =
       require("../../env.json")[process.env.NODE_ENV || "development"],
-    MAX_FILE = environment.MAX_FILE,
+    MAX_FILE_SIZE = environment.MAX_FILE_SIZE,
     gcconfig = {
       projectId: environment.projectId,
       keyFilename: environment.keyFileName,
@@ -46,7 +46,7 @@
         req,
         {
           length: req.headers["content-length"],
-          limit: MAX_FILE + "mb",
+          limit: MAX_FILE_SIZE + "mb",
           encoding: contentType.parse(req).parameters.charset,
         },
         (err, string) => {
@@ -70,7 +70,7 @@
       const busboy = new Busboy({
         headers: req.headers,
         limits: {
-          fileSize: MAX_FILE * 1024 * 1024,
+          fileSize: MAX_FILE_SIZE * 1024 * 1024,
         },
       });
 

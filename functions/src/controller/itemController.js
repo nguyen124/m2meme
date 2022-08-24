@@ -422,10 +422,11 @@
       return false;
     }
     if (
-      !item.title ||
       !item.files ||
+      item.files.length > 10 ||
       item.files.length <= 0 ||
-      !item.businessName
+      (item.tags && item.tags.length > 5) ||
+      (item.categories && item.categories.length > 20)
     ) {
       return false;
     }
