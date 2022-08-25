@@ -114,8 +114,8 @@
         });
     });
   
-    router.get("/svc/activate", (req, res) => {
-      const sts = req.query.hashStatus
+    router.post("/svc/activate", (req, res) => {
+      const sts = req.body.hashStatus;
       return userSvc
         .activateUser(sts)
         .then((ok) => {
@@ -137,10 +137,11 @@
               .json("login.validate.error");
           } else if (
             !user ||
-            user.status === "SUSPENDED" ||
-            user.status.length === 24
+            user.status === "SUSPENDED"            
           ) {
             return res.status(status.UNAUTHORIZED).json("login.validate.error");
+          } else if(user.status.length === 24) {
+            return res.status(status.UNAUTHORIZED).json("login.validate.emailNotValidated");
           }
           return req.logIn(user, (err) => {
             if (err) {

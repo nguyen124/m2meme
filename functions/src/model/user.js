@@ -49,7 +49,7 @@
             resetPasswordExpires: Date,
             activateAccountExpires: {
                 type: Date,
-                expires: 900,
+                expires: 120,
             },
             dob: Date,
             joinedDate: Date,

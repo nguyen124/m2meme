@@ -2,7 +2,7 @@
     const nodemailer = require("nodemailer");
     const environment =
       require("../../env.json")[process.env.NODE_ENV || "development"];
-    userControllerHost = environment.userControllerHost;
+    const host = environment.host;
     const transporter = nodemailer.createTransport({
       host: environment.EMAIL_SERVER_HOST,
       secure: false,
@@ -54,12 +54,12 @@
         subject: "Activate your TroiViet account!",
         text: `${new Date()}
         Dear wonderful customer
-        Please click on this link to activate your account ${userControllerHost}/svc/activate?${new URLSearchParams({hashStatus}).toString()}
+        Please click on this link to activate your account ${host}activate?${new URLSearchParams({hashStatus}).toString()}
         `,
         html:
           `<p>${new Date()}</p>
           <p>Dear wonderful customer</p>
-          <p>Please click on this link to activate your account <a href="${userControllerHost}/svc/activate?${new URLSearchParams({hashStatus}).toString()}">activate</a></p>
+          <p>Please click on this link to activate your account <a href="${host}activate?${new URLSearchParams({hashStatus}).toString()}">activate</a></p>
           `,
       };
   
