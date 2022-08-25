@@ -47,6 +47,10 @@
                 maxlength: 512
             },
             resetPasswordExpires: Date,
+            activateAccountExpires: {
+                type: Date,
+                expires: 900,
+            },
             dob: Date,
             joinedDate: Date,
             modifiedDate: Date,

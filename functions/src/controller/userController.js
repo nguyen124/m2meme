@@ -1,144 +1,207 @@
 (function () {
-    var router = require('express').Router(),
-        userSvc = require('../services/userSvc'),
-        middleware = require('../../util/middleware'),
-        passport = require('passport'),
-        status = require('http-status'),
-        moment = require('moment'),
-        functions = require('firebase-functions'),
-        fileSvc = require('../services/fileSvc');
-
-
+    var router = require("express").Router(),
+      userSvc = require("../services/userSvc"),
+      middleware = require("../../util/middleware"),
+      passport = require("passport"),
+      status = require("http-status"),
+      moment = require("moment"),
+      functions = require("firebase-functions"),
+      fileSvc = require("../services/fileSvc");
+  
     //********************USER*********************** */
-
+  
     /** Update profile of a user */
-    router.put('/svc/users/:_id/update', middleware.isValidUser, (req, res) => {
-        var id = req.params._id,
-            conditions = {
-                _id: id
-            },
-            newUserInfo = req.body,
-            options = {
-                projection: {
-                    _id: true,
-                    username: true,
-                    gender: true,
-                    dob: true,
-                    nationality: true,
-                    avatar: true
-                },
-                new: true
-            };
-
-        userSvc.updateUser(conditions, newUserInfo, options).then(newUser => {
-            if (newUserInfo.hasAvatarChanged) {
-                fileSvc.deleteByUrl(req.user.avatar, 'image')
-            }
-            return res.status(status.OK).json(newUser);
-        }).catch(err => {
-            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
-        });
-    });
-
-    /** Logout user */
-    router.post('/svc/users/logout', middleware.isValidUser, (req, res) => {
-        req.logout();
-        return res.status(status.OK).json({ status: "LOGOUT_DONE" });
-    });
-
-    /* Register user*/
-    router.post('/svc/users/register', (req, res) => {
-        if (!req.body.passwords.password ||
-            !req.body.passwords.confirmPassword ||
-            (req.body.passwords.password !== req.body.passwords.confirmPassword)) {
-            return res.status(status.INTERNAL_SERVER_ERROR).json("Passwords are not qualified!");
-        }
-        if (!req.body.username || !req.body.email) {
-            return res.status(status.INTERNAL_SERVER_ERROR).json("Username and email have to be entered!");
-        }
-        var user = {
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.passwords.password,
-            avatar: '../../assets/image/default-avatar.png',
-            joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z")
+    router.put("/svc/users/:_id/update", middleware.isValidUser, (req, res) => {
+      var id = req.params._id,
+        conditions = {
+          _id: id,
+        },
+        newUserInfo = req.body,
+        options = {
+          projection: {
+            _id: true,
+            username: true,
+            gender: true,
+            dob: true,
+            nationality: true,
+            avatar: true,
+          },
+          new: true,
         };
-        return userSvc.registerUser(user).then(newUser => {
-            return res.status(status.OK).json(newUser);
-        }).catch(err => {
-            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+  
+      userSvc
+        .updateUser(conditions, newUserInfo, options)
+        .then((newUser) => {
+          if (newUserInfo.hasAvatarChanged) {
+            fileSvc.deleteByUrl(req.user.avatar, "image");
+          }
+          return res.status(status.OK).json(newUser);
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
-
+  
+    /** Logout user */
+    router.post("/svc/users/logout", middleware.isValidUser, (req, res) => {
+      req.logout();
+      return res.status(status.OK).json({ status: "LOGOUT_DONE" });
+    });
+  
+    /* Register user*/
+    router.post("/svc/users/register", (req, res) => {
+      if (
+        !req.body.passwords.password ||
+        !req.body.passwords.confirmPassword ||
+        req.body.passwords.password !== req.body.passwords.confirmPassword
+      ) {
+        return res
+          .status(status.INTERNAL_SERVER_ERROR)
+          .json("Passwords are not qualified!");
+      }
+      if (!req.body.username || !req.body.email) {
+        return res
+          .status(status.INTERNAL_SERVER_ERROR)
+          .json("Username and email have to be entered!");
+      }
+      var user = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.passwords.password,
+        avatar: "../../assets/image/default-avatar.png",
+        joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
+      };
+      return userSvc
+        .registerUser(user)
+        .then((newUser) => {
+          return res.status(status.OK).json(newUser);
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+        });
+    });
+  
     /* Request Reset password*/
-    router.post('/svc/users/password/request-reset', (req, res) => {
-        return userSvc.requestResetPassword(req.body).then(isTempPassSent => {
-            return res.status(status.OK).json(isTempPassSent);
-        }).catch(err => {
-            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+    router.post("/svc/users/password/request-reset", (req, res) => {
+      return userSvc
+        .requestResetPassword(req.body)
+        .then((isTempPassSent) => {
+          return res.status(status.OK).json(isTempPassSent);
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
-
+  
     /* Reset password*/
-    router.post('/svc/users/password/reset', (req, res) => {
-        if (!req.body.password ||
-            !req.body.confirmPassword ||
-            (req.body.password !== req.body.confirmPassword)) {
-            return res.status(status.INTERNAL_SERVER_ERROR).json("Passwords are not qualified!");
-        }
-        return userSvc.resetPassword(req.body).then(isPasswordResetOk => {
-            return res.status(status.OK).json(isPasswordResetOk);
-        }).catch(err => {
-            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+    router.post("/svc/users/password/reset", (req, res) => {
+      if (
+        !req.body.password ||
+        !req.body.confirmPassword ||
+        req.body.password !== req.body.confirmPassword
+      ) {
+        return res
+          .status(status.INTERNAL_SERVER_ERROR)
+          .json("Passwords are not qualified!");
+      }
+      return userSvc
+        .resetPassword(req.body)
+        .then((isPasswordResetOk) => {
+          return res.status(status.OK).json(isPasswordResetOk);
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
         });
     });
-
+  
+    router.get("/svc/activate", (req, res) => {
+      const sts = req.query.hashStatus
+      return userSvc
+        .activateUser(sts)
+        .then((ok) => {
+          return res.status(status.OK).json({ status: "success" });
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+        });
+    });
+  
     /** Login user with local auth */
-    router.post('/svc/users/local-auth', functions.https.onRequest((req, res, next) => {
-        passport.authenticate('local', (err, user, info) => {
+    router.post(
+      "/svc/users/local-auth",
+      functions.https.onRequest((req, res, next) => {
+        passport.authenticate("local", (err, user, info) => {
+          if (err) {
+            return res
+              .status(status.INTERNAL_SERVER_ERROR)
+              .json("login.validate.error");
+          } else if (
+            !user ||
+            user.status === "SUSPENDED" ||
+            user.status.length === 24
+          ) {
+            return res.status(status.UNAUTHORIZED).json("login.validate.error");
+          }
+          return req.logIn(user, (err) => {
             if (err) {
-                return res.status(status.INTERNAL_SERVER_ERROR).json("login.validate.error");
-            } else if (!user || user.status === "SUSPENDED") {
-                return res.status(status.UNAUTHORIZED).json("login.validate.error");
+              return res
+                .status(status.INTERNAL_SERVER_ERROR)
+                .json("login.validate.error");
             }
-            return req.logIn(user, (err) => {
-                if (err) {
-                    return res.status(status.INTERNAL_SERVER_ERROR).json("login.validate.error");
-                }
-                return res.status(status.OK).json({
-                    user: {
-                        _id: user._id,
-                        username: user.username,
-                        email: user.email,
-                        joinedDate: user.joinedDate,
-                        avatar: user.avatar,
-                        familyName: user.familyName,
-                        givenName: user.givenName,
-                        gender: user.gender,
-                        nationality: user.nationality,
-                        dob: user.dob,
-                        role: user.role
-                    }
-                });
+            return res.status(status.OK).json({
+              user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                joinedDate: user.joinedDate,
+                avatar: user.avatar,
+                familyName: user.familyName,
+                givenName: user.givenName,
+                gender: user.gender,
+                nationality: user.nationality,
+                dob: user.dob,
+                role: user.role,
+              },
             });
+          });
         })(req, res, next);
-    }));
-
+      })
+    );
+  
     /* Google login. This route navigate user to google authentication page */
-    router.get('/svc/users/google-auth', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
+    router.get(
+      "/svc/users/google-auth",
+      passport.authenticate("google", { scope: ["profile", "email"] })
+    );
+  
     /* Google login. This route navigate user to google authentication page */
-    router.get('/svc/users/facebook-auth', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
-
+    router.get(
+      "/svc/users/facebook-auth",
+      passport.authenticate("facebook", { scope: ["public_profile", "email"] })
+    );
+  
     //Google login. This route navigate user to back to application after google authenticated successfully
-    router.get('/svc/users/google-auth-callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-        res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
-    });
-
+    router.get(
+      "/svc/users/google-auth-callback",
+      passport.authenticate("google", { failureRedirect: "/login" }),
+      (req, res) => {
+        res.redirect(
+          "/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user))
+        );
+      }
+    );
+  
     //Google login. This route navigate user to back to application after google authenticated successfully
-    router.get('/svc/users/facebook-auth-callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
-        res.redirect("/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user)));
-    });
-
+    router.get(
+      "/svc/users/facebook-auth-callback",
+      passport.authenticate("facebook", { failureRedirect: "/login" }),
+      (req, res) => {
+        res.redirect(
+          "/savelogin?user=" + encodeURIComponent(JSON.stringify(req.user))
+        );
+      }
+    );
+  
     module.exports = router;
-}());
+  })();
+  
