@@ -126,7 +126,7 @@
       var hashStatus = makeid(24);
       // expire hashStatus in 15 minutes;
       let activateAccountExpires = Date.now() + 900000;
-      console.log("hashStatus: " + hashStatus);
+      //console.log("hashStatus: " + hashStatus);
       var user = {
         username: info.username,
         email: info.email,
