@@ -88,7 +88,7 @@
       price: Number,
       address: {
         type: String,
-        maxlength: 50,
+        maxlength: 100,
       },
       address2: {
         type: String,

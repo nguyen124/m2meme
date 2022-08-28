@@ -263,12 +263,15 @@
       category = req.query.category,
       need = req.query.need,
       id = req.query.id,
-      temp = req.query.temp,
+      //temp = req.query.temp,
       address = req.query.address,
       zipcode = req.query.zipcode,
       city = req.query.city,
       state = req.query.state,
-      country = req.query.country;
+      country = req.query.country,
+      minPrice = req.query.minPrice,
+      maxPrice = req.query.maxPrice,
+      keyword = req.query.keyword;
 
     // query conditions
     if (category) {
@@ -324,21 +327,40 @@
         }
       }
     }
-    if (temp) {
-      if (options.temp === "cold") {
-        options.conditions = Object.assign(options.conditions, {
-          noOfPoints: { $lt: 1000 },
-        });
-      } else if (options.temp === "warm") {
-        options.conditions = Object.assign(options.conditions, {
-          noOfPoints: { $gte: 1000, $lt: 2000 },
-        });
-      } else if (options.temp === "hot") {
-        options.conditions = Object.assign(options.conditions, {
-          noOfPoints: { $gte: 2000 },
-        });
-      }
+    if (minPrice) {
+      options.conditions = Object.assign(options.conditions, {
+        price: { $gte: minPrice },
+      });
     }
+    if (maxPrice) {
+      options.conditions = Object.assign(options.conditions, {
+        price: { $lte: maxPrice },
+      });
+    }
+    if (keyword) {
+      options.conditions = Object.assign(options.conditions, {
+        $or: [
+          { title: { $regex: keyword } },
+          { businessName: { $regex: keyword } },
+          { tags: { $in: [keyword] } },
+        ],
+      });
+    }
+    // if (temp) {
+    //   if (options.temp === "cold") {
+    //     options.conditions = Object.assign(options.conditions, {
+    //       noOfPoints: { $lt: 1000 },
+    //     });
+    //   } else if (options.temp === "warm") {
+    //     options.conditions = Object.assign(options.conditions, {
+    //       noOfPoints: { $gte: 1000, $lt: 2000 },
+    //     });
+    //   } else if (options.temp === "hot") {
+    //     options.conditions = Object.assign(options.conditions, {
+    //       noOfPoints: { $gte: 2000 },
+    //     });
+    //   }
+    // }
 
     return options;
   }
@@ -351,7 +373,11 @@
     //prevent user chaning modifiedDate
     delete newItemInfo.modifiedDate;
     itemSvc
-      .updateItem({ _id: req.params.id }, newItemInfo, {})
+      .updateItem(
+        { _id: req.params.id, "createdBy.userId": req.user.id },
+        newItemInfo,
+        {}
+      )
       .then((result) => {
         return res.status(status.OK).json(result);
       })
