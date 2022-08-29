@@ -308,24 +308,15 @@
     if (id) {
       options.conditions = Object.assign(options.conditions, { _id: id });
     }
-    if (address) {
-      options.conditions = Object.assign(options.conditions, {
-        address: address,
-      });
-    } else {
-      if (zipcode) {
-        options.conditions = Object.assign(options.conditions, { zipcode });
-      } else {
-        if (city) {
-          options.conditions = Object.assign(options.conditions, { city });
-        } else {
-          if (state) {
-            options.conditions = Object.assign(options.conditions, { state });
-          } else if (country) {
-            options.conditions = Object.assign(options.conditions, { country });
-          }
-        }
-      }
+    if (address || zipcode || city || state || country) {
+      options.conditions = Object.assign(
+        options.conditions,
+        address ? { address } : null,
+        zipcode ? { zipcode } : null,
+        city ? { city } : null,
+        state ? { state } : null,
+        country ? { country } : null
+      );
     }
     if (minPrice) {
       options.conditions = Object.assign(options.conditions, {
@@ -346,22 +337,6 @@
         ],
       });
     }
-    // if (temp) {
-    //   if (options.temp === "cold") {
-    //     options.conditions = Object.assign(options.conditions, {
-    //       noOfPoints: { $lt: 1000 },
-    //     });
-    //   } else if (options.temp === "warm") {
-    //     options.conditions = Object.assign(options.conditions, {
-    //       noOfPoints: { $gte: 1000, $lt: 2000 },
-    //     });
-    //   } else if (options.temp === "hot") {
-    //     options.conditions = Object.assign(options.conditions, {
-    //       noOfPoints: { $gte: 2000 },
-    //     });
-    //   }
-    // }
-
     return options;
   }
 
