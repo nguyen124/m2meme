@@ -6,7 +6,11 @@
     User = require("../model/user"),
     environment =
       require("../../env.json")[process.env.NODE_ENV || "development"],
-    host = environment.host;
+    host = environment.host,
+    googleClientId = environment.googleClientId,
+    googleClientSecretKey = environment.googleClientSecretKey,
+    facebookClientId = environment.facebookClientId,
+    facebookClientSecret = environment.facebookClientSecret;
 
   var passportConfig = function (passport) {
     passport.serializeUser((user, done) => {
@@ -60,9 +64,8 @@
     passport.use(
       new GoogleStrategy(
         {
-          clientID:
-            "325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com",
-          clientSecret: "GKfVQghfAYBmXhvGbb0oLftZ",
+          clientID: googleClientId,
+          clientSecret: googleClientSecretKey,
           callbackURL: host + "svc/users/google-auth-callback",
         },
         (accessToken, refreshToken, profile, done) => {
@@ -74,8 +77,8 @@
     passport.use(
       new FacebookStrategy(
         {
-          clientID: "737995523963189",
-          clientSecret: "71fe6ae0d4493b941ba320251fc72958",
+          clientID: facebookClientId,
+          clientSecret: facebookClientSecret,
           callbackURL: host + "svc/users/facebook-auth-callback",
           profileFields: ["email", "name", "displayName", "photos"],
         },

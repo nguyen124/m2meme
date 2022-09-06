@@ -4,8 +4,13 @@
     itemSvc = require("../services/itemSvc"),
     environment =
       require("../../env.json")[process.env.NODE_ENV || "development"],
-    host = environment.host;
+    host = environment.host,
+    striptags = require("striptags");
   const secret = environment["reCAPTCHA_SK"];
+  const facebookClientId = environment.facebookClientId;
+  const mongoose = require("mongoose");
+  const ObjectId = mongoose.Types.ObjectId;
+
   // Define the home page route
   router.get("/svc/share/image", (req, res) => {
     var html =
@@ -46,7 +51,7 @@
   router.get("/svc/metatags", (req, res) => {
     var itemId = req.query.id;
     var conditions = {
-      _id: itemId,
+      _id: ObjectId(itemId),
     };
     itemSvc
       .getOneItem(conditions)
@@ -57,41 +62,31 @@
           if (fileType.startsWith("video")) {
             imageLink = imageLink.replace(/\.[^.]+$/, "_poster.jpg");
           }
-          var html =
-            '<html><head><meta property="og:title" content="' +
-            item.title +
-            '"><meta property="og:url" content="' +
-            host +
-            "svc/metatags?id=" +
-            itemId +
-            '"><meta property="fb:app_id" content="2341935745914929' +
-            '"><meta property="og:type" content="website' +
-            '"><meta property="og:image" content="' +
-            imageLink +
-            '"><meta property="og:image:width" content="' +
-            1200 +
-            '"><meta property="og:image:height" content="' +
-            630 +
-            '"><meta property="og:description" content="' +
-            item.description +
-            '"><meta name="twitter:card" content="summary_large_image' +
-            '"><meta name="twitter:image" content="' +
-            imageLink +
-            '"><meta name="twitter:title" content="' +
-            item.title +
-            '"><meta name="twitter:description" content="' +
-            item.description +
-            '"></head><body><script>window.location="' +
-            environment.host +
-            "/business?id=" +
-            item.id +
-            '"</script></body></html>';
+          var html = `
+          <html>
+              <head>
+                <meta property="og:title" content="${item.title}">
+                <meta property="og:url" content="${host}svc/metatags?id=${itemId}">
+                <meta property="fb:app_id" content="${facebookClientId}">
+                <meta property="og:type" content="website">
+                <meta property="og:image" content="${imageLink}">
+                <meta property="og:image:width" content="1200">
+                <meta property="og:image:height" content="630">
+                <meta property="og:description" content="${striptags(item.description)}">
+                <meta name="twitter:card" content="summary_large_image">
+                <meta name="twitter:image" content="${imageLink}">
+                <meta name="twitter:title" content="${item.title}">
+                <meta name="twitter:description" content="${item.description}">
+              </head>
+              <body>
+                <script>window.location="${environment.host}?id=${
+            item.id
+          }"</script>
+              </body>
+          </html>`;
           return res.send(html);
         } else {
-          var defaultHtml =
-            '<html><head></head><body><script>window.location="' +
-            host +
-            '"</script></body></html>';
+          var defaultHtml = `<html><head></head><body><script>window.location="${host}"</script></body></html>`;
           return res.send(defaultHtml);
         }
       })
