@@ -74,8 +74,8 @@
     passport.use(
       new FacebookStrategy(
         {
-          clientID: "2341935745914929",
-          clientSecret: "f9b60ab65360841ab7377664348eba75",
+          clientID: "737995523963189",
+          clientSecret: "71fe6ae0d4493b941ba320251fc72958",
           callbackURL: host + "svc/users/facebook-auth-callback",
           profileFields: ["email", "name", "displayName", "photos"],
         },
