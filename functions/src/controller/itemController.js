@@ -403,14 +403,12 @@
 
   function validate(user, item) {
     let charge = item.charge;
-    // will turn this on if neccessary in future
-    // stripe.charges.retrieve(charge.id).then(charge=>{
-    // }).catch((err) => {
-    //     console.log("Can't get charge by id");
-    //     console.log(err);
-    // });
     let price = 2000;
     if (item.coupon && item.coupon.appliedCoupon) {
+      //make sure discount is correct
+      if (item.coupon.discount !== 0.5) {
+        return false;
+      }
       price = price * item.coupon.discount;
     }
     let duration = Number(item.duration);
