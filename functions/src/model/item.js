@@ -148,6 +148,10 @@
       refundable: {
         type: Boolean,
       },
+      coupon: {
+        appliedCoupon: Boolean,
+        discount: Number
+      }
     });
   function arrayLimit(val) {
     return val.length <= 5;

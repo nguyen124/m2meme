@@ -10,10 +10,12 @@
   router.post("/svc/stripe/checkout", middleware.isValidUser, (req, res) => {
     //console.log(req.body);
     let duration = req.body.duration;
+    let appliedCoupon = req.body.appliedCoupon;
     let token = req.body.stripeToken;
     let userId = req.user.id;
+    
     paymentSvc
-      .checkout(duration, token, userId)
+      .checkout(duration, appliedCoupon, token, userId)
       .then((result) => {
         return res.status(status.OK).json(result);
       })

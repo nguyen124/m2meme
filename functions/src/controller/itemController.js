@@ -409,17 +409,21 @@
     //     console.log("Can't get charge by id");
     //     console.log(err);
     // });
+    let price = 2000;
+    if (item.coupon && item.coupon.appliedCoupon) {
+      price = price * item.coupon.discount;
+    }
     let duration = Number(item.duration);
-    if (duration === 1 && charge.amount !== 2000) {
+    if (duration === 1 && charge.amount !== price) {
       return false;
     }
-    if (duration === 3 && charge.amount !== 4000) {
+    if (duration === 3 && charge.amount !== price * 2) {
       return false;
     }
-    if (duration === 6 && charge.amount !== 6000) {
+    if (duration === 6 && charge.amount !== price * 3) {
       return false;
     }
-    if (duration === 12 && charge.amount !== 8000) {
+    if (duration === 12 && charge.amount !== price * 4) {
       return false;
     }
     if (

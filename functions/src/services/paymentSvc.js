@@ -36,28 +36,32 @@
     });
   }
 
-  function checkout(duration, stripeToken, userId) {
+  function checkout(duration, appliedCoupon, stripeToken, userId) {
     return new Promise((resolve, reject) => {
       let cost = 0;
+      let price = 20;
       let description = "";
       if (!duration || isNaN(duration)) {
         return;
       }
+      if (appliedCoupon) {
+        price = price / 2;
+      }
       switch (duration) {
         case "1":
-          cost = 20;
+          cost = price;
           description = "Tạo Quảng Cáo Cho 1 Tháng";
           break;
         case "3":
-          cost = 40;
+          cost = price * 2;
           description = "Tạo Quảng Cáo Cho 3 Tháng";
           break;
         case "6":
-          cost = 60;
+          cost = price * 3;
           description = "Tạo Quảng Cáo Cho 6 Tháng";
           break;
         case "12":
-          cost = 80;
+          cost = price * 4;
           description = "Tạo Quảng Cáo Cho 12 Tháng";
           break;
       }
@@ -80,7 +84,7 @@
             userId: userId,
             charge,
             modifiedDate: moment().format(),
-          });          
+          });
           return resolve({
             status: "success",
             charge: {
