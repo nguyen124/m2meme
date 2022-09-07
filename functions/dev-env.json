@@ -4,21 +4,37 @@
     "FIREBASE_BUCKET": "m2meme-dev.appspot.com",
     "FILE_LOCATION": "https://storage.googleapis.com/m2meme-dev.appspot.com/",
     "host": "http://localhost:4200/",
-    "MAX_FILE": "10",
+    "MAX_FILE_SIZE": "5",
     "projectId": "m2meme-dev",
     "keyFileName": "m2meme-dev-firebase-adminsdk-6tku0-55299bd0d1.json",
     "stripePk": "pk_test_51LSD2fJbUrktT3xj6s57seUsslyiQidJwLpl63lEeqjZN1XNh2PsVuCNncoRTqOSKElEWkU5s8JhHW4vPaAUU8VT00PnJIt8pz",
-    "stripeSk": "sk_test_51LSD2fJbUrktT3xjBFJSPDbIHGxFONG1RXh3xifec4Gp8hp2tPtUlhxVansBSmRdTAEroMDP54pXBV4AfU6VTF1000EgBLJIL2"
+    "stripeSk": "sk_test_51LSD2fJbUrktT3xjBFJSPDbIHGxFONG1RXh3xifec4Gp8hp2tPtUlhxVansBSmRdTAEroMDP54pXBV4AfU6VTF1000EgBLJIL2",
+    "EMAIL_SERVER_HOST": "smtp.gmail.com",
+    "USERNAME": "troivietcompany@gmail.com",
+    "PASSWORD": "jaixcqgcfmsgedzg",
+    "reCAPTCHA_SK": "6LfDDpQhAAAAALAp1zulzYZ526t4XdEOijxzgkfl",    
+    "googleClientId": "325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com",
+    "googleClientSecretKey": "GKfVQghfAYBmXhvGbb0oLftZ",
+    "facebookClientId": "737995523963189",
+    "facebookClientSecret": "71fe6ae0d4493b941ba320251fc72958"
   },
   "production": {
     "MONGO_URI": "mongodb+srv://admin:Nguy3nH0H@1@cluster0-wq5um.gcp.mongodb.net/architect-dev?retryWrites=true&w=majority",
     "FIREBASE_BUCKET": "m2meme-dev.appspot.com",
     "FILE_LOCATION": "https://storage.googleapis.com/m2meme-dev.appspot.com/",
     "host": "https://m2meme-dev.web.app/",
-    "MAX_FILE": "10",
+    "MAX_FILE_SIZE": "5",
     "projectId": "m2meme-dev",
     "keyFileName": "m2meme-dev-firebase-adminsdk-6tku0-55299bd0d1.json",
     "stripePk": "pk_test_51LSD2fJbUrktT3xj6s57seUsslyiQidJwLpl63lEeqjZN1XNh2PsVuCNncoRTqOSKElEWkU5s8JhHW4vPaAUU8VT00PnJIt8pz",
-    "stripeSk": "sk_test_51LSD2fJbUrktT3xjBFJSPDbIHGxFONG1RXh3xifec4Gp8hp2tPtUlhxVansBSmRdTAEroMDP54pXBV4AfU6VTF1000EgBLJIL2"
+    "stripeSk": "sk_test_51LSD2fJbUrktT3xjBFJSPDbIHGxFONG1RXh3xifec4Gp8hp2tPtUlhxVansBSmRdTAEroMDP54pXBV4AfU6VTF1000EgBLJIL2",
+    "EMAIL_SERVER_HOST": "smtp.gmail.com",
+    "USERNAME": "troivietcompany@gmail.com",
+    "PASSWORD": "jaixcqgcfmsgedzg",
+    "reCAPTCHA_SK": "6LfDDpQhAAAAALAp1zulzYZ526t4XdEOijxzgkfl",    
+    "googleClientId": "325839050136-uujn1lk8v9ob775gujape3nd420hjppe.apps.googleusercontent.com",
+    "googleClientSecretKey": "GKfVQghfAYBmXhvGbb0oLftZ",
+    "facebookClientId": "737995523963189",
+    "facebookClientSecret": "71fe6ae0d4493b941ba320251fc72958"
   }
 }
