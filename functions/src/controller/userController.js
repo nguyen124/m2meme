@@ -114,7 +114,7 @@
         });
     });
   
-    router.post("/svc/activate", (req, res) => {
+    router.post("/svc/users/activate", (req, res) => {
       const sts = req.body.hashStatus;
       return userSvc
         .activateUser(sts)
