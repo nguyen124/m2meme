@@ -273,23 +273,42 @@
       maxPrice = req.query.maxPrice,
       keyword = req.query.keyword;
 
+    if (need) {
+      if (need === "other") {
+        options.conditions = Object.assign(options.conditions, {
+          categories: {
+            $nin: ["Nail_Salon", "Hair_Salon", "Restaurant", "House"],
+          },
+        });
+      } else {
+        if (need === "forSale") {
+          options.conditions = Object.assign(options.conditions, {
+            categories: {
+              $in: [
+                "Nail_Salon",
+                "Hair_Salon",
+                "Restaurant",
+                "House",
+                "Other_Business",
+              ],
+            },
+            needs: { $in: ["forSale"] },
+          });
+        } else if (need === "hiring") {
+          options.conditions = Object.assign(options.conditions, {
+            needs: { $in: ["hiring"] },
+          });
+        }
+      }
+    }
+    
     // query conditions
     if (category) {
       options.conditions = Object.assign(options.conditions, {
         categories: { $in: [category] },
       });
     }
-    if (need) {
-      if (need !== "other") {
-        options.conditions = Object.assign(options.conditions, {
-          needs: { $in: [need] },
-        });
-      } else {
-        options.conditions = Object.assign(options.conditions, {
-          needs: { $nin: ["forSale", "hiring"] },
-        });
-      }
-    }
+
     if (tag) {
       options.conditions = Object.assign(options.conditions, {
         tags: { $in: [tag] },
