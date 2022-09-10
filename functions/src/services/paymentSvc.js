@@ -60,9 +60,10 @@
           cost = price * 3;
           description = "Tạo Quảng Cáo Cho 6 Tháng";
           break;
-        case "12":
+        //duration
+        case "24":
           cost = price * 4;
-          description = "Tạo Quảng Cáo Cho 12 Tháng";
+          description = "Tạo Quảng Cáo Cho 24 Tháng";
           break;
       }
       const customer = stripe.customers

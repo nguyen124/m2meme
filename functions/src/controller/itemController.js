@@ -228,6 +228,11 @@
       var conditions = {
         _id: req.params.id,
       };
+      if (req.user.role !== "ADMIN") {
+        conditions = Object.assign(conditions, {
+          "createdBy.userId": req.user.id,
+        });
+      }
       itemSvc
         .getOneItem(conditions)
         .then((item) => {
@@ -301,7 +306,7 @@
         }
       }
     }
-    
+
     // query conditions
     if (category) {
       options.conditions = Object.assign(options.conditions, {
@@ -440,7 +445,8 @@
     if (duration === 6 && charge.amount !== price * 3) {
       return false;
     }
-    if (duration === 12 && charge.amount !== price * 4) {
+    //duration
+    if (duration === 24 && charge.amount !== price * 4) {
       return false;
     }
     if (
