@@ -115,6 +115,28 @@
       });
   }
 
+  router.get(
+    "/svc/business/checkExistingFreePost",
+    middleware.isValidUser,
+    (req, res) => {
+      itemSvc
+        .getOneItem({
+          "createdBy.userId": req.user.id,
+          duration: 0.5,
+        })
+        .then((item) => {
+          if (item) {
+            return res.status(status.OK).json(true);
+          } else {
+            return res.status(status.OK).json(false);
+          }
+        })
+        .catch((err) => {
+          return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+        });
+    }
+  );
+
   /** Get item */
   router.post("/svc/business/:id/upview", (req, res) => {
     var condition = {
@@ -390,12 +412,13 @@
     */
   router.post("/svc/business/create", middleware.isValidUser, (req, res) => {
     var item = req.body;
-    var isValid = validate(req.user, item);
-    if (!isValid) {
-      return res.status(status.INTERNAL_SERVER_ERROR).json("Invalid form");
-    }
-    return itemSvc
-      .addItem(item)
+    validate(req.user, item)
+      .then((isValid) => {
+        if (!isValid) {
+          return res.status(status.INTERNAL_SERVER_ERROR).json("Invalid form");
+        }
+        return itemSvc.addItem(item);
+      })
       .then((newItem) => {
         return res.status(status.OK).json(newItem);
       })
@@ -425,7 +448,7 @@
       });
   });
 
-  function validate(user, item) {
+  async function validate(user, item) {
     let charge = item.charge;
     let price = 2000;
     if (item.coupon && item.coupon.appliedCoupon) {
@@ -436,6 +459,15 @@
       price = price * item.coupon.discount;
     }
     let duration = Number(item.duration);
+    if (duration === 0.5) {
+      let existItem = await itemSvc.getOneItem({
+        "createdBy.userId": user.id,
+        duration: 0.5,
+      });
+      if (existItem) {
+        return false;
+      }
+    }
     if (duration === 1 && charge.amount !== price) {
       return false;
     }
@@ -447,6 +479,15 @@
     }
     //duration
     if (duration === 24 && charge.amount !== price * 4) {
+      return false;
+    }
+    if (
+      duration !== 0.5 &&
+      duration !== 1 &&
+      duration !== 3 &&
+      duration !== 6 &&
+      duration !== 24
+    ) {
       return false;
     }
     if (
