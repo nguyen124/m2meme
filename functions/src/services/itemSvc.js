@@ -18,6 +18,7 @@
     fakeDeleteItem: fakeDeleteItem,
     isExpired: isExpired,
     isRefundable: isRefundable,
+    getRandomItems: getRandomItems
   };
 
   function isExpired(item) {
@@ -65,6 +66,21 @@
           return reject(err);
         }
         return resolve(item);
+      });
+    });
+  }
+
+  function getRandomItems(conditions) {
+    return new Promise((resolve, reject) => {
+      Item.aggregate()
+      .match(conditions)
+      .sample(10)
+      .exec((err, items) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(items)
+        }
       });
     });
   }

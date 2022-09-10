@@ -29,6 +29,37 @@
       });
   });
 
+  router.get("/svc/business/random", (req, res, next) => {
+    let conditions = {
+      expired: { $ne: true },
+      status: { $nin: ["DELETED", "REFUNDED"] },
+    };
+    var address = req.query.address,
+      zipcode = req.query.zipcode,
+      city = req.query.city,
+      state = req.query.state,
+      country = req.query.country;
+    if (address || zipcode || city || state || country) {
+      conditions = Object.assign(
+        conditions,
+        address ? { address } : null,
+        zipcode ? { zipcode } : null,
+        city ? { city } : null,
+        state ? { state } : null,
+        country ? { country } : null
+      );
+    }
+
+    itemSvc
+      .getRandomItems(conditions)
+      .then((items) => {
+        return res.status(status.OK).json(items);
+      })
+      .catch((err) => {
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+      });
+  });
+
   router.get("/svc/business/user/", (req, res, next) => {
     var options = getOptions(req);
     itemSvc
