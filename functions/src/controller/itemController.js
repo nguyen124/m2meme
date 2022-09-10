@@ -490,7 +490,7 @@
       price = price * item.coupon.discount;
     }
     let duration = Number(item.duration);
-    if (duration === 0.5) {
+    if (user.role !== "ADMIN" && duration === 0.5) {
       let existItem = await itemSvc.getOneItem({
         "createdBy.userId": user.id,
         duration: 0.5,
