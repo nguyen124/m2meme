@@ -100,7 +100,7 @@
       },
       city: {
         type: String,
-        maxlength: 20,
+        maxlength: 40,
       },
       state: {
         type: String,
