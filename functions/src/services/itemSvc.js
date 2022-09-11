@@ -33,6 +33,9 @@
   }
 
   function isRefundable(item) {
+    if(item.duration === 0.5) {
+      return false;
+    }
     const date1 = new Date();
     const date2 = new Date(item.modifiedDate);
     const diffTime = Math.abs(date2 - date1);
