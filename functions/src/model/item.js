@@ -134,7 +134,7 @@
       },
       description: {
         type: String,
-        maxlength: 1000,
+        maxlength: 2000,
       },
       charge: ChargeSchema,
       status: {
