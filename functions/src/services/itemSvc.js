@@ -77,7 +77,7 @@
     return new Promise((resolve, reject) => {
       Item.aggregate()
       .match(conditions)
-      .sample(10)
+      .sample(50)
       .exec((err, items) => {
         if (err) {
           return reject(err);
