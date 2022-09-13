@@ -230,7 +230,7 @@ let sample = {
   noOfChairs: { $numberInt: "20" },
   noOfTables: { $numberInt: "15" },
   contactPhoneNo: "9876543210",
-  contactEmail: "troivietcompany@gmail.com",
+  contactEmail: "info@troiviet.com",
   income: { $numberInt: "10000" },
   rentCost: { $numberInt: "50000" },
   otherCost: { $numberInt: "0" },

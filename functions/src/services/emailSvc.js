@@ -23,7 +23,7 @@
   
     function sendEmail(obj) {
       var mailOptions = {
-        from: "troivietcompany@gmail.com",
+        from: "info@troiviet.com",
         to: obj.targetEmail,
         subject: "Reset password passcode!",
         text:
@@ -49,7 +49,7 @@
   
     function sendActivateEmail(targetEmail, hashStatus) {
       var mailOptions = {
-        from: "troivietcompany@gmail.com",
+        from: "info@troiviet.com",
         to: targetEmail,
         subject: "Activate your TroiViet account!",
         text: `${new Date()}
