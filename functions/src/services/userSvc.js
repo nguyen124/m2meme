@@ -19,7 +19,7 @@
       let expriredDate = Date.now() + 300000; // expire in 5 minutes;
 
       User.findOneAndUpdate(
-        { email: obj.email },
+        { email: obj.email.toLowerCase() },
         { resetPasswordToken: tempPass, resetPasswordExpires: expriredDate },
         { new: true },
         (err, newUser) => {
@@ -57,7 +57,7 @@
     return new Promise((resolve, reject) => {
       User.findOneAndUpdate(
         {
-          email: obj.email,
+          email: obj.email.toLowerCase(),
           resetPasswordToken: obj.resetPasscode,
           resetPasswordExpires: { $gt: cutoff },
         },
@@ -129,7 +129,7 @@
       //console.log("hashStatus: " + hashStatus);
       var user = {
         username: info.username,
-        email: info.email,
+        email: info.email.toLowerCase(),
         password: User.hashPassword(info.password),
         avatar: info.avatar,
         joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
@@ -169,14 +169,14 @@
   function hasExisted(info) {
     return new Promise((resolve, reject) => {
       User.findOne(
-        { $or: [{ email: info.email }, { username: info.username }] },
+        { $or: [{ email: info.email.toLowerCase() }, { username: info.username }] },
         (err, user) => {
           if (err) {
             // eslint-disable-next-line prefer-promise-reject-errors
             return reject("register.validate.error");
           }
           if (user) {
-            if (user.email === info.email) {
+            if (user.email.toLowerCase() === info.email.toLowerCase()) {
               // eslint-disable-next-line prefer-promise-reject-errors
               return reject("register.validate.existingEmail");
             } else if (user.username === info.username) {

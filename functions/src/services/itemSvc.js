@@ -18,7 +18,8 @@
     fakeDeleteItem: fakeDeleteItem,
     isExpired: isExpired,
     isRefundable: isRefundable,
-    getRandomItems: getRandomItems
+    getRandomItems: getRandomItems,
+    getSpecialItem: getSpecialItem,
   };
 
   function isExpired(item) {
@@ -33,7 +34,7 @@
   }
 
   function isRefundable(item) {
-    if(item.duration === 0.5) {
+    if (item.duration === 0.5) {
       return false;
     }
     const date1 = new Date();
@@ -62,6 +63,25 @@
     });
   }
 
+  function getSpecialItem() {
+    return new Promise((resolve, reject) => {
+      Item.findOne(
+        { isSpecial: true, status: { $nin: ["REFUNDED", "DELETED"] } },
+        {},
+        (err, item) => {
+          if (err) {
+            return reject(err);
+          }
+          if (!isExpired(item)) {
+            return resolve(item);
+          } else {
+            return resolve(null);
+          }
+        }
+      );
+    });
+  }
+
   function getOneItem(conditions) {
     return new Promise((resolve, reject) => {
       Item.findOne(conditions, (err, item) => {
@@ -76,15 +96,19 @@
   function getRandomItems(conditions) {
     return new Promise((resolve, reject) => {
       Item.aggregate()
-      .match(conditions)
-      .sample(50)
-      .exec((err, items) => {
-        if (err) {
-          return reject(err);
-        } else {
-          return resolve(items)
-        }
-      });
+        .match(conditions)
+        .sample(50)
+        .exec((err, items) => {
+          if (err) {
+            return reject(err);
+          } else {
+            return resolve(
+              items.filter((item) => {
+                return !isExpired(item);
+              })
+            );
+          }
+        });
     });
   }
 

@@ -66,7 +66,7 @@
       }
       var user = {
         username: req.body.username,
-        email: req.body.email,
+        email: req.body.email.toLowerCase(),
         password: req.body.passwords.password,
         avatar: "../../assets/image/default-avatar.png",
         joinedDate: moment().format("YYYY-MM-DD HH:mm:ss Z"),
@@ -153,7 +153,7 @@
               user: {
                 _id: user._id,
                 username: user.username,
-                email: user.email,
+                email: user.email.toLowerCase(),
                 joinedDate: user.joinedDate,
                 avatar: user.avatar,
                 familyName: user.familyName,

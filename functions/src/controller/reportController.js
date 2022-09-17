@@ -40,7 +40,7 @@
         report.reportedByUser = {
             _id: req.user.id,
             username: req.user.username,
-            email: req.user.email,
+            email: req.user.email.toLowerCase(),
             familyName: req.user.familyName,
             givenName: req.user.givenName
         };

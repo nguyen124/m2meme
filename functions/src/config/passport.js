@@ -33,7 +33,7 @@
         },
         (req, email, password, done) => {
           User.findOne(
-            { $or: [{ email: email }, { username: email }] },
+            { $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }] },
             {
               email: 1,
               password: 1,
@@ -91,7 +91,7 @@
 
   function saveGoogleUser(accessToken, refreshToken, profile, done) {
     User.findOne(
-      { email: profile.emails[0].value },
+      { email: profile.emails[0].value.toLowerCase() },
       {
         email: 1,
         avatar: 1,
@@ -111,7 +111,7 @@
           return done(null, user);
         } else {
           var newUser = new User({
-            email: profile.emails[0].value,
+            email: profile.emails[0].value.toLowerCase(),
             avatar: profile.photos[0].value,
             username: profile.displayName,
             familyName: profile.name.familyName,
@@ -130,7 +130,7 @@
 
   function saveFacebookUser(accessToken, refreshToken, profile, done) {
     User.findOne(
-      { email: profile._json.email },
+      { email: profile._json.email.toLowerCase() },
       {
         email: 1,
         avatar: 1,
@@ -150,7 +150,7 @@
           return done(null, user);
         } else {
           var newUser = new User({
-            email: profile._json.email,
+            email: profile._json.email.toLowerCase(),
             avatar: profile._json.picture.data.url,
             username: profile._json.name,
             givenName: profile._json.first_name,

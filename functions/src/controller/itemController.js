@@ -16,9 +16,6 @@
   //********************ITEM*********************** */
   router.get("/svc/business", (req, res, next) => {
     var options = getOptions(req);
-    options.conditions = Object.assign(options.conditions, {
-      expired: { $ne: true },
-    });
     itemSvc
       .getItems(options)
       .then((items) => {
@@ -31,27 +28,37 @@
 
   router.get("/svc/business/random", (req, res, next) => {
     let conditions = {
-      expired: { $ne: true },
       status: { $nin: ["DELETED", "REFUNDED"] },
     };
-    var address = req.query.address,
-      zipcode = req.query.zipcode,
-      city = req.query.city,
-      state = req.query.state,
-      country = req.query.country;
-    if (address || zipcode || city || state || country) {
-      conditions = Object.assign(
-        conditions,
-        address ? { address } : null,
-        zipcode ? { zipcode } : null,
-        city ? { city } : null,
-        state ? { state } : null,
-        country ? { country } : null
-      );
-    }
+    // var address = req.query.address,
+    //   zipcode = req.query.zipcode,
+    //   city = req.query.city,
+    //   state = req.query.state,
+    //   country = req.query.country;
+    // if (address || zipcode || city || state || country) {
+    //   conditions = Object.assign(
+    //     conditions,
+    //     address ? { address } : null,
+    //     zipcode ? { zipcode } : null,
+    //     city ? { city } : null,
+    //     state ? { state } : null,
+    //     country ? { country } : null
+    //   );
+    // }
 
     itemSvc
       .getRandomItems(conditions)
+      .then((items) => {
+        return res.status(status.OK).json(items);
+      })
+      .catch((err) => {
+        return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+      });
+  });
+
+  router.get("/svc/business/special", (req, res, next) => {
+    itemSvc
+      .getSpecialItem()
       .then((items) => {
         return res.status(status.OK).json(items);
       })
@@ -408,9 +415,9 @@
     if (keyword) {
       options.conditions = Object.assign(options.conditions, {
         $or: [
-          { title: { $regex: keyword } },
-          { businessName: { $regex: keyword } },
-          { tags: { $in: [keyword] } },
+          { title: { $regex: keyword, $options: "i" } },
+          { businessName: { $regex: keyword, $options: "i" } },
+          { tags: { $in: [keyword], $options: "i" } },
         ],
       });
     }

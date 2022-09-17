@@ -68,7 +68,7 @@
       }
       const customer = stripe.customers
         .create({
-          email: stripeToken.email,
+          email: stripeToken.email.toLowerCase(),
           source: stripeToken.id,
         })
         .then((customer) => {
@@ -77,7 +77,7 @@
             description: description,
             currency: "USD",
             customer: customer.id,
-            receipt_email: stripeToken.email,
+            receipt_email: stripeToken.email.toLowerCase(),
           });
         })
         .then(async (charge) => {
