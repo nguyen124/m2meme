@@ -417,7 +417,7 @@
         $or: [
           { title: { $regex: keyword, $options: "i" } },
           { businessName: { $regex: keyword, $options: "i" } },
-          { tags: { $in: [keyword], $options: "i" } },
+          { tags: { $in: [new RegExp(keyword, "i")] } },
         ],
       });
     }
