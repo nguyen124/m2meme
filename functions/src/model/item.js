@@ -162,5 +162,5 @@
   itemSchema.index({ modifiedDate: -1, tags: 1 });
   //TTL of modifiedDate.
   //157680000 is 5years , 94608000 is 3 years, 63072000 is 2 years , 34190000 is 13 months
-  module.exports = mongoose.model("item", itemSchema);
+  module.exports = mongoose.model("item", itemSchema, "specialItem");  
 })();

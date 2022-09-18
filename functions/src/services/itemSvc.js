@@ -1,5 +1,6 @@
 (function () {
   var Item = require("../model/item"),
+    SpecialItem = require("../model/item"),
     Comment = require("../model/comment"),
     modelUserLogSvc = require("./modelUserLogSvc"),
     reportSvc = require("./reportSvc"),
@@ -65,20 +66,16 @@
 
   function getSpecialItem() {
     return new Promise((resolve, reject) => {
-      Item.findOne(
-        { isSpecial: true, status: { $nin: ["REFUNDED", "DELETED"] } },
-        {},
-        (err, item) => {
-          if (err) {
-            return reject(err);
-          }
-          if (!isExpired(item)) {
-            return resolve(item);
-          } else {
-            return resolve(null);
-          }
+      SpecialItem.findOne({}, (err, item) => {
+        if (err) {
+          return reject(err);
         }
-      );
+        if (!isExpired(item)) {
+          return resolve(item);
+        } else {
+          return resolve(null);
+        }
+      });
     });
   }
 
