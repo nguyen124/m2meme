@@ -1,6 +1,6 @@
 (function () {
   var Item = require("../model/item"),
-    SpecialItem = require("../model/item"),
+    SpecialItem = require("../model/specialItem"),
     Comment = require("../model/comment"),
     modelUserLogSvc = require("./modelUserLogSvc"),
     reportSvc = require("./reportSvc"),
