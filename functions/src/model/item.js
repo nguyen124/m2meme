@@ -151,7 +151,10 @@
       coupon: {
         appliedCoupon: Boolean,
         discount: Number,
-      }
+      },
+      isSpecial: {
+        type: Boolean,
+      },
     });
   function arrayLimit(val) {
     return val.length <= 5;

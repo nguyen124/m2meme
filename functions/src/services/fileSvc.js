@@ -107,7 +107,7 @@
 
       busboy.on("finish", () => {
         const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
-        let destination = filePath + req.user.username + "/";
+        let destination = filePath + req.user.username + "/" + today.getTime() + "/";
 
         bucket
           .upload(req.data.file, {
@@ -195,54 +195,41 @@
       const bucket = gcs.bucket(environment.FIREBASE_BUCKET);
       if (fileType.startsWith("image")) {
         var thumb_file_name = `${THUMB_PREFIX}${basename}`;
-        bucket
+        return bucket
           .file(dir + "/" + thumb_file_name)
           .delete()
-          .catch((err) => {
-            console.log(err);
+          .finally(() => {
+            return bucket.file(filename).delete();
           });
       } else if (fileType.startsWith("video")) {
         var mp4_file = filename.replace(/\.[^.]+$/, "_output.mp4");
-        bucket
+        var mp4_file_thumb = filename.replace(/\.[^.]+$/, "_thumb_output.mp4");
+        var poster = filename.replace(/\.[^.]+$/, "_poster.jpg");
+        var posterGif = filename.replace(/\.[^.]+$/, "_poster.gif");
+        return bucket
           .file(mp4_file)
           .delete()
-          .catch((err) => {
-            console.log(err);
-          });
-        var mp4_file_thumb = filename.replace(/\.[^.]+$/, "_thumb_output.mp4");
-        bucket
-          .file(mp4_file_thumb)
-          .delete()
-          .catch((err) => {
-            console.log(err);
-          });
-        var poster = filename.replace(/\.[^.]+$/, "_poster.jpg");
-        bucket
-          .file(poster)
-          .delete()
-          .catch((err) => {
-            console.log(err);
-          });
-        var posterGif = filename.replace(/\.[^.]+$/, "_poster.gif");
-        bucket
-          .file(posterGif)
-          .delete()
-          .catch((err) => {
-            console.log(err);
+          .finally(() => {
+            return bucket.file(mp4_file_thumb).delete();
+          })
+          .finally(() => {
+            return bucket.file(poster).delete();
+          })
+          .finally(() => {
+            return bucket.file(posterGif).delete();
+          })
+          .finally(() => {
+            return bucket.file(filename).delete();
           });
       }
-      return bucket
-        .file(filename)
-        .delete()
-        .catch((err) => {
-          console.log(err);
-        });
     }
-    return null;
+    return new Promise((resolve, reject) => {
+      resolve(null);
+    });
   }
 
   function deleteByUrl(url, fileType) {
     var filename = url.replace(environment.FILE_LOCATION, "");
-    deleteFile(filename, fileType);
+    return deleteFile(filename, fileType);
   }
 })();

@@ -11,8 +11,12 @@
 
     router.post('/svc/files/delete', (req, res) => {
         var body = req.body;
-        fileSvc.deleteByUrl(body.url, body.fileType);
-        return res.status(status.OK);
+        fileSvc.deleteByUrl(body.url, body.fileType).then((result)=>{
+            return res.status(status.OK).json(result);
+        }).catch(err=>{
+            return res.status(status.INTERNAL_SERVER_ERROR).json(err);
+        });
+        
     });
     module.exports = router;
 }());
