@@ -274,7 +274,7 @@
     }
 
     function adjustNoOfRepliesOfComment(commentId, change) {
-        return updateComment({ _id: commentId }, { $inc: { noOfReplies: change } }, { upsert: true, new: true })
+        return updateComment({ _id: commentId }, { $inc: { noOfReplies: change } }, { new: true })
     }
 
     function updateCommentsOfAnUser(newUserInfo) {

@@ -116,12 +116,12 @@
     return updateItem(
       item,
       { $inc: { noOfViews: 1 } },
-      { upsert: true, new: true }
+      { new: true }
     );
   }
 
   /** Add item */
-  function addItem(item) {
+  function addItem(item) {    
     return new Promise((resolve, reject) => {
       Item.create(item, (err, item) => {
         if (err) {
@@ -186,7 +186,7 @@
     updateItem(
       { _id: itemId },
       { $inc: { noOfComments: change } },
-      { upsert: true, new: true }
+      { new: true }
     );
   }
 
