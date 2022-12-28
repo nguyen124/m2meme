@@ -157,6 +157,9 @@
     "/svc/business/checkExistingFreePost",
     middleware.isValidUser,
     (req, res) => {
+      if (req.user.role === "ADMIN") {
+        return res.status(status.OK).json(false);
+      }
       itemSvc
         .getOneItem({
           "createdBy.userId": req.user.id,
@@ -496,46 +499,48 @@
       }
       price = price * item.coupon.discount;
     }
-    let duration = Number(item.duration);
-    if (user.role !== "ADMIN" && duration === 0.5) {
-      let existItem = await itemSvc.getOneItem({
-        "createdBy.userId": user.id,
-        duration: 0.5,
-      });
-      if (existItem) {
+    if (user.role !== "ADMIN") {
+      let duration = Number(item.duration);
+      if (duration === 0.5) {
+        let existItem = await itemSvc.getOneItem({
+          "createdBy.userId": user.id,
+          duration: 0.5,
+        });
+        if (existItem) {
+          return false;
+        }
+      }
+      if (duration === 1 && charge.amount !== price) {
         return false;
       }
-    }
-    if (duration === 1 && charge.amount !== price) {
-      return false;
-    }
-    if (duration === 3 && charge.amount !== price * 2) {
-      return false;
-    }
-    if (duration === 6 && charge.amount !== price * 3) {
-      return false;
-    }
-    //duration
-    if (duration === 24 && charge.amount !== price * 4) {
-      return false;
-    }
-    if (
-      duration !== 0.5 &&
-      duration !== 1 &&
-      duration !== 3 &&
-      duration !== 6 &&
-      duration !== 24
-    ) {
-      return false;
-    }
-    if (
-      !item.files ||
-      item.files.length > 10 ||
-      item.files.length <= 0 ||
-      (item.tags && item.tags.length > 5) ||
-      (item.categories && item.categories.length > 20)
-    ) {
-      return false;
+      if (duration === 3 && charge.amount !== price * 2) {
+        return false;
+      }
+      if (duration === 6 && charge.amount !== price * 3) {
+        return false;
+      }
+      //duration
+      if (duration === 24 && charge.amount !== price * 4) {
+        return false;
+      }
+      if (
+        duration !== 0.5 &&
+        duration !== 1 &&
+        duration !== 3 &&
+        duration !== 6 &&
+        duration !== 24
+      ) {
+        return false;
+      }
+      if (
+        !item.files ||
+        item.files.length > 10 ||
+        item.files.length <= 0 ||
+        (item.tags && item.tags.length > 5) ||
+        (item.categories && item.categories.length > 20)
+      ) {
+        return false;
+      }
     }
     item.tags = item.tags.slice(0, 5);
     item.createdBy = {
